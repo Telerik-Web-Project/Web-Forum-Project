@@ -31,7 +31,6 @@ public class HibernateConfig {
         return sessionFactory;
     }
     @Bean
-
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
