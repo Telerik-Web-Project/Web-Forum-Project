@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
-
 @Configuration
 @EnableTransactionManagement
 public class HibernateConfig {
@@ -32,6 +31,7 @@ public class HibernateConfig {
         return sessionFactory;
     }
     @Bean
+
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
