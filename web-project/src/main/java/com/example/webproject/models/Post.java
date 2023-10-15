@@ -25,7 +25,7 @@ public class Post {
 
     @OneToMany
     @JoinTable(name = "posts_comments",
-            joinColumns = {@JoinColumn(name = "user_id")})
+            joinColumns = {@JoinColumn(name = "post_id")})
     private Set<Comment> postComments;
 
     public Post() {
