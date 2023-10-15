@@ -1,8 +1,8 @@
 package com.example.webproject.repositories;
 
+import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
-import jakarta.persistence.EntityNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -38,7 +38,7 @@ public class PostRepositoryImpl implements PostRepository{
         try(Session session = sessionFactory.openSession()) {
             Post post = session.get(Post.class, id);
             if (post == null) {
-                throw new EntityNotFoundException();
+                throw new EntityNotFoundException("Post", id);
             }
             return post;
         }
