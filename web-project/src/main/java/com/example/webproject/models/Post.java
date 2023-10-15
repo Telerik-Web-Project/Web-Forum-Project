@@ -3,6 +3,7 @@ package com.example.webproject.models;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -21,6 +22,11 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany
+    @JoinTable(name = "posts_comments",
+            joinColumns = {@JoinColumn(name = "post_id")})
+    private Set<Comment> postComments;
 
     public Post() {
     }

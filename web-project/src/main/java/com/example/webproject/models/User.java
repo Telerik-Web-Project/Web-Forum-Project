@@ -26,7 +26,11 @@ public class User {
     private String email;
     @Column(name = "is_Blocked")
     private boolean isBlocked;
-    @OneToMany(mappedBy = "user")
+    @OneToMany
+    @JoinTable(name = "users_posts",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "post_id")}
+    )
     private Set<Post> userPosts;
 
     public User() {
