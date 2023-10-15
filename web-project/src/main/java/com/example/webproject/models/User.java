@@ -28,9 +28,7 @@ public class User {
     private boolean isBlocked;
     @OneToMany
     @JoinTable(name = "users_posts",
-            joinColumns = {@JoinColumn(name = "post_id")},
-            inverseJoinColumns = {@JoinColumn(name = "post_id")}
-    )
+            joinColumns = {@JoinColumn(name = "user_id")})
     private Set<Post> userPosts;
 
     public User() {
