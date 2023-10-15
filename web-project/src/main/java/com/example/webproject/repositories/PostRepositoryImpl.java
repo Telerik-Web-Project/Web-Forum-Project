@@ -38,7 +38,7 @@ public class PostRepositoryImpl implements PostRepository{
         try(Session session = sessionFactory.openSession()) {
             Post post = session.get(Post.class, id);
             if (post == null) {
-                throw new EntityNotFoundException("Post", id);
+                throw new EntityNotFoundException();
             }
             return post;
         }
