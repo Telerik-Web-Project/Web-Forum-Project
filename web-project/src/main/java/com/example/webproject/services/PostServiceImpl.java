@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PostServiceImpl {
+public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     public static final String AUTHENTICATION_ERROR = "Only admins or the creator of the post can modify it.";
 
@@ -20,20 +20,24 @@ public class PostServiceImpl {
         this.postRepository = postRepository;
     }
 
+    @Override
     public List<Post> getAll() {
         return postRepository.getAll();
     }
 
+    @Override
     public Post get(int id) {
         return postRepository.get(id);
     }
 
+    @Override
     public void createPost(Post post, User user) {
         checkIfBanned(user);
         post.setPostCreator(user);
         postRepository.createPost(post);
     }
 
+    @Override
     public void updatePost(Post post, User user) {
         checkModifyPermissions(post.getId(), user);
         checkIfBanned(user);
@@ -55,20 +59,21 @@ public class PostServiceImpl {
         postRepository.updatePost(post);
     }
 
+    @Override
     public void deletePost(Post post, User user) {
         checkModifyPermissions(post.getId(), user);
         checkIfBanned(user);
         postRepository.deletePost(post);
     }
 
-    private void checkModifyPermissions(int id, User user) {
+    void checkModifyPermissions(int id, User user) {
         Post post = postRepository.get(id);
         if (!(user.isAdmin() || post.getPostCreator().equals(user))) {
-            throw new AuthorizationException(AUTHENTICATION_ERROR);
+            throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
         }
     }
 
-    private void checkIfBanned(User user) {
+    void checkIfBanned(User user) {
         if (user.isBlocked()) {
             throw new UserBannedException();
         }
