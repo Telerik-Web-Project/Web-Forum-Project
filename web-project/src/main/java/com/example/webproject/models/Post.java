@@ -21,7 +21,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User postCreator;
 
     @OneToMany
     @JoinTable(name = "posts_comments",
@@ -55,12 +55,12 @@ public class Post {
         this.content = content;
     }
 
-    public User getUser() {
-        return user;
+    public User getPostCreator() {
+        return postCreator;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPostCreator(User user) {
+        this.postCreator = user;
     }
 
     public Set<Comment> getPostComments() {
