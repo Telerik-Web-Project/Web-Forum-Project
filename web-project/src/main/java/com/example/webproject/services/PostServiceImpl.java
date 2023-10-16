@@ -7,6 +7,7 @@ import com.example.webproject.exceptions.UserBannedException;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     public static final String AUTHENTICATION_ERROR = "Only admins or the creator of the post can modify it.";
 
+    @Autowired
     public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
     }

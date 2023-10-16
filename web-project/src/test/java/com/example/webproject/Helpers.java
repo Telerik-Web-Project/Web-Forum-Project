@@ -1,6 +1,9 @@
 package com.example.webproject;
 
+import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
+
+import java.util.HashSet;
 
 public class Helpers {
     public static User createMockUser() {
@@ -12,5 +15,16 @@ public class Helpers {
         mockUser.setFirstName("TestFirstName");
         mockUser.setEmail("test@email.com");
         return mockUser;
+    }
+
+    public static Post createMockPost() {
+        var mockPost = new Post();
+        var mockCreator = createMockUser();
+        mockPost.setId((int)(Math.random()*100));
+        mockPost.setTitle("TestTitle");
+        mockPost.setPostCreator(mockCreator);
+        mockPost.setContent("TestContent");
+        mockPost.setPostComments(new HashSet<>());
+        return mockPost;
     }
 }
