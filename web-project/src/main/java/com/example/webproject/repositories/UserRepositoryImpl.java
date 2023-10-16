@@ -27,15 +27,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
     @Override
     public List<Post> getUserPosts(int userId) {
-        /*User user = get(userId);
-        List <Post> userPosts = user.getUserPosts().stream().toList();
-        if(userPosts.isEmpty()){
-            throw new EntityNotFoundException(user.getId());
-        }
-        return userPosts;*/
         try(Session session = sessionFactory.openSession()){
             Query<Post> result = session.createQuery("from Post " +
                     "where user.id=:id",Post.class);
+            result.setParameter("id",userId);
             List <Post> userPosts= result.list();
             if(userPosts.isEmpty()){
                 throw new EntityNotFoundException(userId);
@@ -43,9 +38,8 @@ public class UserRepositoryImpl implements UserRepository {
             return userPosts;
         }
     }
-
     @Override
-    public User get(int id) {
+    public User getById(int id) {
         try(Session session = sessionFactory.openSession()){
             User user = session.get(User.class,id);
             if(user == null){
@@ -54,7 +48,6 @@ public class UserRepositoryImpl implements UserRepository {
             return user;
         }
     }
-
     @Override
     public User getByUsername(String username) {
         try(Session session = sessionFactory.openSession()){
@@ -68,7 +61,6 @@ public class UserRepositoryImpl implements UserRepository {
             return users.get(0);
         }
     }
-
     @Override
     public User getByEmail(String email) {
         try(Session session = sessionFactory.openSession()){

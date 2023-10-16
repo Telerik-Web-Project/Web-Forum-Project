@@ -63,6 +63,14 @@ public class Post {
         this.user = user;
     }
 
+    public Set<Comment> getPostComments() {
+        return postComments;
+    }
+
+    public void setPostComments(Set<Comment> postComments) {
+        this.postComments = postComments;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -9,7 +9,7 @@ import java.util.Set;
 public interface UserRepository {
     List <User> getAll(String username, String firstname, String email);
     List <Post> getUserPosts(int userId);
-    User get (int id);
+    User getById (int id);
     User getByUsername (String username);
     User getByEmail (String email);
     User createUser (User user);
