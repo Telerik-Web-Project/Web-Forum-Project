@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import static com.example.webproject.Helpers.createMockUser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -55,9 +54,8 @@ public class UserServiceImplTests {
         Mockito.when(repository.getByEmail(user.getEmail()))
                 .thenThrow(EntityNotFoundException.class);
 
-        assertThrows(EntityDuplicateException.class, () -> {
-            userService.createUser(user);
-        });
+        assertThrows(EntityDuplicateException.class,
+                () -> userService.createUser(user));
 
         Mockito.verify(repository, Mockito.times(0)).createUser(user);
     }
@@ -70,14 +68,13 @@ public class UserServiceImplTests {
         Mockito.when(repository.getByEmail(user.getEmail()))
                 .thenReturn(user);
 
-        assertThrows(EntityDuplicateException.class, () -> {
-            userService.createUser(user);
-        });
+        assertThrows(EntityDuplicateException.class,
+                () -> userService.createUser(user));
 
         Mockito.verify(repository, Mockito.times(0)).createUser(user);
     }
     @Test
-    public void create_Should_callRepository_When_PassedValidDetails() {
+    public void create_Should_Call_Repository_When_PassedValidDetails() {
         User user = createMockUser();
 
         Mockito.when(repository.getByUsername(user.getUsername()))
@@ -89,4 +86,59 @@ public class UserServiceImplTests {
 
         Mockito.verify(repository, Mockito.times(1)).createUser(user);
     }
+    @Test
+    public void deleteUser_Should_Not_Call_Repository_When_NonAdmin_User_Tries_To_Delete_Other_User() {
+        User mockUser = createMockUser();
+        mockUser.setAdmin(false);
+
+        User userToBeDeleted = createMockUser();
+        userToBeDeleted.setUsername("otherUsername");
+
+        Mockito.verify(repository, Mockito.times(0)).deleteUser(userToBeDeleted);
+    }
+    @Test
+    public void deleteUser_Should_Call_Repository_When_NonAdmin_User_Deletes_Themselves() {
+        User mockUser = createMockUser();
+        mockUser.setAdmin(false);
+
+        User userToBeDeleted = createMockUser();
+
+        userService.deleteUser(mockUser,userToBeDeleted);
+
+        Mockito.verify(repository, Mockito.times(1)).deleteUser(userToBeDeleted);
+    }
+    @Test
+    public void deleteUser_Should_Call_Repository_When_Admin_User_Delete_Other_User(){
+        User adminUser = createMockUser();
+        adminUser.setAdmin(true);
+        User otherUser = createMockUser();
+        otherUser.setUsername("otherUser");
+
+        userService.deleteUser(adminUser,otherUser);
+
+        Mockito.verify(repository, Mockito.times(1)).deleteUser(otherUser);
+    }
+    @Test
+    public void updateUser_Should_Not_Call_Repository_When_NonAdmin_User_Tries_To_Update_Other_User() {
+        User normalUser = createMockUser();
+        normalUser.setAdmin(false);
+
+        User userToBeUpdated = createMockUser();
+        userToBeUpdated.setUsername("otherUser");
+
+        Mockito.verify(repository, Mockito.times(0)).updateUser(userToBeUpdated);
+    }
+    @Test
+    public void updateUser_Should_Call_Repository_When_Admin_User_Tries_To_Update_Other_User() {
+        User adminUser = createMockUser();
+        adminUser.setAdmin(true);
+
+        User userToBeUpdated = createMockUser();
+        userToBeUpdated.setUsername("otherUser");
+
+        userService.updateUser(adminUser,userToBeUpdated);
+
+        Mockito.verify(repository, Mockito.times(1)).updateUser(userToBeUpdated);
+    }
 }
+

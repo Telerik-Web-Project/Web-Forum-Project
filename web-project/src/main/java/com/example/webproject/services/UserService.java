@@ -7,6 +7,6 @@ public interface UserService {
     User getById (int id);
     User getByUsername (String username);
     void createUser (User user);
-    void updateUser (User user);
+    void updateUser (User user,User userToBeUpdated);
     void deleteUser (User user,User userToBeDeleted);
 }
