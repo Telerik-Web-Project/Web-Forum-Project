@@ -1,5 +1,6 @@
 package com.example.webproject;
 
+import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 
@@ -25,5 +26,14 @@ public class Helpers {
         mockPost.setContent("TestContent");
         mockPost.setPostComments(new HashSet<>());
         return mockPost;
+    }
+
+    public static Comment createMockComment() {
+        var mockComment = new Comment();
+        mockComment.setId(1);
+        mockComment.setContent("TestContent");
+        mockComment.setPost(createMockPost());
+        mockComment.setUser(createMockUser());
+        return mockComment;
     }
 }
