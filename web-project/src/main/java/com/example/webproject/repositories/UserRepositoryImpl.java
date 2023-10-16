@@ -29,7 +29,7 @@ public class UserRepositoryImpl implements UserRepository {
     public List<Post> getUserPosts(int userId) {
         try(Session session = sessionFactory.openSession()){
             Query<Post> result = session.createQuery("from Post " +
-                    "where user.id=:id",Post.class);
+                    "where postCreator.id=:id",Post.class);
             result.setParameter("id",userId);
             List <Post> userPosts= result.list();
             if(userPosts.isEmpty()){

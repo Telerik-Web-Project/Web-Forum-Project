@@ -27,9 +27,11 @@ public class PostRepositoryImpl implements PostRepository{
     }
 
     @Override
-    public List<Comment> getAllComments() {
+    public List<Comment> getPostComments(Post post) {
         try(Session session = sessionFactory.openSession()) {
-            Query<Comment> query = session.createQuery("from Comment", Comment.class);
+            Query<Comment> query = session.createQuery
+                    ("from Comment where post.id=:id", Comment.class);
+            query.setParameter("id",post.getId());
             return query.list();
         }
     }
