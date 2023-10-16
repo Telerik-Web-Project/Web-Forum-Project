@@ -28,6 +28,25 @@ public class Post {
             joinColumns = {@JoinColumn(name = "post_id")})
     private Set<Comment> postComments;
 
+    /*@ManyToMany
+    @JoinTable(name = "liked_posts",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> usersLikedThePost;
+
+    private int numberOfLikes;
+
+    public Set<User> getUsersLikedPost() {
+        return new HashSet<>(usersLikedPost);
+    }
+
+    public void setUsersLikedPost(Set<User> usersLikedPost) {
+        this.usersLikedPost = usersLikedPost;
+    }
+
+    public int getNumberOfLikes() {
+        return  getUsersLikedPost().size();*/
+
     public Post() {
     }
 

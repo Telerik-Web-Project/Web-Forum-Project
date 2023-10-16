@@ -9,7 +9,7 @@ import java.util.List;
 public interface PostRepository {
 
     List <Post> getAll(); //TODO filter most recent ?
-    List <Comment> getAllComments();
+    List <Comment> getPostComments(Post post);
     Post get(int id);
     Post createPost (Post post);
     Post updatePost (Post post);
