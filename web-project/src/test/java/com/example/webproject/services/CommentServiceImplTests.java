@@ -16,7 +16,7 @@ import static com.example.webproject.Helpers.createMockComment;
 import static com.example.webproject.Helpers.createMockUser;
 
 @ExtendWith(MockitoExtension.class)
-public class CommentServiceTests {
+public class CommentServiceImplTests {
     @Mock
     CommentRepository commentRepository;
     @InjectMocks
