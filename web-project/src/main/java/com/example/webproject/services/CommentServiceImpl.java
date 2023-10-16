@@ -38,12 +38,8 @@ public class CommentServiceImpl implements CommentService{
            if(user.isBlocked()){
                throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
            }
-            try {
-                comment.setUser(user);
-                commentRepository.updateComment(comment);
-            } catch (EntityNotFoundException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+           comment.setUser(user);
+           commentRepository.updateComment(comment);
         } else throw new AuthorizationException(AUTHORIZATION_ERROR);
     }
 
@@ -54,12 +50,8 @@ public class CommentServiceImpl implements CommentService{
             if(user.isBlocked()){
                 throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
             }
-            try {
-                Comment comment = getComment(id);
-                commentRepository.deleteComment(comment);
-            } catch (EntityNotFoundException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            Comment comment = getComment(id);
+            commentRepository.deleteComment(comment);
         } else throw new AuthorizationException(AUTHORIZATION_ERROR);
     }
 }
