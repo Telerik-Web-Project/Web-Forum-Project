@@ -50,17 +50,19 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void updateUser(User user,User userToBeUpdated) {
-        if(!user.isAdmin() && !user.getUsername().equals(userToBeUpdated.getUsername())){
-            throw new AuthorizationException("Only admins can update other users details");
-        }
+        checkPermission(user, userToBeUpdated, "Only admins can update other users details");
         userRepository.updateUser(userToBeUpdated);
     }
 
     @Override
     public void deleteUser(User user,User userToBeDeleted) {
-        if(!user.isAdmin() && !user.getUsername().equals(userToBeDeleted.getUsername())){
-            throw new AuthorizationException("Only admins can delete other users");
-        }
+        checkPermission(user, userToBeDeleted, "Only admins can delete other users");
         userRepository.deleteUser(userToBeDeleted);
+    }
+
+    private static void checkPermission(User user, User userToBeDeleted, String message) {
+        if (!user.isAdmin() && !user.getUsername().equals(userToBeDeleted.getUsername())) {
+            throw new AuthorizationException(message);
+        }
     }
 }
