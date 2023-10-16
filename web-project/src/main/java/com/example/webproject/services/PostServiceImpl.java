@@ -41,7 +41,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updatePost(Post post, User user) {
-        checkModifyPermissions(post.getId(), user);
+        checkModifyPermissions(post, user);
         checkIfBanned(user);
 
         boolean postExist =true;
@@ -63,19 +63,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Post post, User user) {
-        checkModifyPermissions(post.getId(), user);
+        checkModifyPermissions(post, user);
         checkIfBanned(user);
         postRepository.deletePost(post);
     }
 
-    void checkModifyPermissions(int id, User user) {
-        Post post = postRepository.get(id);
-        if (!(user.isAdmin() || post.getPostCreator().equals(user))) {
+    private void checkModifyPermissions(Post post, User user) {
+        Post postToUpdate = postRepository.get(post.getId());
+        if (!(user.isAdmin() || postToUpdate.getPostCreator().equals(user))) {
             throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
         }
     }
 
-    void checkIfBanned(User user) {
+    private void checkIfBanned(User user) {
         if (user.isBlocked()) {
             throw new UserBannedException();
         }

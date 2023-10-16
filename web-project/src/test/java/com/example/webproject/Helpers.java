@@ -19,10 +19,9 @@ public class Helpers {
 
     public static Post createMockPost() {
         var mockPost = new Post();
-        var mockCreator = createMockUser();
-        mockPost.setId((int)(Math.random()*100));
+        mockPost.setId(1);
         mockPost.setTitle("TestTitle");
-        mockPost.setPostCreator(mockCreator);
+        mockPost.setPostCreator(createMockUser());
         mockPost.setContent("TestContent");
         mockPost.setPostComments(new HashSet<>());
         return mockPost;
