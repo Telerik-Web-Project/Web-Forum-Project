@@ -55,10 +55,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(User user,User userToBeDeleted) {
-       /* if(!user.isAdmin()){
+        if(!user.isAdmin()){
             throw new AuthorizationException("Only admins can delete other users");
         }
-        userRepository.deleteUser(userToBeDeleted);*/
+        userRepository.deleteUser(userToBeDeleted);
         throw new UnsupportedOperationException();
     }
 }
