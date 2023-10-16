@@ -3,6 +3,7 @@ package com.example.webproject.models;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+
 public class UserDto {
     @NotNull(message = "Username can't be empty!")
     private String username;
