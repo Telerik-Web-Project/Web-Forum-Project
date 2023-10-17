@@ -1,6 +1,7 @@
 package com.example.webproject;
 
 import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 
@@ -30,5 +31,14 @@ public class Helpers {
 
     public static FilterOptions createMockFilterOptions() {
         return new FilterOptions(createMockUser());
+    }
+
+    public static Comment createMockComment() {
+        var mockComment = new Comment();
+        mockComment.setId(1);
+        mockComment.setContent("TestContent");
+        mockComment.setPost(createMockPost());
+        mockComment.setUser(createMockUser());
+        return mockComment;
     }
 }

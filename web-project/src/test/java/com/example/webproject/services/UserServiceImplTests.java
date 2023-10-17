@@ -46,7 +46,7 @@ public class UserServiceImplTests {
     }
 
     @Test
-    public void create_Should_Throw_When_UsernameExists() {
+    public void create_Not_Call_Repository_When_Username_Exists() {
         User user = createMockUser();
 
         Mockito.when(repository.getByUsername(user.getUsername()))
@@ -60,7 +60,7 @@ public class UserServiceImplTests {
         Mockito.verify(repository, Mockito.times(0)).createUser(user);
     }
     @Test
-    public void create_Should_Throw_When_EmailExists() {
+    public void create_Not_Call_Repository_When_Email_Exists() {
         User user = createMockUser();
 
         Mockito.when(repository.getByUsername(user.getUsername()))
@@ -99,7 +99,6 @@ public class UserServiceImplTests {
     @Test
     public void deleteUser_Should_Call_Repository_When_NonAdmin_User_Deletes_Themselves() {
         User mockUser = createMockUser();
-        mockUser.setAdmin(false);
 
         User userToBeDeleted = createMockUser();
 
@@ -137,6 +136,16 @@ public class UserServiceImplTests {
         userToBeUpdated.setUsername("otherUser");
 
         userService.updateUser(adminUser,userToBeUpdated);
+
+        Mockito.verify(repository, Mockito.times(1)).updateUser(userToBeUpdated);
+    }
+    @Test
+    public void updateUser_Should_Call_Repository_When_User_Tries_To_Update_Themselves() {
+        User mockUser = createMockUser();
+
+        User userToBeUpdated = createMockUser();
+
+        userService.updateUser(mockUser,userToBeUpdated);
 
         Mockito.verify(repository, Mockito.times(1)).updateUser(userToBeUpdated);
     }
