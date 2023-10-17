@@ -2,6 +2,7 @@ package com.example.webproject.models;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,7 +29,25 @@ public class Post {
             joinColumns = {@JoinColumn(name = "post_id")})
     private Set<Comment> postComments;
 
+    @ManyToMany
+    @JoinTable(name = "liked_posts",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    private Set<User> likes;
+
     public Post() {
+    }
+
+    public int getLikesCount() {
+        return likes.size();
+    }
+
+    public Set<User> getLikes() {
+        return new HashSet<>();
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
     }
 
     public int getId() {

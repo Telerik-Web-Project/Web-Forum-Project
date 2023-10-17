@@ -1,9 +1,9 @@
 package com.example.webproject.services;
 
 import com.example.webproject.exceptions.AuthorizationException;
-import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
+import com.example.webproject.models.FilterOptions;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.PostRepository;
@@ -23,8 +23,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getAll() {
-        return postRepository.getAll();
+    public List<Post> getAll(FilterOptions filterOptions) {
+        return postRepository.getAll(filterOptions);
     }
 
     @Override
@@ -43,20 +43,7 @@ public class PostServiceImpl implements PostService {
     public void updatePost(Post post, User user) {
         checkModifyPermissions(post, user);
         checkIfBanned(user);
-
-        boolean postExist =true;
-        try {
-            Post existingPost = postRepository.get(post.getId());
-            if (existingPost.getId() == post.getId()) {
-                postExist = false;
-            }
-        } catch (EntityNotFoundException e) {
-            postExist = false;
-        }
-
-        if (postExist) {
-            throw new EntityDuplicateException("Post", "id", String.valueOf(post.getId()));
-        }
+        verifyPostExists(post);
 
         postRepository.updatePost(post);
     }
@@ -65,7 +52,20 @@ public class PostServiceImpl implements PostService {
     public void deletePost(Post post, User user) {
         checkModifyPermissions(post, user);
         checkIfBanned(user);
+        verifyPostExists(post);
         postRepository.deletePost(post);
+    }
+
+    public int getLikesCount(Post post) {
+        verifyPostExists(post);
+        return postRepository.getLikesCount(post);
+    }
+
+    private void verifyPostExists(Post post) {
+        Post existingPost = postRepository.get(post.getId());
+        if(existingPost.getId() != post.getId()) {
+            throw new EntityNotFoundException("Post", "id", String.valueOf(post.getId()));
+        }
     }
 
     private void checkModifyPermissions(Post post, User user) {

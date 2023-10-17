@@ -1,5 +1,6 @@
 package com.example.webproject;
 
+import com.example.webproject.models.FilterOptions;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 
@@ -25,5 +26,9 @@ public class Helpers {
         mockPost.setContent("TestContent");
         mockPost.setPostComments(new HashSet<>());
         return mockPost;
+    }
+
+    public static FilterOptions createMockFilterOptions() {
+        return new FilterOptions(createMockUser());
     }
 }

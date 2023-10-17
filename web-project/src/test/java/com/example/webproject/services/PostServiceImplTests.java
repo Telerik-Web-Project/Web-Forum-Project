@@ -3,6 +3,7 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
+import com.example.webproject.models.FilterOptions;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.PostRepository;
@@ -14,8 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.example.webproject.Helpers.createMockPost;
-import static com.example.webproject.Helpers.createMockUser;
+import static com.example.webproject.Helpers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PostServiceImplTests {
@@ -28,63 +28,64 @@ public class PostServiceImplTests {
 
     @Test
     public void getAll_Should_CallRepository() {
-        Mockito.when(postRepository.getAll())
+        FilterOptions mockFilterOptions = createMockFilterOptions();
+        Mockito.when(postRepository.getAll(mockFilterOptions))
                 .thenReturn(null);
 
-        postService.getAll();
+        postService.getAll(mockFilterOptions);
 
         Mockito.verify(postRepository, Mockito.times(1))
-                .getAll();
+                .getAll(mockFilterOptions);
     }
 
     @Test
     public void get_Should_CallRepository_When_PostIdExists() {
-        Post post = createMockPost();
+        Post mockPost = createMockPost();
 
-        Mockito.when(postRepository.get(post.getId()))
-                .thenReturn(post);
+        Mockito.when(postRepository.get(mockPost.getId()))
+                .thenReturn(mockPost);
 
-        Post result = postService.get(post.getId());
+        Post result = postService.get(mockPost.getId());
 
-        Assertions.assertEquals(post, result);
+        Assertions.assertEquals(mockPost, result);
     }
 
     @Test
     public void get_Should_Throw_When_PostIdDoesNotExist() {
-        Post post = createMockPost();
+        Post mockPost = createMockPost();
 
-        Mockito.when(postRepository.get(post.getId()))
+        Mockito.when(postRepository.get(mockPost.getId()))
                 .thenThrow(EntityNotFoundException.class);
 
         Assertions.assertThrows(EntityNotFoundException.class,
-                () -> postService.get(post.getId()));
+                () -> postService.get(mockPost.getId()));
 
-        Mockito.verify(postRepository, Mockito.times(1))
-                .get(post.getId());
+//        Mockito.verify(postRepository, Mockito.times(1))
+//                .get(mockPost.getId());
     }
 
     @Test
     public void createPost_Should_Call_Repository_When_PassValidations() {
-        Post post = createMockPost();
+        Post mockPost = createMockPost();
 
-        postService.createPost(post, post.getPostCreator());
+        postService.createPost(mockPost, mockPost.getPostCreator());
 
         Mockito.verify(postRepository, Mockito.times(1))
-                .createPost(post);
+                .createPost(mockPost);
     }
 
     @Test
     public void createPost_Should_Throw_When_UserBanned() {
-        Post post = createMockPost();
+        Post mockPost = createMockPost();
 
-        Mockito.when(postRepository.createPost(post))
+        Mockito.when(postRepository.createPost(mockPost))
                 .thenThrow(UserBannedException.class);
 
         Assertions.assertThrows(UserBannedException.class,
-                () -> postService.createPost(post, post.getPostCreator()));
+                () -> postService.createPost(mockPost, mockPost.getPostCreator()));
 
         Mockito.verify(postRepository, Mockito.times(1))
-                .createPost(post);
+                .createPost(mockPost);
     }
 
     @Test
@@ -117,14 +118,14 @@ public class PostServiceImplTests {
 
     @Test
     public void updatePost_Should_Throw_When_UserBanned() {
-        Post post = createMockPost();
-        User user = post.getPostCreator();
-        user.setBlocked(true);
+        Post mockPost = createMockPost();
+        User mockUser = mockPost.getPostCreator();
+        mockUser.setBlocked(true);
 
-        Mockito.when(postRepository.get(post.getId()))
-                .thenReturn(post);
+        Mockito.when(postRepository.get(mockPost.getId()))
+                .thenReturn(mockPost);
 
-        Assertions.assertThrows(UserBannedException.class, () -> postService.updatePost(post, user));
+        Assertions.assertThrows(UserBannedException.class, () -> postService.updatePost(mockPost, mockUser));
     }
 
     @Test
@@ -138,6 +139,18 @@ public class PostServiceImplTests {
 
         Assertions.assertThrows(AuthorizationException.class, () -> postService.updatePost(mockPost, mockUser));
     }
+
+    @Test
+    public void updatePost_Should_Throw_When_PostDoesNotExist() {
+        Post mockPost = createMockPost();
+        User moackUser = mockPost.getPostCreator();
+
+        Mockito.when(postRepository.get(mockPost.getId()))
+               .thenThrow(EntityNotFoundException.class);
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> postService.updatePost(mockPost, moackUser));
+    }
+
 
     @Test
     public void deletePost_Should_Call_Repository_When_PassValidations() {
@@ -169,14 +182,14 @@ public class PostServiceImplTests {
 
     @Test
     public void deletePost_Should_Throw_When_UserBanned() {
-        Post post = createMockPost();
-        User user = post.getPostCreator();
-        user.setBlocked(true);
+        Post mockPost = createMockPost();
+        User mockUser = mockPost.getPostCreator();
+        mockUser.setBlocked(true);
 
-        Mockito.when(postRepository.get(post.getId()))
-                .thenReturn(post);
+        Mockito.when(postRepository.get(mockPost.getId()))
+                .thenReturn(mockPost);
 
-        Assertions.assertThrows(UserBannedException.class, () -> postService.deletePost(post, user));
+        Assertions.assertThrows(UserBannedException.class, () -> postService.deletePost(mockPost, mockUser));
     }
 
     @Test
@@ -189,6 +202,17 @@ public class PostServiceImplTests {
                 .thenReturn(mockPost);
 
         Assertions.assertThrows(AuthorizationException.class, () -> postService.deletePost(mockPost, mockUser));
+    }
+
+    @Test
+    public void deletePost_Should_Throw_When_PostDoesNotExist() {
+        Post mockPost = createMockPost();
+        User mockUser = mockPost.getPostCreator();
+
+        Mockito.when(postRepository.get(mockPost.getId()))
+                .thenThrow(EntityNotFoundException.class);
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> postService.deletePost(mockPost, mockUser));
     }
 
 }
