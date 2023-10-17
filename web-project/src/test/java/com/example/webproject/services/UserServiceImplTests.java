@@ -149,5 +149,24 @@ public class UserServiceImplTests {
 
         Mockito.verify(repository, Mockito.times(1)).updateUser(userToBeUpdated);
     }
+    @Test
+    public void get_User_Posts_Should_Not_Call_Repository_IfLoggedUser_IsBanned(){
+        User loggedUser = createMockUser();
+        loggedUser.setBlocked(true);
+
+
+        Mockito.verify(repository, Mockito.times(0))
+                .getUserPosts(repository.getById(Mockito.anyInt()));
+
+    }
+    @Test
+    public void get_User_Posts_Should_Call_Repository_IfLoggedUser_Is_Not_Banned(){
+        User loggedUser = createMockUser();
+
+        userService.getUserPosts(loggedUser,repository.getById(Mockito.anyInt()));
+
+        Mockito.verify(repository, Mockito.times(1))
+                .getUserPosts(repository.getById(Mockito.anyInt()));
+    }
 }
 

@@ -2,10 +2,15 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.exceptions.UserBannedException;
+import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -14,6 +19,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public List<User> getAll(FilterOptions filterOptions) {
+      return userRepository.getAll(filterOptions);
     }
 
     @Override
@@ -48,6 +58,14 @@ public class UserServiceImpl implements UserService {
        userRepository.createUser(user);
 
     }
+
+    @Override
+    public List<Post> getUserPosts(User loggedUser,User user) {
+        checkIfBanned(loggedUser);
+        return userRepository.getUserPosts(user);
+    }
+
+
     @Override
     public void updateUser(User user,User userToBeUpdated) {
         checkPermission(user, userToBeUpdated, "Only admins can update other users details");
@@ -63,6 +81,11 @@ public class UserServiceImpl implements UserService {
     private static void checkPermission(User user, User userToBeDeleted, String message) {
         if (!user.isAdmin() && !user.getUsername().equals(userToBeDeleted.getUsername())) {
             throw new AuthorizationException(message);
+        }
+    }
+    private static void checkIfBanned(User loggedUser) {
+        if(loggedUser.isBlocked()){
+            throw new UserBannedException();
         }
     }
 }

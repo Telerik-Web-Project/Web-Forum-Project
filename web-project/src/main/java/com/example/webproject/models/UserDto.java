@@ -1,7 +1,7 @@
 package com.example.webproject.models;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 
 
 public class UserDto {
@@ -19,6 +19,9 @@ public class UserDto {
 
     @NotNull(message = "password required")
     private String password;
+
+
+
     public UserDto() {
     }
 

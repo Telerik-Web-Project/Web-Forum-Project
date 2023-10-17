@@ -1,6 +1,7 @@
 package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.models.FilterOptions;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import org.hibernate.Session;
@@ -8,7 +9,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -19,21 +24,45 @@ public class UserRepositoryImpl implements UserRepository {
         this.sessionFactory = sessionFactory;
     }
     @Override
-    public List<User> getAll(String username, String firstname, String email) {
+    public List<User> getAll(FilterOptions filterOptions) {
         try(Session session = sessionFactory.openSession()){
-            Query<User> query = session.createQuery("from User",User.class);
+            List<String> filters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+
+            filterOptions.getUsername().ifPresent(value -> {
+                filters.add("username like :username");
+                params.put("username", String.format("%%%s%%", value));
+            });
+
+            filterOptions.getEmail().ifPresent(value -> {
+                filters.add("email like :email");
+                params.put("email", String.format("%%%s%%", value));
+            });
+            filterOptions.getFirstName().ifPresent(value -> {
+                filters.add("first_name like :first_name");
+                params.put("first_name", String.format("%%%s%%", value));
+            });
+            StringBuilder queryString = new StringBuilder("from Beer");
+            if (!filters.isEmpty()) {
+                queryString
+                        .append(" where ")
+                        .append(String.join(" and ", filters));
+            }
+            queryString.append(generateOrderBy(filterOptions));
+            Query<User> query = session.createQuery(queryString.toString(),User.class);
+            query.setProperties(params);
             return query.list();
         }
     }
     @Override
-    public List<Post> getUserPosts(int userId) {
+    public List<Post> getUserPosts(User user) {
         try(Session session = sessionFactory.openSession()){
             Query<Post> result = session.createQuery("from Post " +
                     "where postCreator.id=:id",Post.class);
-            result.setParameter("id",userId);
+            result.setParameter("id",user.getId());
             List <Post> userPosts= result.list();
             if(userPosts.isEmpty()){
-                throw new EntityNotFoundException(userId);
+                throw new EntityNotFoundException(user.getId());
             }
             return userPosts;
         }
@@ -102,5 +131,33 @@ public class UserRepositoryImpl implements UserRepository {
             session.getTransaction().commit();
             return user;
         }
+    }
+    private String generateOrderBy(FilterOptions filterOptions) {
+        if (filterOptions.getSortedBy().isEmpty()) {
+            return "";
+        }
+
+        String orderBy = "";
+        switch (filterOptions.getSortedBy().get()) {
+            case "name":
+                orderBy = "name";
+                break;
+            case "abv":
+                orderBy = "abv";
+                break;
+            case "style":
+                orderBy = "style.name";
+                break;
+            default:
+                return "";
+        }
+
+        orderBy = String.format(" order by %s", orderBy);
+
+        if (filterOptions.getSortOrder().isPresent() && filterOptions.getSortOrder().get().equalsIgnoreCase("desc")) {
+            orderBy = String.format("%s desc", orderBy);
+        }
+
+        return orderBy;
     }
 }

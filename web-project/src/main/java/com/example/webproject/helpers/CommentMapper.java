@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CommentMapper {
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
     @Autowired
     public CommentMapper(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;

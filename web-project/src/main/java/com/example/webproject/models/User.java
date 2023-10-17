@@ -1,11 +1,11 @@
 package com.example.webproject.models;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Objects;
-import java.util.Set;
 @Entity
 @Table(name = "users")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,16 +22,11 @@ public class User {
     private String password;
     @Column(name = "is_Admin")
     private boolean isAdmin;
-    @Column(name = "phone_number")
-    private String phoneNumber;
+
     @Column(name = "email")
     private String email;
     @Column(name = "is_Blocked")
     private boolean isBlocked;
-    @OneToMany
-    @JoinTable(name = "users_posts",
-            joinColumns = {@JoinColumn(name = "user_id")})
-    private Set<Post> userPosts;
 
     public User() {
     }
@@ -84,13 +79,7 @@ public class User {
         isAdmin = admin;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 
     public String getEmail() {
         return email;
@@ -108,13 +97,7 @@ public class User {
         isBlocked = blocked;
     }
 
-    public Set<Post> getUserPosts() {
-        return userPosts;
-    }
 
-    public void setUserPosts(Set<Post> userPosts) {
-        this.userPosts = userPosts;
-    }
 
     @Override
     public boolean equals(Object o) {
