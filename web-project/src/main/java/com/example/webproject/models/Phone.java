@@ -1,5 +1,4 @@
 package com.example.webproject.models;
-
 import jakarta.persistence.*;
 
 @Entity

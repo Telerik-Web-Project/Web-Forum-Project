@@ -5,7 +5,6 @@ import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserRepository {
     List <User> getAll(FilterOptions filterOptions);

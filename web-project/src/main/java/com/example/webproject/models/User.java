@@ -1,8 +1,10 @@
 package com.example.webproject.models;
-import com.fasterxml.jackson.annotation.JsonIgnore;import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 
@@ -27,8 +29,39 @@ public class User {
     private String email;
     @Column(name = "is_Blocked")
     private boolean isBlocked;
+    @OneToMany(mappedBy = "postCreator", fetch = FetchType.EAGER)
+    private Set<Post> userPosts;
 
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<Comment> comments;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @JoinTable(
+            name = "liked_posts",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private Set<Post> likedPosts;
     public User() {
+    }
+
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<Post> getLikedPosts() {
+        return likedPosts;
+    }
+
+    public void setLikedPosts(Set<Post> likedPosts) {
+        this.likedPosts = likedPosts;
     }
 
     public int getId() {
@@ -97,7 +130,13 @@ public class User {
         isBlocked = blocked;
     }
 
+    public Set<Post> getUserPosts() {
+        return userPosts;
+    }
 
+    public void setUserPosts(Set<Post> posts) {
+        this.userPosts = posts;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,8 +1,8 @@
 package com.example.webproject.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -21,18 +21,16 @@ public class Post {
     private String content;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User postCreator;
 
-    @OneToMany
-    @JoinTable(name = "posts_comments",
-            joinColumns = {@JoinColumn(name = "post_id")})
-    private Set<Comment> postComments;
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<Comment> comments;
 
-    @ManyToMany
-    @JoinTable(name = "liked_posts",
-            joinColumns = {@JoinColumn(name = "post_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    @ManyToMany(mappedBy = "likedPosts",fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<User> likes;
 
     public Post() {
@@ -40,14 +38,6 @@ public class Post {
 
     public int getLikesCount() {
         return likes.size();
-    }
-
-    public Set<User> getLikes() {
-        return new HashSet<>();
-    }
-
-    public void setLikes(Set<User> likes) {
-        this.likes = likes;
     }
 
     public int getId() {
@@ -74,6 +64,16 @@ public class Post {
         this.content = content;
     }
 
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return id == post.id;
+    }
+
     public User getPostCreator() {
         return postCreator;
     }
@@ -82,20 +82,20 @@ public class Post {
         this.postCreator = user;
     }
 
-    public Set<Comment> getPostComments() {
-        return postComments;
+    public Set<Comment> getComments() {
+        return comments;
     }
 
-    public void setPostComments(Set<Comment> postComments) {
-        this.postComments = postComments;
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return id == post.id;
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<User> usersWhoLiked) {
+        this.likes = usersWhoLiked;
     }
 
     @Override

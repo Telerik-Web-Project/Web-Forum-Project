@@ -3,8 +3,6 @@ package com.example.webproject.helpers;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.CommentDto;
 import com.example.webproject.repositories.CommentRepository;
-import com.example.webproject.repositories.PostRepository;
-import com.example.webproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

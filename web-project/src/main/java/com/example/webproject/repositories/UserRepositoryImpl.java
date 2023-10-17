@@ -42,7 +42,7 @@ public class UserRepositoryImpl implements UserRepository {
                 filters.add("first_name like :first_name");
                 params.put("first_name", String.format("%%%s%%", value));
             });
-            StringBuilder queryString = new StringBuilder("from Beer");
+            StringBuilder queryString = new StringBuilder("from User");
             if (!filters.isEmpty()) {
                 queryString
                         .append(" where ")
@@ -133,31 +133,30 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
     private String generateOrderBy(FilterOptions filterOptions) {
-        if (filterOptions.getSortedBy().isEmpty()) {
+        if (!filterOptions.getSortBy().isPresent()) {
             return "";
         }
 
-        String orderBy = "";
-        switch (filterOptions.getSortedBy().get()) {
-            case "name":
-                orderBy = "name";
+        String orderBy;
+        switch (filterOptions.getSortBy().get()) {
+            case "username":
+                orderBy = "username";
                 break;
-            case "abv":
-                orderBy = "abv";
+            case "email":
+                orderBy = "email";
                 break;
-            case "style":
-                orderBy = "style.name";
+            case "firstName":
+                orderBy = "firstName";
                 break;
             default:
                 return "";
         }
-
         orderBy = String.format(" order by %s", orderBy);
 
         if (filterOptions.getSortOrder().isPresent() && filterOptions.getSortOrder().get().equalsIgnoreCase("desc")) {
             orderBy = String.format("%s desc", orderBy);
         }
-
         return orderBy;
     }
+
 }
