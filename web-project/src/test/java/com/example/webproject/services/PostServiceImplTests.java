@@ -215,4 +215,16 @@ public class PostServiceImplTests {
         Assertions.assertThrows(EntityNotFoundException.class, () -> postService.deletePost(mockPost, mockUser));
     }
 
+    @Test
+    public void getLikesCount_Should_CallRepository_When_PostIdExists() {
+        Post mockPost = createMockPost();
+        postService.createPost(mockPost, mockPost.getPostCreator());
+
+        Mockito.when(postRepository.get(mockPost.getId()))
+                .thenReturn(mockPost);
+        Mockito.when(postRepository.getLikesCount(mockPost))
+                .thenReturn(0);
+
+        Assertions.assertEquals(0, postService.getLikesCount(mockPost));
+    }
 }

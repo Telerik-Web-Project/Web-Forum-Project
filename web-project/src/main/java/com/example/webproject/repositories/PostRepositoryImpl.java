@@ -29,12 +29,6 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    // TODO: 17-Oct-23 implement this method
-    public List<Comment> getAllComments() {
-        throw new UnsupportedOperationException("Not supported yet");
-    }
-
-    @Override
     public int getLikesCount(Post post) {
         try (Session session = sessionFactory.openSession()) {
             Query<Integer> query = session.createQuery(

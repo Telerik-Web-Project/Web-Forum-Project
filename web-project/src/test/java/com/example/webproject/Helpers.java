@@ -30,7 +30,7 @@ public class Helpers {
     }
 
     public static FilterOptions createMockFilterOptions() {
-        return new FilterOptions(createMockUser());
+        return new FilterOptions("testFirstName", "testUsername", "testEmail");
     }
 
     public static Comment createMockComment() {

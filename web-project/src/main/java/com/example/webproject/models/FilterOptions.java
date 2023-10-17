@@ -4,12 +4,12 @@ import java.util.Optional;
 
 public class FilterOptions {
     private Optional<String> firstName;
-    private Optional<String> lastName;
+    private Optional<String> username;
     private Optional<String> email;
 
-    public FilterOptions(String firstName, String lastName, String email) {
+    public FilterOptions(String firstName, String username, String email) {
         this.firstName = Optional.ofNullable(firstName);
-        this.lastName = Optional.ofNullable(lastName);
+        this.username = Optional.ofNullable(username);
         this.email = Optional.ofNullable(email);
 
     }
@@ -18,8 +18,8 @@ public class FilterOptions {
         return firstName;
     }
 
-    public Optional<String> getLastName() {
-        return lastName;
+    public Optional<String> getUsername() {
+        return username;
     }
 
     public Optional<String> getEmail() {
