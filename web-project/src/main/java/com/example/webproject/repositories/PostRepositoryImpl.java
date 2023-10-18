@@ -1,12 +1,12 @@
 package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
-import com.example.webproject.models.Comment;
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,12 +16,13 @@ public class PostRepositoryImpl implements PostRepository {
 
     private final SessionFactory sessionFactory;
 
+    @Autowired
     public PostRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public List<Post> getAll(FilterOptions filterOptions) {
+    public List<Post> getAll(UserFilter userFilter) {
         try (Session session = sessionFactory.openSession()) {
             Query<Post> query = session.createQuery("from Post", Post.class);
             return query.list();

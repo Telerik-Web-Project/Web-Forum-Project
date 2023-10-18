@@ -1,13 +1,13 @@
 package com.example.webproject.repositories;
 
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 
 import java.util.List;
 
 public interface UserRepository {
-    List <User> getAll(FilterOptions filterOptions);
+    List <User> getAll(UserFilter userFilter);
     List <Post> getUserPosts(User user);
     User getById (int id);
     User getByUsername (String username);

@@ -3,7 +3,7 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.PostRepository;
@@ -28,14 +28,14 @@ public class PostServiceImplTests {
 
     @Test
     public void getAll_Should_CallRepository() {
-        FilterOptions mockFilterOptions = createMockFilterOptions();
-        Mockito.when(postRepository.getAll(mockFilterOptions))
+        UserFilter mockUserFilter = createMockFilterOptions();
+        Mockito.when(postRepository.getAll(mockUserFilter))
                 .thenReturn(null);
 
-        postService.getAll(mockFilterOptions);
+        postService.getAll(mockUserFilter);
 
         Mockito.verify(postRepository, Mockito.times(1))
-                .getAll(mockFilterOptions);
+                .getAll(mockUserFilter);
     }
 
     @Test

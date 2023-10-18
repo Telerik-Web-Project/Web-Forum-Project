@@ -1,15 +1,13 @@
 package com.example.webproject.services;
 
-import com.example.webproject.exceptions.AuthorizationException;
-import com.example.webproject.exceptions.UserBannedException;
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 
 import java.util.List;
 
 public interface PostService {
-    List<Post> getAll(FilterOptions filterOptions);
+    List<Post> getAll(UserFilter userFilter);
 
     Post get(int id);
 

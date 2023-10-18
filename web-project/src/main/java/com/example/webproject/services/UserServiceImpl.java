@@ -3,7 +3,7 @@ import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.UserRepository;
@@ -22,8 +22,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll(FilterOptions filterOptions) {
-      return userRepository.getAll(filterOptions);
+    public List<User> getAll(UserFilter userFilter) {
+      return userRepository.getAll(userFilter);
     }
 
     @Override
@@ -76,6 +76,17 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(User user,User userToBeDeleted) {
         checkPermission(user, userToBeDeleted, "Only admins can delete other users");
         userRepository.deleteUser(userToBeDeleted);
+    }
+
+    @Override
+    public void changeBanStatus(User user) {
+        if(user.isBlocked()){
+            user.setBlocked(false);
+        }
+        else{
+            user.setBlocked(true);
+        }
+        userRepository.updateUser(user);
     }
 
     private static void checkPermission(User user, User userToBeDeleted, String message) {

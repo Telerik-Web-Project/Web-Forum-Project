@@ -1,7 +1,7 @@
 package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import org.hibernate.Session;
@@ -24,21 +24,21 @@ public class UserRepositoryImpl implements UserRepository {
         this.sessionFactory = sessionFactory;
     }
     @Override
-    public List<User> getAll(FilterOptions filterOptions) {
+    public List<User> getAll(UserFilter userFilter) {
         try(Session session = sessionFactory.openSession()){
             List<String> filters = new ArrayList<>();
             Map<String, Object> params = new HashMap<>();
 
-            filterOptions.getUsername().ifPresent(value -> {
+            userFilter.getUsername().ifPresent(value -> {
                 filters.add("username like :username");
                 params.put("username", String.format("%%%s%%", value));
             });
 
-            filterOptions.getEmail().ifPresent(value -> {
+            userFilter.getEmail().ifPresent(value -> {
                 filters.add("email like :email");
                 params.put("email", String.format("%%%s%%", value));
             });
-            filterOptions.getFirstName().ifPresent(value -> {
+            userFilter.getFirstName().ifPresent(value -> {
                 filters.add("first_name like :first_name");
                 params.put("first_name", String.format("%%%s%%", value));
             });
@@ -48,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
                         .append(" where ")
                         .append(String.join(" and ", filters));
             }
-            queryString.append(generateOrderBy(filterOptions));
+            queryString.append(generateOrderBy(userFilter));
             Query<User> query = session.createQuery(queryString.toString(),User.class);
             query.setProperties(params);
             return query.list();
@@ -132,13 +132,13 @@ public class UserRepositoryImpl implements UserRepository {
             return user;
         }
     }
-    private String generateOrderBy(FilterOptions filterOptions) {
-        if (!filterOptions.getSortBy().isPresent()) {
+    private String generateOrderBy(UserFilter userFilter) {
+        if (!userFilter.getSortBy().isPresent()) {
             return "";
         }
 
         String orderBy;
-        switch (filterOptions.getSortBy().get()) {
+        switch (userFilter.getSortBy().get()) {
             case "username":
                 orderBy = "username";
                 break;
@@ -153,7 +153,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         orderBy = String.format(" order by %s", orderBy);
 
-        if (filterOptions.getSortOrder().isPresent() && filterOptions.getSortOrder().get().equalsIgnoreCase("desc")) {
+        if (userFilter.getSortOrder().isPresent() && userFilter.getSortOrder().get().equalsIgnoreCase("desc")) {
             orderBy = String.format("%s desc", orderBy);
         }
         return orderBy;

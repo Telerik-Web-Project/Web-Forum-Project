@@ -2,21 +2,21 @@ package com.example.webproject.models;
 
 import java.util.Optional;
 
-public class FilterOptions {
+public class UserFilter {
     private Optional<String> firstName;
     private Optional<String> username;
     private Optional<String> email;
     private Optional<String> sortBy;
     private Optional<String> sortOrder;
 
-    public FilterOptions(String firstName, String username, String email, String sortedBy,String sortOrder) {
+    public UserFilter(String firstName, String username, String email, String sortedBy, String sortOrder) {
         this.firstName = Optional.ofNullable(firstName);
         this.username = Optional.ofNullable(username);
         this.email = Optional.ofNullable(email);
         this.sortBy = Optional.ofNullable(sortedBy);
         this.sortOrder = Optional.ofNullable(sortOrder);
     }
-    public FilterOptions() {
+    public UserFilter() {
     }
 
     public Optional<String> getFirstName() {

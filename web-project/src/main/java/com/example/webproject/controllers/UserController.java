@@ -1,11 +1,12 @@
 package com.example.webproject.controllers;
 
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.User;
 import com.example.webproject.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpHeaders;
 import java.util.List;
 
 @RestController
@@ -24,11 +25,11 @@ public class UserController {
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortOrder) {
-        FilterOptions filterOptions = new FilterOptions(firstName, username, email, sortBy, sortOrder);
-        return userService.getAll(filterOptions);
+        UserFilter userFilter = new UserFilter(firstName, username, email, sortBy, sortOrder);
+        return userService.getAll(userFilter);
     }
     @GetMapping("/{id}")
-    public User get(@PathVariable int id){
+    public User get(@PathVariable int id) {
         return userService.getById(id);
     }
 }

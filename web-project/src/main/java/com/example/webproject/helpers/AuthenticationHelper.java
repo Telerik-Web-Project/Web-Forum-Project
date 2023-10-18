@@ -20,7 +20,7 @@ public class AuthenticationHelper {
     public static final int ASCII_VALUE_OF_SPACE = 32;
 
     public User getUser(HttpHeaders headers){
-        if(headers.containsKey(VALID_HEADER_NAME)){
+        if(!headers.containsKey(VALID_HEADER_NAME)){
             throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
         }
         try {

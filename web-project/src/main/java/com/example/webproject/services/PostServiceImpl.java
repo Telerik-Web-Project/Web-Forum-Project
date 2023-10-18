@@ -3,7 +3,7 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.PostRepository;
@@ -23,8 +23,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getAll(FilterOptions filterOptions) {
-        return postRepository.getAll(filterOptions);
+    public List<Post> getAll(UserFilter userFilter) {
+        return postRepository.getAll(userFilter);
     }
 
     @Override

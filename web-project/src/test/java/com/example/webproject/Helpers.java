@@ -1,6 +1,6 @@
 package com.example.webproject;
 
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
@@ -29,8 +29,8 @@ public class Helpers {
         return mockPost;
     }
 
-    public static FilterOptions createMockFilterOptions() {
-        return new FilterOptions("testFirstName",
+    public static UserFilter createMockFilterOptions() {
+        return new UserFilter("testFirstName",
                 "testUsername",
                 "testEmail",
                 "",

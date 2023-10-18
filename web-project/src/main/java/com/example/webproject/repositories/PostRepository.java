@@ -1,15 +1,13 @@
 package com.example.webproject.repositories;
 
-import com.example.webproject.models.Comment;
-import com.example.webproject.models.FilterOptions;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
-import com.example.webproject.models.User;
 
 import java.util.List;
 
 public interface PostRepository {
 
-    List <Post> getAll(FilterOptions filterOptions);
+    List <Post> getAll(UserFilter userFilter);
     Post get(int id);
     Post createPost (Post post);
     Post updatePost (Post post);
