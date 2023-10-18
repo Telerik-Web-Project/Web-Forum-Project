@@ -63,18 +63,21 @@ public class UserController {
         }   catch (AuthorizationException e){
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,e.getMessage());}
     }
-    @PutMapping()
-    public User updateUser(@RequestHeader HttpHeaders headers, @Valid @RequestBody UserDto userDto){
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable int id,@RequestHeader HttpHeaders headers, @Valid @RequestBody UserDto userDto){
       try {
+
           User user = authenticationHelper.getUser(headers);
+          checkUpdatePermission(id, user);
           User userToBeUpdate = userMapper.fromDtoToUser(userDto);
-          userService.updateUser(user, userToBeUpdate);
-          return userToBeUpdate;
+          return userService.updateUser(id,user, userToBeUpdate);
+
       }catch (EntityNotFoundException e){
           throw  new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
       }   catch (AuthorizationException e){
           throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,e.getMessage());}
     }
+
     @DeleteMapping("/{id}")
     public void deleteUser(@RequestHeader HttpHeaders headers, @PathVariable int id){
        try {
@@ -96,6 +99,11 @@ public class UserController {
        }catch (EntityDuplicateException e){
            throw new ResponseStatusException(HttpStatus.CONFLICT,e.getMessage());
        }
+    }
+    private static void checkUpdatePermission(int id, User user) {
+        if(user.getId()!= id){
+            throw new AuthorizationException("You can modify only your personal details");
+        }
     }
 }
 

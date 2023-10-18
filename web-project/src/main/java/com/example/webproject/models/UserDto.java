@@ -5,7 +5,8 @@ import jakarta.validation.constraints.Size;
 
 
 public class UserDto {
-    @NotNull(message = "Username can't be empty!")
+    //@NotNull(message = "Username can't be empty!")
+    //TODO check for update method !
     private String username;
     @NotNull(message = "You sure have a name, right?")
     @Size(min =4, max = 32, message = "First name must be between 4 and 32 characters")

@@ -65,14 +65,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void updateUser(User loggedUser, User userToBeUpdated) {
-        checkUpdatePermission(loggedUser,userToBeUpdated,"You can only update your personal information");
-        userRepository.updateUser(userToBeUpdated);
+    public User updateUser(int id, User loggedUser, User userToBeUpdated) {
+        mapToUser(id, loggedUser, userToBeUpdated);
+        userRepository.updateUser(loggedUser);
+        return loggedUser;
     }
 
+
     @Override
-    public void deleteUser(User logeedUser, User userToBeDeleted) {
-        checkPermission(logeedUser, userToBeDeleted, "Only admins can delete other users");
+    public void deleteUser(User loggedUser, User userToBeDeleted) {
+        checkPermission(loggedUser, userToBeDeleted, "Only admins can delete other users");
         userRepository.deleteUser(userToBeDeleted);
     }
 
@@ -92,14 +94,18 @@ public class UserServiceImpl implements UserService {
             throw new AuthorizationException(message);
         }
     }
-    private static void checkUpdatePermission(User user, User userDoBeUpdated, String message) {
-        if (!user.getUsername().equals(userDoBeUpdated.getUsername())) {
-            throw new AuthorizationException(message);
-        }
-    }
+
+
     private static void checkIfBanned(User loggedUser) {
         if(loggedUser.isBlocked()){
             throw new UserBannedException();
         }
+    }
+    private static void mapToUser(int id, User loggedUser, User userToBeUpdated) {
+        loggedUser.setId(id);
+        loggedUser.setFirstName(userToBeUpdated.getFirstName());
+        loggedUser.setLastName(userToBeUpdated.getLastName());
+        loggedUser.setEmail(userToBeUpdated.getEmail());
+        loggedUser.setPassword(userToBeUpdated.getPassword());
     }
 }
