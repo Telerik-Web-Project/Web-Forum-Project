@@ -49,4 +49,11 @@ create table liked_posts
     constraint liked_posts_users_user_id_fk
         foreign key (user_id) references users (user_id)
 );
-
+    create table admin_phones
+ (
+     phone_number varchar(12) not null
+         primary key,
+     user_id      int         null,
+     constraint phone_number_users_user_id_fk
+         foreign key (user_id) references users (user_id)
+ );

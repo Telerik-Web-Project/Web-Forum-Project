@@ -11,6 +11,6 @@ public interface UserService {
     User getByUsername (String username);
     void createUser (User user);
     List <Post> getUserPosts(User loggedUser,User user);
-    void updateUser (User user,User userToBeUpdated);
-    void deleteUser (User user,User userToBeDeleted);
+    void updateUser (User loggedUser,User userToBeUpdated);
+    void deleteUser (User logeedUser,User userToBeDeleted);
 }

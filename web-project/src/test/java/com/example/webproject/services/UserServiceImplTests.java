@@ -1,4 +1,5 @@
 package com.example.webproject.services;
+import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.User;
@@ -118,27 +119,17 @@ public class UserServiceImplTests {
         Mockito.verify(repository, Mockito.times(1)).deleteUser(otherUser);
     }
     @Test
-    public void updateUser_Should_Not_Call_Repository_When_NonAdmin_User_Tries_To_Update_Other_User() {
+    public void updateUser_Should_Not_Call_Repository_User_Tries_To_Update_Other_User() {
         User normalUser = createMockUser();
-        normalUser.setAdmin(false);
 
         User userToBeUpdated = createMockUser();
         userToBeUpdated.setUsername("otherUser");
-
+        assertThrows(AuthorizationException.class,
+                () -> userService.updateUser(normalUser,userToBeUpdated));
         Mockito.verify(repository, Mockito.times(0)).updateUser(userToBeUpdated);
     }
-    @Test
-    public void updateUser_Should_Call_Repository_When_Admin_User_Tries_To_Update_Other_User() {
-        User adminUser = createMockUser();
-        adminUser.setAdmin(true);
 
-        User userToBeUpdated = createMockUser();
-        userToBeUpdated.setUsername("otherUser");
 
-        userService.updateUser(adminUser,userToBeUpdated);
-
-        Mockito.verify(repository, Mockito.times(1)).updateUser(userToBeUpdated);
-    }
     @Test
     public void updateUser_Should_Call_Repository_When_User_Tries_To_Update_Themselves() {
         User mockUser = createMockUser();
