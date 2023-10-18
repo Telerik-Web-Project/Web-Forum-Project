@@ -20,8 +20,6 @@ public class UserDto {
     @NotNull(message = "password required")
     private String password;
 
-
-
     public UserDto() {
     }
 

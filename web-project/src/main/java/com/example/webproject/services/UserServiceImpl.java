@@ -56,9 +56,7 @@ public class UserServiceImpl implements UserService {
           throw new EntityDuplicateException("User","username",user.getUsername());
       }
        userRepository.createUser(user);
-
     }
-
     @Override
     public List<Post> getUserPosts(User loggedUser,User user) {
         checkIfBanned(loggedUser);
@@ -67,14 +65,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void updateUser(User user,User userToBeUpdated) {
-        checkPermission(user, userToBeUpdated, "Only admins can update other users details");
+    public void updateUser(User loggedUser, User userToBeUpdated) {
+        checkUpdatePermission(loggedUser,userToBeUpdated,"You can only update your personal information");
         userRepository.updateUser(userToBeUpdated);
     }
 
     @Override
-    public void deleteUser(User user,User userToBeDeleted) {
-        checkPermission(user, userToBeDeleted, "Only admins can delete other users");
+    public void deleteUser(User logeedUser, User userToBeDeleted) {
+        checkPermission(logeedUser, userToBeDeleted, "Only admins can delete other users");
         userRepository.deleteUser(userToBeDeleted);
     }
 
@@ -91,6 +89,11 @@ public class UserServiceImpl implements UserService {
 
     private static void checkPermission(User user, User userToBeDeleted, String message) {
         if (!user.isAdmin() && !user.getUsername().equals(userToBeDeleted.getUsername())) {
+            throw new AuthorizationException(message);
+        }
+    }
+    private static void checkUpdatePermission(User user, User userDoBeUpdated, String message) {
+        if (!user.getUsername().equals(userDoBeUpdated.getUsername())) {
             throw new AuthorizationException(message);
         }
     }
