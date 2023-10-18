@@ -49,7 +49,7 @@ public class AdminController {
     public void changeBlockStatus(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
         try {
             User user = userService.getById(id);
-            checkAccessPermissions(id, authenticationHelper.getUser(httpHeaders));
+            checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
             userService.changeBanStatus(user);
         } catch (AuthorizationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
@@ -59,7 +59,7 @@ public class AdminController {
     }
 
 
-    private static void checkAccessPermissions(int targetUserId, User executingUser) {
+    private static void checkAccessPermissions(User executingUser) {
         if (!executingUser.isAdmin()) {
             throw new AuthorizationException("Administrator privileges needed");
         }

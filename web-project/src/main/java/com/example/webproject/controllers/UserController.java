@@ -5,10 +5,10 @@ import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
-import com.example.webproject.models.FilterOptions;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserDto;
+import com.example.webproject.models.UserFilter;
 import com.example.webproject.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +40,8 @@ public class UserController {
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortOrder) {
-        FilterOptions filterOptions = new FilterOptions(firstName, username, email, sortBy, sortOrder);
-        return userService.getAll(filterOptions);
+        UserFilter userFilter = new UserFilter(firstName, username, email, sortBy, sortOrder);
+        return userService.getAll(userFilter);
     }
 
     @GetMapping("/{id}")
