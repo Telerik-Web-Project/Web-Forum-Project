@@ -6,7 +6,7 @@ public class EntityNotFoundException extends RuntimeException {
     }
 
     public EntityNotFoundException(int id){
-        super(String.format("There are currently not posts from User with id %d",id));
+        super(String.format("There are currently no posts from User with id %d",id));
     }
 
     public EntityNotFoundException(String type, String attribute, String value) {

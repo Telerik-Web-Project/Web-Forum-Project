@@ -126,12 +126,25 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User deleteUser(User user) {
         try(Session session = sessionFactory.openSession()) {
+            deleteUserLikedPostsByUserId(user.getId());
             session.beginTransaction();
             session.remove(user);
             session.getTransaction().commit();
             return user;
         }
     }
+
+    public void deleteUserLikedPostsByUserId(int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            String queryString = "DELETE FROM liked_posts WHERE user_id = :userId";
+            Query<?> query = session.createNativeQuery(queryString);
+            query.setParameter("userId", userId);
+            query.executeUpdate();
+            session.getTransaction().commit();
+        }
+    }
+
     private String generateOrderBy(UserFilter userFilter) {
         if (!userFilter.getSortBy().isPresent()) {
             return "";

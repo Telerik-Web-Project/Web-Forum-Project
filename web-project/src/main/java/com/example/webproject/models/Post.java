@@ -25,6 +25,13 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User postCreator;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "liked_posts",
+    joinColumns = @JoinColumn(name = "post_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonIgnore
+    private Set<User> likes;
+
     public Post() {
     }
 
@@ -58,6 +65,16 @@ public class Post {
 
     public void setPostCreator(User user) {
         this.postCreator = user;
+    }
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
+    }
+    public int getLikeCounts() {
+        return likes.size();
     }
 
     @Override
