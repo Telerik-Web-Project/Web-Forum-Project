@@ -21,6 +21,8 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+
+
     @Override
     public List<User> getAll(UserFilter userFilter) {
       return userRepository.getAll(userFilter);
@@ -65,8 +67,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User updateUser(int id, User loggedUser, User userToBeUpdated) {
-        mapToUser(id, loggedUser, userToBeUpdated);
+    public User updateUser(User loggedUser, User userToBeUpdated) {
+        boolean emailExists = true;
+        try {
+            userRepository.getByEmail(userToBeUpdated.getEmail());
+        } catch (EntityNotFoundException e){
+            emailExists = false;
+        }
+        if(emailExists){
+            throw new EntityDuplicateException("User","email",userToBeUpdated.getEmail());}
+        mapToUser(loggedUser, userToBeUpdated);
         userRepository.updateUser(loggedUser);
         return loggedUser;
     }
@@ -89,20 +99,29 @@ public class UserServiceImpl implements UserService {
         userRepository.updateUser(user);
     }
 
+    @Override
+    public void changeAdminStatus(User user) {
+        if(user.isAdmin()){
+            user.setAdmin(false);
+        }
+        else{
+            user.setAdmin(true);
+        }
+        userRepository.updateUser(user);
+    }
+
     private static void checkPermission(User user, User userToBeDeleted, String message) {
         if (!user.isAdmin() && !user.getUsername().equals(userToBeDeleted.getUsername())) {
             throw new AuthorizationException(message);
         }
     }
 
-
     private static void checkIfBanned(User loggedUser) {
         if(loggedUser.isBlocked()){
             throw new UserBannedException();
         }
     }
-    private static void mapToUser(int id, User loggedUser, User userToBeUpdated) {
-        loggedUser.setId(id);
+    private static void mapToUser( User loggedUser, User userToBeUpdated) {
         loggedUser.setFirstName(userToBeUpdated.getFirstName());
         loggedUser.setLastName(userToBeUpdated.getLastName());
         loggedUser.setEmail(userToBeUpdated.getEmail());

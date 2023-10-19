@@ -15,8 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static jakarta.servlet.RequestDispatcher.ERROR_MESSAGE;
-
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -51,6 +49,19 @@ public class AdminController {
             User user = userService.getById(id);
             checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
             userService.changeBanStatus(user);
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @PutMapping("/user/{id}/makeAdmin")
+    public void changeAdminStatus(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
+        try {
+            User user = userService.getById(id);
+            checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
+            userService.changeAdminStatus(user);
         } catch (AuthorizationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         } catch (EntityNotFoundException e) {

@@ -65,17 +65,20 @@ public class UserController {
     }
     @PutMapping("/{id}")
     public User updateUser(@PathVariable int id,@RequestHeader HttpHeaders headers, @Valid @RequestBody UserDto userDto){
-      try {
+        try {
+            User user = authenticationHelper.getUser(headers);
+            user.setId(id);
+            checkUpdatePermission(id, user);
+            User userToBeUpdate = userMapper.fromDtoToUser(userDto);
+            return userService.updateUser(user, userToBeUpdate);
 
-          User user = authenticationHelper.getUser(headers);
-          checkUpdatePermission(id, user);
-          User userToBeUpdate = userMapper.fromDtoToUser(userDto);
-          return userService.updateUser(id,user, userToBeUpdate);
-
-      }catch (EntityNotFoundException e){
-          throw  new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
-      }   catch (AuthorizationException e){
-          throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,e.getMessage());}
+        }catch (EntityNotFoundException e){
+            throw  new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }   catch (AuthorizationException e){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,e.getMessage());}
+        catch (EntityDuplicateException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

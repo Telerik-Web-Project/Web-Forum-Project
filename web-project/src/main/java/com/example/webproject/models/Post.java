@@ -25,19 +25,7 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User postCreator;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
-    @JsonIgnore
-    private Set<Comment> comments;
-
-    @ManyToMany(mappedBy = "likedPosts",fetch = FetchType.EAGER)
-    @JsonIgnore
-    private Set<User> likes;
-
     public Post() {
-    }
-
-    public int getLikesCount() {
-        return likes.size();
     }
 
     public int getId() {
@@ -64,16 +52,6 @@ public class Post {
         this.content = content;
     }
 
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return id == post.id;
-    }
-
     public User getPostCreator() {
         return postCreator;
     }
@@ -82,20 +60,12 @@ public class Post {
         this.postCreator = user;
     }
 
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public Set<User> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Set<User> usersWhoLiked) {
-        this.likes = usersWhoLiked;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return id == post.id;
     }
 
     @Override
