@@ -1,6 +1,7 @@
 package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.models.Comment;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import org.hibernate.Session;
@@ -72,10 +73,22 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Post deletePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
+            deletePostComments(post.getId());
             session.beginTransaction();
             session.remove(post);
             session.getTransaction().commit();
             return post;
+        }
+    }
+
+    private void deletePostComments(int postId) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            String queryString = "DELETE FROM comments WHERE post_id = :postId";
+            Query<?> query = session.createNativeQuery(queryString, Comment.class);
+            query.setParameter("postId", postId);
+            query.executeUpdate();
+            session.getTransaction().commit();
         }
     }
 }

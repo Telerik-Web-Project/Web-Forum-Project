@@ -1,5 +1,6 @@
 package com.example.webproject.repositories;
 
+import com.example.webproject.models.Phone;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
@@ -15,5 +16,6 @@ public interface UserRepository {
     User createUser (User user);
     User updateUser (User user);
     User deleteUser (User user);
-
+    Phone createPhone(Phone phone);
+    Phone findPhone(String phoneNumber);
 }

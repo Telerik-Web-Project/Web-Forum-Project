@@ -1,6 +1,7 @@
 package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.models.Phone;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
@@ -114,6 +115,30 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Phone createPhone(Phone phone) {
+        try(Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.persist(phone);
+            session.getTransaction().commit();
+            return phone;
+        }
+    }
+
+    @Override
+    public Phone findPhone(String phoneNumber) {
+        try(Session session = sessionFactory.openSession()){
+            Query<Phone> query = session.createQuery("from Phone where " +
+                    "phoneNumber =:phoneNumber",Phone.class);
+            query.setParameter("phoneNumber",phoneNumber);
+            List<Phone> phones = query.list();
+            if(phones.isEmpty()){
+                throw new EntityNotFoundException("User","phone number",phoneNumber);
+            }
+            return phones.get(0);
+        }
+    }
+
+    @Override
     public User updateUser(User user) {
         try(Session session = sessionFactory.openSession()) {
             session.beginTransaction();
@@ -127,6 +152,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User deleteUser(User user) {
         try(Session session = sessionFactory.openSession()) {
             deleteUserLikedPostsByUserId(user.getId());
+            deleteUserPhones(user.getId());
             session.beginTransaction();
             session.remove(user);
             session.getTransaction().commit();
@@ -134,11 +160,22 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
-    public void deleteUserLikedPostsByUserId(int userId) {
+    private void deleteUserLikedPostsByUserId(int userId) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             String queryString = "DELETE FROM liked_posts WHERE user_id = :userId";
-            Query<?> query = session.createNativeQuery(queryString);
+            Query<?> query = session.createNativeQuery(queryString, User.class);
+            query.setParameter("userId", userId);
+            query.executeUpdate();
+            session.getTransaction().commit();
+        }
+    }
+
+    private void deleteUserPhones(int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            String queryString = "DELETE FROM admin_phones WHERE user_id = :userId";
+            Query<?> query = session.createNativeQuery(queryString, User.class);
             query.setParameter("userId", userId);
             query.executeUpdate();
             session.getTransaction().commit();

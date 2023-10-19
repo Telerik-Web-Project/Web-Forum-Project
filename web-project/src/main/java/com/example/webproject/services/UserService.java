@@ -1,4 +1,5 @@
 package com.example.webproject.services;
+import com.example.webproject.models.Phone;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
@@ -16,4 +17,6 @@ public interface UserService {
     void changeBanStatus(User user);
 
     void changeAdminStatus(User user);
+
+    void addPhoneNumber(Phone phone);
 }

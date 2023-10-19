@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
     public void deletePost(Post post, User user) {
         checkModifyPermissions(post, user);
         checkIfBanned(user);
-        verifyPostExists(post);
+        //verifyPostExists(post);
         postRepository.deletePost(post);
     }
 

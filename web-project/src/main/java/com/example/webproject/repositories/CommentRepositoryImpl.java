@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -38,10 +39,10 @@ public class CommentRepositoryImpl implements CommentRepository {
             Query<Comment> result = session.createQuery("from Comment " +
                     "where user.id=:id",Comment.class);
             result.setParameter("id",user.getId());
-            List <Comment> userComments= result.list();
-            if(userComments.isEmpty()){
-                throw new EntityNotFoundException(user.getId());
-            }
+            List <Comment> userComments= new ArrayList<>(result.list());
+//            if(userComments.isEmpty()){
+//                throw new EntityNotFoundException(user.getId());
+//            }
             return userComments;
         }
     }

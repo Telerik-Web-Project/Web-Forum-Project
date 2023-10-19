@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAll(
+    public List<User> getAllUsers(
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String email,
@@ -67,7 +67,6 @@ public class UserController {
     public User updateUser(@PathVariable int id,@RequestHeader HttpHeaders headers, @Valid @RequestBody UserDto userDto){
         try {
             User user = authenticationHelper.getUser(headers);
-            user.setId(id);
             checkUpdatePermission(id, user);
             User userToBeUpdate = userMapper.fromDtoToUser(userDto);
             return userService.updateUser(user, userToBeUpdate);

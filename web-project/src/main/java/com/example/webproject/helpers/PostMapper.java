@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class PostMapper {
 
     private final UserService userService;
-    private PostService postService;
+    private final PostService postService;
 
     @Autowired
     public PostMapper(UserService userService, PostService postService) {
@@ -19,19 +19,10 @@ public class PostMapper {
         this.postService = postService;
     }
 
-    public Post fromDto(int id, PostDto postDto) {
-        Post post = new Post();
-        post.setId(id);
-        Post repositoryPost = postService.get(id);
-        post.setPostCreator(repositoryPost.getPostCreator());
-        return post;
-    }
-
     public Post fromDto(PostDto postDto) {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
-        post.setPostCreator(userService.getByUsername(postDto.getPostCreator().getUsername()));
         return post;
     }
 }

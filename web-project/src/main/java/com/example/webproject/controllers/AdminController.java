@@ -1,10 +1,10 @@
 package com.example.webproject.controllers;
 
 import com.example.webproject.exceptions.AuthorizationException;
+import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
-import com.example.webproject.models.User;
-import com.example.webproject.models.UserFilter;
+import com.example.webproject.models.*;
 import com.example.webproject.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -69,6 +69,22 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/phoneNumber")
+    public void addPhoneNumber(@RequestHeader HttpHeaders httpHeaders, @RequestBody PhoneDto phoneDto) {
+        try{
+            User user = authenticationHelper.getUser(httpHeaders);
+            Phone phone = new Phone();
+            phone.setPhoneNumber(phoneDto.getPhoneNumber());
+            phone.setAdminUser(user);
+            userService.addPhoneNumber(phone);
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (EntityDuplicateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
 
     private static void checkAccessPermissions(User executingUser) {
         if (!executingUser.isAdmin()) {

@@ -25,7 +25,6 @@ public class Helpers {
         mockPost.setTitle("TestTitle");
         mockPost.setPostCreator(createMockUser());
         mockPost.setContent("TestContent");
-        mockPost.setComments(new HashSet<>());
         return mockPost;
     }
 

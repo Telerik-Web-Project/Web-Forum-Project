@@ -4,10 +4,7 @@ import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
-import com.example.webproject.models.Comment;
-import com.example.webproject.models.UserFilter;
-import com.example.webproject.models.Post;
-import com.example.webproject.models.User;
+import com.example.webproject.models.*;
 import com.example.webproject.repositories.CommentRepository;
 import com.example.webproject.repositories.PostRepository;
 import com.example.webproject.repositories.UserRepository;
@@ -116,6 +113,29 @@ public class UserServiceImpl implements UserService {
             user.setAdmin(true);
         }
         userRepository.updateUser(user);
+    }
+
+    @Override
+    public void addPhoneNumber(Phone phone) {
+        checkIfBanned(phone.getAdminUser());
+
+        boolean phoneExists = true;
+        try {
+            userRepository.findPhone(phone.getPhoneNumber());
+        } catch (EntityNotFoundException e) {
+            phoneExists = false;
+        }
+
+        if (phoneExists) {
+            throw new EntityDuplicateException("User", "phone number", phone.getPhoneNumber());
+        }
+
+        if (phone.getAdminUser().isAdmin()) {
+            userRepository.createPhone(phone);
+        } else {
+            throw new AuthorizationException("Only admins can add phone numbers");
+        }
+
     }
 
     private void setToDefault(User userToBeDeleted) {

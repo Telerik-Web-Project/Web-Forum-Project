@@ -3,6 +3,7 @@ package com.example.webproject.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class Post {
     joinColumns = @JoinColumn(name = "post_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIgnore
-    private Set<User> likes;
+    private Set<User> likes = new HashSet<>();
 
     public Post() {
     }
