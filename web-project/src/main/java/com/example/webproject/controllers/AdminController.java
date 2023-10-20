@@ -43,17 +43,8 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/{id}")
-    public User get(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
-        try {
-            checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
-            return userService.getById(id);
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
-    }
 
-    @PutMapping("/user/{id}/ban")
+    @PutMapping("/ban/user/{id}")
     public void changeBlockStatus(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
         try {
             User user = userService.getById(id);
@@ -66,7 +57,7 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/user/{id}/makeAdmin")
+    @PutMapping("/makeAdmin/user/{id}")
     public void changeAdminStatus(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
         try {
             User user = userService.getById(id);
@@ -101,4 +92,13 @@ public class AdminController {
             throw new AuthorizationException("Administrator privileges needed");
         }
     }
+    /* @GetMapping("/{id}")
+    public User get(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
+        try {
+            checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
+            return userService.getById(id);
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }*/
 }

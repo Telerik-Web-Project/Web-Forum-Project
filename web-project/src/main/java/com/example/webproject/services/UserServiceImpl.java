@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
 public class UserServiceImpl implements UserService {
     public static final int DATA_BASE_USER_ID = 1;
@@ -40,7 +39,6 @@ public class UserServiceImpl implements UserService {
     public User getByUsername(String username) {
         return userRepository.getByUsername(username);
     }
-
     @Override
     public List<Post> getUserPosts(User loggedUser, User user) {
         ValidationHelper.checkIfBanned(loggedUser);

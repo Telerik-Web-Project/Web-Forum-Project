@@ -76,14 +76,15 @@ public class ValidationHelper {
         }
     }
       public static void validateModifyPermissions(PostRepository postRepository, Post post, User user) {
-        Post postToUpdate = postRepository.get(post.getId());
-        if (!(user.isAdmin() || postToUpdate.getPostCreator().equals(user))) {
+        Post postToModify = postRepository.get(post.getId());
+        if (!(user.isAdmin() || postToModify.getPostCreator().equals(user))) {
             throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
         }
     }
     public static void masterUserAccessDenied(int id) {
         if(id == UserServiceImpl.DATA_BASE_USER_ID){
             throw new AuthorizationException("Access denied for master user !");
+            //TODO check if error message if correct
         }
     }
     public static void validateUpdatePermission(int id, User user) {
