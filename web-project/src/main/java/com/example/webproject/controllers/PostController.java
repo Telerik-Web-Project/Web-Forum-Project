@@ -29,8 +29,8 @@ public class PostController {
         this.postMapper = postMapper;
         this.postService = postService;
     }
-
-
+    //TODO implement getTheTenRecentPosts
+    //TODO implement get10mostLikedPosts
 
     @PostMapping()
     public Post createPost(@Valid @RequestBody PostDto postDto, @RequestHeader HttpHeaders httpHeader){
@@ -45,7 +45,6 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,e.getMessage());
         }
     }
-
     @PutMapping("/{id}")
     public Post updatePost(@PathVariable int id,@RequestHeader HttpHeaders headers, @Valid @RequestBody PostDto postDto){
         try {
@@ -63,7 +62,18 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.CONFLICT,e.getMessage());
         }
     }
-
+    @PutMapping("{id}/like")
+    public void likePost(@RequestHeader HttpHeaders headers,@PathVariable int id){
+        try{
+            User user = authenticationHelper.getUser(headers);
+            Post post = postService.get(id);
+            postService.likePost(user,post);
+        }catch (AuthorizationException e){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,e.getMessage());
+        }catch (EntityNotFoundException e){
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+    }
+    }
     @DeleteMapping("/{id}")
     public void deletePost(@RequestHeader HttpHeaders headers, @PathVariable int id){
         try {

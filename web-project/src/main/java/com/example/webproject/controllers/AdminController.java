@@ -28,19 +28,29 @@ public class AdminController {
     }
 
     @GetMapping
-    public List<User> getAll(
-            @RequestParam(required = false) String firstName,
-            @RequestParam(required = false) String username,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) String sortOrder) {
-        UserFilter userFilter = new UserFilter(firstName, username, email, sortBy, sortOrder);
-        return userService.getAll(userFilter);
+    public List<User> getAll(@RequestHeader HttpHeaders httpHeaders,
+                             @RequestParam(required = false) String firstName,
+                             @RequestParam(required = false) String username,
+                             @RequestParam(required = false) String email,
+                             @RequestParam(required = false) String sortBy,
+                             @RequestParam(required = false) String sortOrder) {
+        try {
+            checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
+            UserFilter userFilter = new UserFilter(firstName, username, email, sortBy, sortOrder);
+            return userService.getAll(userFilter);
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
-    public User get(@PathVariable int id) {
-        return userService.getById(id);
+    public User get(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
+        try {
+            checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
+            return userService.getById(id);
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
     }
 
     @PutMapping("/user/{id}/ban")
@@ -71,7 +81,7 @@ public class AdminController {
 
     @PostMapping("/phoneNumber")
     public void addPhoneNumber(@RequestHeader HttpHeaders httpHeaders, @RequestBody PhoneDto phoneDto) {
-        try{
+        try {
             User user = authenticationHelper.getUser(httpHeaders);
             Phone phone = new Phone();
             phone.setPhoneNumber(phoneDto.getPhoneNumber());

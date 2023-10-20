@@ -49,7 +49,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     @Override
     public Post createPost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -59,7 +58,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     @Override
     public Post updatePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -69,7 +67,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     @Override
     public Post deletePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -80,7 +77,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     private void deletePostComments(int postId) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();

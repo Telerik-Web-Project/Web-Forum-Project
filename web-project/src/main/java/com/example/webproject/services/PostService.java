@@ -16,4 +16,6 @@ public interface PostService {
     void updatePost(Post post, User user);
 
     void deletePost(Post post, User user);
+
+    void likePost(User user, Post post);
 }
