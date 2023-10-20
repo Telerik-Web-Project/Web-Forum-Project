@@ -1,20 +1,22 @@
 package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
-import com.example.webproject.models.Comment;
-import com.example.webproject.models.UserFilter;
-import com.example.webproject.models.Post;
+import com.example.webproject.models.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
 
+    private static final String MASTER_USER_ID = "1";
     private final SessionFactory sessionFactory;
 
     @Autowired
@@ -23,9 +25,39 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getAll(UserFilter userFilter) {
+    public List<Post> getAll(PostFilter filter) {
+        try(Session session = sessionFactory.openSession()){
+            List<String> filters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+            filter.getTitle().ifPresent(value -> {
+                filters.add("title like :title");
+                params.put("title", String.format("%%%s%%", value));
+            });
+
+            filter.getContent().ifPresent(value -> {
+                filters.add("content like :content");
+                params.put("content", String.format("%%%s%%", value));
+            });
+            filter.getPostCreator().ifPresent(value -> {
+                filters.add("user_id like :user_id");
+                params.put("user_id", String.format("%%%s%%", value));
+            });
+            StringBuilder queryString = new StringBuilder("from Post");
+            if (!filters.isEmpty()) {
+                queryString
+                        .append(" where ")
+                        .append(String.join(" and ", filters));
+            }
+            queryString.append(generateOrderBy(filter));
+            Query<Post> query = session.createQuery(queryString.toString(),Post.class);
+            query.setProperties(params);
+            return query.list();
+        }
+    }
+    //TODO check if constant  MASTER_USER_ID works properly !!!
+    public List<Post> getPostsAsAnonymousUser() {
         try (Session session = sessionFactory.openSession()) {
-            Query<Post> query = session.createQuery("from Post", Post.class);
+            Query<Post> query = session.createQuery("from Post where postCreator.id!=" + MASTER_USER_ID + " order by id desc limit 10", Post.class);
             return query.list();
         }
     }
@@ -40,6 +72,15 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
+    public List<Comment> getPostComments(Post post) {
+        try(Session session = sessionFactory.openSession()){
+            Query<Comment> result = session.createQuery("from Comment where post.id=:id", Comment.class);
+            result.setParameter("id",post.getId());
+            return result.list();
+        }
+    }
+
+    @Override
     public Post get(int id) {
         try (Session session = sessionFactory.openSession()) {
             Post post = session.get(Post.class, id);
@@ -49,7 +90,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     @Override
     public Post createPost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -59,7 +99,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     @Override
     public Post updatePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -69,7 +108,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     @Override
     public Post deletePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -80,7 +118,6 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
-
     private void deletePostComments(int postId) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
@@ -90,5 +127,30 @@ public class PostRepositoryImpl implements PostRepository {
             query.executeUpdate();
             session.getTransaction().commit();
         }
+    }
+    private String generateOrderBy(PostFilter filter) {
+        if (filter.getSortBy().isEmpty()) {
+            return "";
+        }
+        String orderBy;
+        switch (filter.getSortBy().get()) {
+            case "title":
+                orderBy = "title";
+                break;
+            case "content":
+                orderBy = "content";
+                break;
+            case "postCreator":
+                orderBy = "postCreator";
+                break;
+            default:
+                return "";
+        }
+        orderBy = String.format(" order by %s", orderBy);
+
+        if (filter.getSortOrder().isPresent() && filter.getSortOrder().get().equalsIgnoreCase("desc")) {
+            orderBy = String.format("%s desc", orderBy);
+        }
+        return orderBy;
     }
 }

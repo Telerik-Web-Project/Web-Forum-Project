@@ -71,8 +71,11 @@ public class Post {
     public Set<User> getLikes() {
         return likes;
     }
-    public void setLikes(Set<User> likes) {
-        this.likes = likes;
+    public void likePost(User user) {
+        this.likes.add(user);
+    }
+    public void dislikePost(User user){
+        this.likes.remove(user);
     }
     public int getLikeCounts() {
         return likes.size();

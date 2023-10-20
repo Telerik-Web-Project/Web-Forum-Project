@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 public class CommentRepositoryImpl implements CommentRepository {
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public CommentRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -32,22 +32,15 @@ public class CommentRepositoryImpl implements CommentRepository {
             return comment;
         }
     }
-
     @Override
     public List<Comment> getUserComments(User user) {
         try(Session session = sessionFactory.openSession()){
             Query<Comment> result = session.createQuery("from Comment " +
                     "where user.id=:id",Comment.class);
             result.setParameter("id",user.getId());
-            List <Comment> userComments= new ArrayList<>(result.list());
-//            if(userComments.isEmpty()){
-//                throw new EntityNotFoundException(user.getId());
-//            }
-            return userComments;
+            return new ArrayList<>(result.list());
         }
     }
-
-
     @Override
     public void createComment(Comment comment) {
         try (Session session = sessionFactory.openSession()) {
@@ -56,7 +49,6 @@ public class CommentRepositoryImpl implements CommentRepository {
             session.getTransaction().commit();
         }
     }
-
     @Override
     public void updateComment(Comment comment) {
         try (Session session = sessionFactory.openSession()) {
@@ -65,7 +57,6 @@ public class CommentRepositoryImpl implements CommentRepository {
             session.getTransaction().commit();
         }
     }
-
     @Override
     public void deleteComment(Comment comment) {
         try (Session session = sessionFactory.openSession()) {

@@ -8,6 +8,8 @@ import com.example.webproject.repositories.CommentRepository;
 import com.example.webproject.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CommentServiceImpl implements CommentService{
     public static final String BLOCKED_ACCOUNT_ERROR = "Your account has been blocked by an admin, currently you are not able to post,update or delete comments.";
@@ -43,6 +45,13 @@ public class CommentServiceImpl implements CommentService{
         } else throw new AuthorizationException(AUTHORIZATION_ERROR);
     }
 
+    public List<Comment> getUserComments(User user){
+        List<Comment> userComments = commentRepository.getUserComments(user);
+        if(userComments.isEmpty()){
+            throw new EntityNotFoundException(user.getId());
+        }
+        return userComments;
+    }
     @Override
     public void deleteComment(User user, int id) {
         Comment repositoryComment = commentRepository.get(id);

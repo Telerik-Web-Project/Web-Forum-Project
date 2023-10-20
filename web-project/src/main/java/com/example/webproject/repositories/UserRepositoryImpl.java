@@ -29,7 +29,6 @@ public class UserRepositoryImpl implements UserRepository {
         try(Session session = sessionFactory.openSession()){
             List<String> filters = new ArrayList<>();
             Map<String, Object> params = new HashMap<>();
-
             userFilter.getUsername().ifPresent(value -> {
                 filters.add("username like :username");
                 params.put("username", String.format("%%%s%%", value));
@@ -56,19 +55,6 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
     @Override
-    public List<Post> getUserPosts(User user) {
-        try(Session session = sessionFactory.openSession()){
-            Query<Post> result = session.createQuery("from Post " +
-                    "where postCreator.id=:id",Post.class);
-            result.setParameter("id",user.getId());
-            List <Post> userPosts= result.list();
-            if(userPosts.isEmpty()){
-                throw new EntityNotFoundException(user.getId());
-            }
-            return userPosts;
-        }
-    }
-    @Override
     public User getById(int id) {
         try(Session session = sessionFactory.openSession()){
             User user = session.get(User.class,id);
@@ -80,13 +66,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
     @Override
     public User getByUsername(String username) {
-        try(Session session = sessionFactory.openSession()){
+        try (Session session = sessionFactory.openSession()) {
             Query<User> query = session.createQuery("from User where " +
-                    "username =:username",User.class);
-            query.setParameter("username",username);
+                    "username =:username", User.class);
+            query.setParameter("username", username);
             List<User> users = query.list();
-            if(users.isEmpty()){
-                throw new EntityNotFoundException("User","username",username);
+            if (users.isEmpty()) {
+                throw new EntityNotFoundException("User", "username", username);
             }
             return users.get(0);
         }
@@ -105,25 +91,15 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
     @Override
-    public User createUser(User user) {
-        try(Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.persist(user);
-            session.getTransaction().commit();
-            return user;
+    public List<Post> getUserPosts(User user) {
+        try(Session session = sessionFactory.openSession()){
+            Query<Post> result = session.createQuery("from Post " +
+                    "where postCreator.id=:id",Post.class);
+            result.setParameter("id",user.getId());
+            List <Post> userPosts = result.list();
+            return new ArrayList<>(userPosts);
         }
     }
-
-    @Override
-    public Phone createPhone(Phone phone) {
-        try(Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.persist(phone);
-            session.getTransaction().commit();
-            return phone;
-        }
-    }
-
     @Override
     public Phone findPhone(String phoneNumber) {
         try(Session session = sessionFactory.openSession()){
@@ -139,6 +115,24 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User createUser(User user) {
+        try(Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.persist(user);
+            session.getTransaction().commit();
+            return user;
+        }
+    }
+    @Override
+    public Phone createPhone(Phone phone) {
+        try(Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.persist(phone);
+            session.getTransaction().commit();
+            return phone;
+        }
+    }
+    @Override
     public User updateUser(User user) {
         try(Session session = sessionFactory.openSession()) {
             session.beginTransaction();
@@ -147,7 +141,6 @@ public class UserRepositoryImpl implements UserRepository {
             return user;
         }
     }
-
     @Override
     public User deleteUser(User user) {
         try(Session session = sessionFactory.openSession()) {
@@ -183,10 +176,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private String generateOrderBy(UserFilter userFilter) {
-        if (!userFilter.getSortBy().isPresent()) {
+        if (userFilter.getSortBy().isEmpty()) {
             return "";
         }
-
         String orderBy;
         switch (userFilter.getSortBy().get()) {
             case "username":
