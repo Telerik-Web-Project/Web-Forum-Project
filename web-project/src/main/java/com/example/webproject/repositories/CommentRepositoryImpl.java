@@ -47,6 +47,7 @@ public class CommentRepositoryImpl implements CommentRepository {
         }
     }
 
+
     @Override
     public void createComment(Comment comment) {
         try (Session session = sessionFactory.openSession()) {
