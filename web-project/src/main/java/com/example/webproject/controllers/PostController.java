@@ -83,6 +83,7 @@ public class PostController {
             User user = authenticationHelper.getUser(headers);
             Post post = postMapper.fromDto(postDto);
             post.setId(id);
+            post.setPostCreator(user);
             postService.updatePost(post, user);
             return post;
 
