@@ -75,6 +75,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void updateComment(User user, Comment comment) {
+        ValidationHelper.checkIfBanned(user);
+        ValidationHelper.validateCommentExists(commentRepository, comment);
+        ValidationHelper.validateModifyPermissions(commentRepository, comment, user);
+        Comment commentToModify = commentRepository.get(comment.getId());
+        comment.setPost(commentToModify.getPost());
+        comment.setUser(user);
+        commentRepository.updateComment(comment);
+    }
+
+    @Override
     public List<Post> getPostsAsAnonymousUser() {
         return postRepository.getPostsAsAnonymousUser();
     }

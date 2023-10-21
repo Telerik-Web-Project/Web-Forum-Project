@@ -19,4 +19,8 @@ public interface UserService {
     void changeAdminStatus(User user);
 
     void addPhoneNumber(Phone phone);
+
+    void updatePhoneNumber(User user, Phone phone);
+
+    void deletePhoneNumber(User user);
 }

@@ -6,6 +6,7 @@ import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.models.*;
 import com.example.webproject.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -71,7 +72,7 @@ public class AdminController {
     }
 
     @PostMapping("/phoneNumber")
-    public void addPhoneNumber(@RequestHeader HttpHeaders httpHeaders, @RequestBody PhoneDto phoneDto) {
+    public void addPhoneNumber(@RequestHeader HttpHeaders httpHeaders, @Valid @RequestBody PhoneDto phoneDto) {
         try {
             User user = authenticationHelper.getUser(httpHeaders);
             Phone phone = new Phone();
@@ -84,6 +85,34 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (EntityDuplicateException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
+    @PutMapping("/phoneNumber")
+    public void updatePhoneNumber(@RequestHeader HttpHeaders httpHeaders, @Valid @RequestBody PhoneDto phoneDto) {
+        try {
+            User user = authenticationHelper.getUser(httpHeaders);
+            Phone phone = new Phone();
+            phone.setPhoneNumber(phoneDto.getPhoneNumber());
+            userService.updatePhoneNumber(user, phone);
+        }catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (EntityDuplicateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/phoneNumber")
+    public void deleteUser(@RequestHeader HttpHeaders httpHeaders) {
+        try {
+            User user = authenticationHelper.getUser(httpHeaders);
+            userService.deletePhoneNumber(user);
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 

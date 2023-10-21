@@ -6,10 +6,7 @@ import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
 import com.example.webproject.helpers.ValidationHelper;
-import com.example.webproject.models.Post;
-import com.example.webproject.models.User;
-import com.example.webproject.models.UserDto;
-import com.example.webproject.models.UserFilter;
+import com.example.webproject.models.*;
 import com.example.webproject.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,12 +79,12 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody UserDto userDto) {
+    public User updateUser(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody UpdateUserDto updateUserDto) {
         try {
             ValidationHelper.masterUserAccessDenied(id);
             User user = authenticationHelper.getUser(headers);
             ValidationHelper.validateUpdatePermission(id, user);
-            User userToBeUpdate = userMapper.fromDtoToUser(userDto);
+            User userToBeUpdate = userMapper.fromUpdateUserDto(updateUserDto);
             return userService.updateUser(user, userToBeUpdate);
 
         } catch (EntityNotFoundException e) {

@@ -5,6 +5,7 @@ import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.*;
 import com.example.webproject.repositories.CommentRepository;
+import com.example.webproject.repositories.PhoneRepository;
 import com.example.webproject.repositories.PostRepository;
 import com.example.webproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private  final PostRepository postRepository;
+    private final PhoneRepository phoneRepository;
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, PostRepository postRepository) {
+    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, PostRepository postRepository, PhoneRepository phoneRepository) {
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.phoneRepository = phoneRepository;
     }
     @Override
     public List<User> getAll(UserFilter userFilter) {
@@ -81,12 +84,37 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addPhoneNumber(Phone phone) {
         ValidationHelper.checkIfBanned(phone.getAdminUser());
-        ValidationHelper.validatePhone(userRepository,phone);
+        ValidationHelper.validatePhone(phoneRepository,phone);
+        boolean userHasPhone = true;
+        try {
+            phoneRepository.findPhone(phone.getAdminUser());
+        } catch (EntityNotFoundException e) {
+            userHasPhone = false;
+        }
+        if (userHasPhone) {
+            throw new AuthorizationException("You are only allowed to add one phone");
+        }
         if (phone.getAdminUser().isAdmin()) {
-            userRepository.createPhone(phone);
+            phoneRepository.createPhone(phone);
         } else {
             throw new AuthorizationException("Only admins can add phone numbers");
         }
+    }
+
+    @Override
+    public void deletePhoneNumber(User user) {
+        ValidationHelper.checkIfBanned(user);
+        Phone phone = phoneRepository.findPhone(user);
+        phoneRepository.deletePhone(phone);
+    }
+
+    @Override
+    public void updatePhoneNumber(User user, Phone phone) {
+        ValidationHelper.checkIfBanned(user);
+        ValidationHelper.validatePhone(phoneRepository,phone);
+        Phone oldPhone = phoneRepository.findPhone(user);
+        oldPhone.setPhoneNumber(phone.getPhoneNumber());
+        phoneRepository.updatePhone(oldPhone);
     }
 
     private void saveDeletedUserDataInDataBase(User userToBeDeleted) {

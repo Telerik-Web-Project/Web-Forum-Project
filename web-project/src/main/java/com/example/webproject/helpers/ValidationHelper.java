@@ -4,9 +4,12 @@ import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
+import com.example.webproject.models.Comment;
 import com.example.webproject.models.Phone;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
+import com.example.webproject.repositories.CommentRepository;
+import com.example.webproject.repositories.PhoneRepository;
 import com.example.webproject.repositories.PostRepository;
 import com.example.webproject.repositories.UserRepository;
 import com.example.webproject.services.PostServiceImpl;
@@ -38,10 +41,10 @@ public class ValidationHelper {
             throw new UserBannedException();
         }
     }
-    public static void validatePhone(UserRepository userRepository,Phone phone) {
+    public static void validatePhone(PhoneRepository phoneRepository, Phone phone) {
         boolean phoneExists = true;
         try {
-            userRepository.findPhone(phone.getPhoneNumber());
+            phoneRepository.findPhone(phone.getPhoneNumber());
         } catch (EntityNotFoundException e) {
             phoneExists = false;
         }
@@ -75,12 +78,28 @@ public class ValidationHelper {
             throw new EntityNotFoundException("Post", "id", String.valueOf(post.getId()));
         }
     }
+
+    public static void validateCommentExists(CommentRepository commentRepository, Comment comment) {
+        Comment existingComment = commentRepository.get(comment.getId());
+        if(existingComment.getId() != comment.getId()) {
+            throw new EntityNotFoundException("Comment", "id", String.valueOf(comment.getId()));
+        }
+    }
+
       public static void validateModifyPermissions(PostRepository postRepository, Post post, User user) {
         Post postToModify = postRepository.get(post.getId());
         if (!(user.isAdmin() || postToModify.getPostCreator().equals(user))) {
             throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
         }
     }
+
+    public static void validateModifyPermissions(CommentRepository commentRepository, Comment comment, User user) {
+        Comment commentToModify = commentRepository.get(comment.getId());
+        if (!(user.isAdmin() || commentToModify.getUser().equals(user))) {
+            throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
+        }
+    }
+
     public static void masterUserAccessDenied(int id) {
         if(id == UserServiceImpl.DATA_BASE_USER_ID){
             throw new AuthorizationException("Access denied for master user !");

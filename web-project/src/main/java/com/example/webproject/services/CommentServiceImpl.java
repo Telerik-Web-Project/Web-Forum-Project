@@ -2,6 +2,7 @@ package com.example.webproject.services;
 
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.CommentRepository;
@@ -35,14 +36,21 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void updateComment(Comment comment, User user, int id) {
-        Comment repositoryComment = commentRepository.get(id);
-       if(repositoryComment.getUser().getId() == user.getId() || user.isAdmin()) {
-           if(user.isBlocked()){
-               throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
-           }
-           comment.setUser(user);
-           commentRepository.updateComment(comment);
-        } else throw new AuthorizationException(AUTHORIZATION_ERROR);
+//        Comment repositoryComment = commentRepository.get(id);
+//       if(repositoryComment.getUser().getId() == user.getId() || user.isAdmin()) {
+//           if(user.isBlocked()){
+//               throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
+//           }
+//           comment.setUser(user);
+//           commentRepository.updateComment(comment);
+//        } else throw new AuthorizationException(AUTHORIZATION_ERROR);
+        ValidationHelper.validateCommentExists(commentRepository, comment);
+        ValidationHelper.checkIfBanned(user);
+        ValidationHelper.validateModifyPermissions(commentRepository, comment, user);
+        Comment commentToModify = commentRepository.get(comment.getId());
+        comment.setPost(commentToModify.getPost());
+        comment.setUser(user);
+        commentRepository.updateComment(comment);
     }
 
     public List<Comment> getUserComments(User user){
@@ -59,8 +67,7 @@ public class CommentServiceImpl implements CommentService{
             if(user.isBlocked()){
                 throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
             }
-            Comment comment = getComment(id);
-            commentRepository.deleteComment(comment);
+            commentRepository.deleteComment(repositoryComment);
         } else throw new AuthorizationException(AUTHORIZATION_ERROR);
     }
 }

@@ -16,6 +16,4 @@ public interface UserRepository {
     User createUser (User user);
     User updateUser (User user);
     User deleteUser (User user);
-    Phone createPhone(Phone phone);
-    Phone findPhone(String phoneNumber);
 }
