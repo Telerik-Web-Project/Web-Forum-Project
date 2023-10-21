@@ -28,9 +28,6 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void createComment(User user, Comment comment) {
-        if(user.isBlocked()){
-            throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
-        }
         commentRepository.createComment(comment);
     }
 
