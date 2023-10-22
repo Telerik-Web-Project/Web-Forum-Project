@@ -28,7 +28,7 @@
 //
 //    @Test
 //    public void getAll_Should_CallRepository() {
-//        UserFilter mockUserFilter = createMockFilterOptions();
+//        UserFilter mockUserFilter = createMockUserFilterOptions();
 //        Mockito.when(postRepository.getAll(mockUserFilter))
 //                .thenReturn(null);
 //

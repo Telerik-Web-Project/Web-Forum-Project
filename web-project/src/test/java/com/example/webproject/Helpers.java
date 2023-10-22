@@ -1,11 +1,6 @@
 package com.example.webproject;
 
-import com.example.webproject.models.UserFilter;
-import com.example.webproject.models.Comment;
-import com.example.webproject.models.Post;
-import com.example.webproject.models.User;
-
-import java.util.HashSet;
+import com.example.webproject.models.*;
 
 public class Helpers {
     public static User createMockUser() {
@@ -28,12 +23,16 @@ public class Helpers {
         return mockPost;
     }
 
-    public static UserFilter createMockFilterOptions() {
+    public static UserFilter createMockUserFilterOptions() {
         return new UserFilter("testFirstName",
                 "testUsername",
                 "testEmail",
                 "",
                 "");
+    }
+
+    public static PostFilter createMockPostFilterOptions() {
+        return new PostFilter();
     }
 
     public static Comment createMockComment() {
