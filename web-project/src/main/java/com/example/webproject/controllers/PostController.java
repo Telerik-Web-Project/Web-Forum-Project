@@ -41,14 +41,55 @@ public class PostController {
     public List<Post> getAll(@RequestHeader(required = false) HttpHeaders headers,
                              @RequestParam(required = false) String title,
                              @RequestParam(required = false) String content,
-                             @RequestParam(required = false) String postCreator,
                              @RequestParam(required = false) String sortBy,
                              @RequestParam(required = false) String sortOrder) {
         if (!headers.containsKey("Authorization")) {
             return postService.getPostsAsAnonymousUser();
         } else {
-            PostFilter filter = new PostFilter(title,content,postCreator,sortBy,sortOrder);
+            PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
             return postService.getAll(filter);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public Post getPost(@PathVariable int id){
+        try {
+            Post post = postService.get(id);
+            return post;
+        }catch (EntityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @GetMapping("/tags")
+    public List<Post> getPostsWithTag(@RequestParam(required = true) String tag){
+        return postService.getPostsWithTag(tag);
+    }
+    @PostMapping("/{id}/tags")
+    public void addTagToPost(@PathVariable int id, @RequestBody Tag tag, @RequestHeader HttpHeaders headers){
+        try {
+            User loggedUser = authenticationHelper.getUser(headers);
+            Post post = postService.get(id);
+            postService.addTagToPost(post, tag, loggedUser);
+        } catch (EntityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (AuthorizationException e){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}/tags")
+    public void deleteTagFromPost(@PathVariable int id,
+                                  @RequestHeader HttpHeaders headers,
+                                  @RequestBody Tag tag){
+        try{
+            User loggedUser = authenticationHelper.getUser(headers);
+            Post post = postService.get(id);
+            postService.deleteTagFromPost(post, loggedUser, tag);
+        } catch (EntityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e){
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
 

@@ -1,9 +1,6 @@
 package com.example.webproject.services;
 
-import com.example.webproject.models.Comment;
-import com.example.webproject.models.Post;
-import com.example.webproject.models.PostFilter;
-import com.example.webproject.models.User;
+import com.example.webproject.models.*;
 
 import java.util.List;
 
@@ -11,6 +8,12 @@ public interface PostService {
     List<Post> getAll(PostFilter filter);
 
     Post get(int id);
+
+    List<Post> getPostsWithTag(String tag);
+
+    void addTagToPost(Post post, Tag tag, User loggedUser);
+
+    void deleteTagFromPost(Post post, User loggedUser, Tag tag);
 
     void createPost(Post post, User user);
 

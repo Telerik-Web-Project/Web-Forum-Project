@@ -1,27 +1,29 @@
 package com.example.webproject.services;
 
+import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.ValidationHelper;
-import com.example.webproject.models.Comment;
-import com.example.webproject.models.Post;
-import com.example.webproject.models.PostFilter;
-import com.example.webproject.models.User;
+import com.example.webproject.models.*;
 import com.example.webproject.repositories.CommentRepository;
 import com.example.webproject.repositories.PostRepository;
+import com.example.webproject.repositories.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final TagRepository tagRepository;
     public static final String AUTHENTICATION_ERROR = "Only admins or the creator of the post can modify it.";
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, TagRepository tagRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -33,6 +35,42 @@ public class PostServiceImpl implements PostService {
     public Post get(int id) {
         return postRepository.get(id);
     }
+    @Override
+    public List<Post> getPostsWithTag(String tag){
+        List<Post> tagPosts = postRepository.getAll();
+        Tag repoTag = tagRepository.get(tag);
+        return tagPosts.stream()
+                .filter(post -> post.getTags().stream().anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void addTagToPost(Post post, Tag tag, User loggedUser){
+        ValidationHelper.checkIfBanned(loggedUser);
+        ValidationHelper.validateModifyPermissions(postRepository,post,loggedUser);
+    //TODO Admin or owner verification
+        try {
+            Tag repoTag = tagRepository.get(tag.getName().toLowerCase());
+            post.getTags().add(repoTag);
+            postRepository.updatePost(post);
+        } catch (EntityNotFoundException e){
+            tagRepository.createTag(tag);
+            post.getTags().add(tag);
+            postRepository.updatePost(post);
+        }
+    }
+
+    @Override
+    public void deleteTagFromPost(Post post, User loggedUser, Tag tag) {
+        ValidationHelper.checkIfBanned(loggedUser);
+        ValidationHelper.validateModifyPermissions(postRepository,post,loggedUser);
+        Tag repoTag = tagRepository.get(tag.getName());
+        //TODO Admin or owner verification
+        post.getTags().remove(repoTag);
+        //TODO remove only certain tag
+        postRepository.updatePost(post);
+    }
+
 
     @Override
     public void createPost(Post post, User user) {
@@ -92,7 +130,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Comment> getPostComments(Post post) {
-
         return postRepository.getPostComments(post);
     }
 

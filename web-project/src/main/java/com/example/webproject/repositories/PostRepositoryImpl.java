@@ -38,10 +38,7 @@ public class PostRepositoryImpl implements PostRepository {
                 filters.add("content like :content");
                 params.put("content", String.format("%%%s%%", value));
             });
-            filter.getPostCreator().ifPresent(value -> {
-                filters.add("user_id like :user_id");
-                params.put("user_id", String.format("%%%s%%", value));
-            });
+
             StringBuilder queryString = new StringBuilder("from Post");
             if (!filters.isEmpty()) {
                 queryString
@@ -58,6 +55,14 @@ public class PostRepositoryImpl implements PostRepository {
     public List<Post> getPostsAsAnonymousUser() {
         try (Session session = sessionFactory.openSession()) {
             Query<Post> query = session.createQuery("from Post where postCreator.id!=" + MASTER_USER_ID + " order by id desc limit 10", Post.class);
+            return query.list();
+        }
+    }
+
+    @Override
+    public List<Post> getAll(){
+        try (Session session = sessionFactory.openSession()) {
+            Query<Post> query = session.createQuery("from Post", Post.class);
             return query.list();
         }
     }
@@ -139,9 +144,6 @@ public class PostRepositoryImpl implements PostRepository {
                 break;
             case "content":
                 orderBy = "content";
-                break;
-            case "postCreator":
-                orderBy = "postCreator";
                 break;
             default:
                 return "";

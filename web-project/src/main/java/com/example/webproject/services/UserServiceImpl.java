@@ -45,10 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Post> getUserPosts(User loggedUser, User user) {
         ValidationHelper.checkIfBanned(loggedUser);
-       List <Post> userPosts = userRepository.getUserPosts(user);
-       if(userPosts.isEmpty()){
-           throw new EntityNotFoundException(user.getId());
-       }
+        List <Post> userPosts = userRepository.getUserPosts(user);
         return userPosts;
     }
     @Override

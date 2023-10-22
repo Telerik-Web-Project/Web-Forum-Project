@@ -52,13 +52,11 @@ public class UserController {
         } catch (AuthorizationException e) {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());}
     }
+
     @GetMapping("/{id}/posts")
     public List<Post> getUserPosts(@PathVariable int id, @RequestHeader HttpHeaders headers) {
         try {
-
             User loggedUser = authenticationHelper.getUser(headers);
-            //TODO admin can check masterUser posts :)
-            ValidationHelper.masterUserAccessDenied(id);
             User userToCheckPosts = userService.getById(id);
             return userService.getUserPosts(loggedUser, userToCheckPosts);
         } catch (EntityNotFoundException e) {

@@ -28,24 +28,7 @@ public class AdminController {
         this.authenticationHelper = authenticationHelper;
     }
 
-    @GetMapping
-    public List<User> getAll(@RequestHeader HttpHeaders httpHeaders,
-                             @RequestParam(required = false) String firstName,
-                             @RequestParam(required = false) String username,
-                             @RequestParam(required = false) String email,
-                             @RequestParam(required = false) String sortBy,
-                             @RequestParam(required = false) String sortOrder) {
-        try {
-            checkAccessPermissions(authenticationHelper.getUser(httpHeaders));
-            UserFilter userFilter = new UserFilter(firstName, username, email, sortBy, sortOrder);
-            return userService.getAll(userFilter);
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
-    }
-
-
-    @PutMapping("/ban/user/{id}")
+    @PutMapping("/ban/{id}")
     public void changeBlockStatus(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
         try {
             User user = userService.getById(id);
@@ -58,7 +41,7 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/makeAdmin/user/{id}")
+    @PutMapping("/makeAdmin/{id}")
     public void changeAdminStatus(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
         try {
             User user = userService.getById(id);
