@@ -48,7 +48,6 @@ public class PostServiceImpl implements PostService {
     public void addTagToPost(Post post, Tag tag, User loggedUser){
         ValidationHelper.checkIfBanned(loggedUser);
         ValidationHelper.validateModifyPermissions(postRepository,post,loggedUser);
-    //TODO Admin or owner verification
         try {
             Tag repoTag = tagRepository.get(tag.getName().toLowerCase());
             post.getTags().add(repoTag);
@@ -65,9 +64,7 @@ public class PostServiceImpl implements PostService {
         ValidationHelper.checkIfBanned(loggedUser);
         ValidationHelper.validateModifyPermissions(postRepository,post,loggedUser);
         Tag repoTag = tagRepository.get(tag.getName());
-        //TODO Admin or owner verification
         post.getTags().remove(repoTag);
-        //TODO remove only certain tag
         postRepository.updatePost(post);
     }
 

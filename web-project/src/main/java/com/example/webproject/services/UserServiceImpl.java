@@ -106,6 +106,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int getUsersCount() {
+        return userRepository.getUsersCount();
+    }
+
+    @Override
     public void updatePhoneNumber(User user, Phone phone) {
         ValidationHelper.checkIfBanned(user);
         ValidationHelper.validatePhone(phoneRepository,phone);

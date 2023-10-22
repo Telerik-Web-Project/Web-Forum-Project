@@ -142,6 +142,15 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    @Override
+    public int getUsersCount() {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Long> query = session.createQuery(
+                    "select count(*) from User ", Long.class);
+            return query.uniqueResult().intValue();
+        }
+    }
+
     private void deleteUserLikedPostsByUserId(int userId) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();

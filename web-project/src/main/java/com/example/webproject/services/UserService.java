@@ -23,4 +23,6 @@ public interface UserService {
     void updatePhoneNumber(User user, Phone phone);
 
     void deletePhoneNumber(User user);
+
+    int getUsersCount();
 }
