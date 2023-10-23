@@ -1,68 +1,111 @@
-//package com.example.webproject.services;
-//
-//import com.example.webproject.exceptions.AuthorizationException;
-//import com.example.webproject.exceptions.EntityNotFoundException;
-//import com.example.webproject.exceptions.UserBannedException;
-//import com.example.webproject.models.UserFilter;
-//import com.example.webproject.models.Post;
-//import com.example.webproject.models.User;
-//import com.example.webproject.repositories.PostRepository;
-//import org.junit.jupiter.api.Assertions;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.Mockito;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import static com.example.webproject.Helpers.*;
-//
-//@ExtendWith(MockitoExtension.class)
-//public class PostServiceImplTests {
-//
-//    @Mock
-//    private PostRepository postRepository;
-//
-//    @InjectMocks
-//    private PostServiceImpl postService;
-//
-//    @Test
-//    public void getAll_Should_CallRepository() {
-//        UserFilter mockUserFilter = createMockUserFilterOptions();
-//        Mockito.when(postRepository.getAll(mockUserFilter))
-//                .thenReturn(null);
-//
-//        postService.getAll(mockUserFilter);
-//
-//        Mockito.verify(postRepository, Mockito.times(1))
-//                .getAll(mockUserFilter);
-//    }
-//
-//    @Test
-//    public void get_Should_CallRepository_When_PostIdExists() {
-//        Post mockPost = createMockPost();
-//
-//        Mockito.when(postRepository.get(mockPost.getId()))
-//                .thenReturn(mockPost);
-//
-//        Post result = postService.get(mockPost.getId());
-//
-//        Assertions.assertEquals(mockPost, result);
-//    }
-//
-//    @Test
-//    public void get_Should_Throw_When_PostIdDoesNotExist() {
-//        Post mockPost = createMockPost();
-//
-//        Mockito.when(postRepository.get(mockPost.getId()))
-//                .thenThrow(EntityNotFoundException.class);
-//
-//        Assertions.assertThrows(EntityNotFoundException.class,
-//                () -> postService.get(mockPost.getId()));
-//
-////        Mockito.verify(postRepository, Mockito.times(1))
-////                .get(mockPost.getId());
-//    }
+package com.example.webproject.services;
+
+import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.helpers.ValidationHelper;
+import com.example.webproject.models.Post;
+import com.example.webproject.models.PostFilter;
+import com.example.webproject.models.Tag;
+import com.example.webproject.models.User;
+import com.example.webproject.repositories.PostRepository;
+import com.example.webproject.repositories.TagRepositoryImpl;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.example.webproject.Helpers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class PostServiceImplTests {
+
+    @Mock
+    private PostRepository postRepository;
+
+    @Mock
+    private CommentServiceImpl commentService;
+
+    @Mock
+    private TagRepositoryImpl tagRepository;
+
+    @InjectMocks
+    private PostServiceImpl postService;
+
+
+
+    @Test
+    public void getAll_Should_callRepository(){
+        PostFilter postFilter = createMockPostFilter();
+
+        Mockito.when(postRepository.getAll(postFilter))
+                .thenReturn(null);
+
+        postService.getAll(postFilter);
+
+        Mockito.verify(postRepository, Mockito.times(1))
+                .getAll(postFilter);
+    }
+
+    @Test
+    public void get_Should_returnPost_When_postExists(){
+        Post mockPost = createMockPost();
+
+        Mockito.when(postRepository.get(Mockito.anyInt()))
+                .thenReturn(mockPost);
+
+        Post post = postService.get(Mockito.anyInt());
+
+        Assertions.assertEquals(mockPost, post);
+    }
+
+    @Test
+    public void get_Should_callRepository(){
+        Post mockPost = createMockPost();
+
+        Mockito.when(postRepository.get(Mockito.anyInt()))
+                .thenReturn(mockPost);
+
+        postService.get(Mockito.anyInt());
+
+        Mockito.verify(postRepository, Mockito.times(1))
+                .get(Mockito.anyInt());
+    }
+
+    @Test
+    public void get_Should_throwException_When_postDoesNotExist(){
+        Post mockPost = createMockPost();
+
+        Mockito.when(postRepository.get(mockPost.getId()))
+                .thenThrow(EntityNotFoundException.class);
+
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> postService.get(mockPost.getId()));
+    }
+
+    @Test
+    public void addTagToPost_Should_callRepository(){
+        Post mockPost = createMockPost();
+        Tag mockTag = createMockTag();
+        User mockUser = createMockUser();
+        mockPost.setPostCreator(mockUser);
+
+        Mockito.when(tagRepository.get(Mockito.anyString()))
+                .thenReturn(mockTag);
+
+        Mockito.when(postRepository.updatePost(mockPost))
+                .thenReturn(mockPost);
+
+        Mockito.when(postRepository.get(Mockito.anyInt()))
+                .thenReturn(mockPost);
+
+        postService.addTagToPost(mockPost, mockTag, mockUser);
+
+
+        Mockito.verify(postRepository,Mockito.times(1))
+                .updatePost(mockPost);
+    }
 //
 //    @Test
 //    public void createPost_Should_Call_Repository_When_PassValidations() {
@@ -227,4 +270,4 @@
 //
 //        Assertions.assertEquals(0, postService.getLikesCount(mockPost));
 //    }
-//}
+}

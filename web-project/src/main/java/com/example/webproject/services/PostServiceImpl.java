@@ -35,6 +35,7 @@ public class PostServiceImpl implements PostService {
     public Post get(int id) {
         return postRepository.get(id);
     }
+
     @Override
     public List<Post> getPostsWithTag(String tag){
         List<Post> tagPosts = postRepository.getAll();
@@ -141,23 +142,4 @@ public class PostServiceImpl implements PostService {
         return postRepository.getLikesCount(post);
     }
 
-    /*private void verifyPostExists(Post post) {
-        Post existingPost = postRepository.get(post.getId());
-        if(existingPost.getId() != post.getId()) {
-            throw new EntityNotFoundException("Post", "id", String.valueOf(post.getId()));
-        }
-    }*/
-
-  /*  private void checkModifyPermissions(Post post, User user) {
-        Post postToUpdate = postRepository.get(post.getId());
-        if (!(user.isAdmin() || postToUpdate.getPostCreator().equals(user))) {
-            throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
-        }
-    }*/
-
-   /* private void checkIfBanned(User user) {
-        if (user.isBlocked()) {
-            throw new UserBannedException();
-        }
-    }*/
 }
