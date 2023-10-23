@@ -41,14 +41,14 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
 
     public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
+    public void setTags(Tag tag) {
+        this.tags.add(tag);
     }
 
     public Post() {

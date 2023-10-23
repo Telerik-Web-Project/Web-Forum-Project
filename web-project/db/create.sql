@@ -57,3 +57,21 @@ create table liked_posts
      constraint phone_number_users_user_id_fk
          foreign key (user_id) references users (user_id)
  );
+ create table tags
+ (
+     tag_id   int auto_increment
+         primary key,
+     tag_name varchar(20) not null,
+     constraint tags_pk2
+         unique (tag_name)
+ );
+
+ create table posts_tags
+ (
+     post_id int not null,
+     tag_id  int not null,
+     constraint posts_tags_posts_post_id_fk
+         foreign key (post_id) references posts (post_id),
+     constraint posts_tags_tags_tag_id_fk
+         foreign key (tag_id) references tags (tag_id)
+ );

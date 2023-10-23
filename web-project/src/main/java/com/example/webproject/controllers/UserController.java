@@ -53,6 +53,11 @@ public class UserController {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());}
     }
 
+    @GetMapping("/count")
+    public int getUsersCount(){
+        return userService.getUsersCount();
+    }
+
     @GetMapping("/{id}/posts")
     public List<Post> getUserPosts(@PathVariable int id, @RequestHeader HttpHeaders headers) {
         try {

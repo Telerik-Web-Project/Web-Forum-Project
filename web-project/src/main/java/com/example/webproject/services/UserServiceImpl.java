@@ -12,9 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.example.webproject.helpers.ValidationHelper.*;
+
 @Service
 public class UserServiceImpl implements UserService {
     public static final int DATA_BASE_USER_ID = 1;
+    private static final String ADMIN_USER_ERR_MESSAGE = "Only admins can delete other users";
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private  final PostRepository postRepository;
@@ -44,9 +48,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public List<Post> getUserPosts(User loggedUser, User user) {
-        ValidationHelper.checkIfBanned(loggedUser);
-        List <Post> userPosts = userRepository.getUserPosts(user);
-        return userPosts;
+        checkIfBanned(loggedUser);
+        return userRepository.getUserPosts(user);
     }
     @Override
     public void createUser(User user) {
@@ -62,7 +65,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void deleteUser(User loggedUser, User userToBeDeleted) {
-        ValidationHelper.checkPermission(loggedUser, userToBeDeleted, "Only admins can delete other users");
+        ValidationHelper.checkPermission(loggedUser, userToBeDeleted, ADMIN_USER_ERR_MESSAGE);
         saveDeletedUserDataInDataBase(userToBeDeleted);
         userRepository.deleteUser(userToBeDeleted);
     }
@@ -80,35 +83,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addPhoneNumber(Phone phone) {
-        ValidationHelper.checkIfBanned(phone.getAdminUser());
-        ValidationHelper.validatePhone(phoneRepository,phone);
-        boolean userHasPhone = true;
-        try {
-            phoneRepository.findPhone(phone.getAdminUser());
-        } catch (EntityNotFoundException e) {
-            userHasPhone = false;
-        }
-        if (userHasPhone) {
-            throw new AuthorizationException("You are only allowed to add one phone");
-        }
-        if (phone.getAdminUser().isAdmin()) {
-            phoneRepository.createPhone(phone);
-        } else {
-            throw new AuthorizationException("Only admins can add phone numbers");
-        }
-    }
+        validateUserIsAdmin(phoneRepository,phone);
+        checkIfBanned(phone.getAdminUser());
+        validatePhone(phoneRepository,phone);
+        validateNoOtherPhoneInRepository(phoneRepository,phone);
 
+    }
     @Override
     public void deletePhoneNumber(User user) {
-        ValidationHelper.checkIfBanned(user);
+        checkIfBanned(user);
         Phone phone = phoneRepository.findPhone(user);
         phoneRepository.deletePhone(phone);
     }
 
     @Override
+    public int getUsersCount() {
+        return userRepository.getUsersCount();
+    }
+
+    @Override
     public void updatePhoneNumber(User user, Phone phone) {
-        ValidationHelper.checkIfBanned(user);
-        ValidationHelper.validatePhone(phoneRepository,phone);
+        checkIfBanned(user);
+        validatePhone(phoneRepository,phone);
         Phone oldPhone = phoneRepository.findPhone(user);
         oldPhone.setPhoneNumber(phone.getPhoneNumber());
         phoneRepository.updatePhone(oldPhone);
@@ -180,6 +176,24 @@ public class UserServiceImpl implements UserService {
             throw new EntityDuplicateException("User", "email", user.getEmail());
         } else if (usernameExists) {
             throw new EntityDuplicateException("User", "username", user.getUsername());
+        }
+    }*/
+
+    /* if (phone.getAdminUser().isAdmin()) {
+            phoneRepository.createPhone(phone);
+        } else {
+            throw new AuthorizationException("Only admins can add phone numbers");
+        }*/
+    
+    /* private void validateNoOtherPhoneInRepository(Phone phone) {
+        boolean userHasPhone = true;
+        try {
+            phoneRepository.findPhone(phone.getAdminUser());
+        } catch (EntityNotFoundException e) {
+            userHasPhone = false;
+        }
+        if (userHasPhone) {
+            throw new AuthorizationException("You are only allowed to add one phone");
         }
     }*/
 }
