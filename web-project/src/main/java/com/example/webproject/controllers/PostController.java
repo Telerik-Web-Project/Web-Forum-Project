@@ -54,16 +54,20 @@ public class PostController {
     @GetMapping("/{id}")
     public Post getPost(@PathVariable int id){
         try {
-            Post post = postService.get(id);
-            return post;
+            return postService.get(id);
         }catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
     @GetMapping("/tags")
-    public List<Post> getPostsWithTag(@RequestParam(required = true) String tag){
-        return postService.getPostsWithTag(tag);
+    public List<Post> getPostsWithTag(@RequestParam String tag){
+      try {
+          return postService.getPostsWithTag(tag);
+      }catch (EntityNotFoundException e){
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+      }
+
     }
     @PostMapping("/{id}/tags")
     public void addTagToPost(@PathVariable int id, @RequestBody Tag tag, @RequestHeader HttpHeaders headers){

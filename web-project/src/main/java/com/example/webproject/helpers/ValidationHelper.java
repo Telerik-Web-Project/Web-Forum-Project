@@ -99,6 +99,24 @@ public class ValidationHelper {
             throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
         }
     }
+    public static void validateUserIsAdmin(PhoneRepository phoneRepository,Phone phone) {
+        if (phone.getAdminUser().isAdmin()) {
+            phoneRepository.createPhone(phone);
+        } else {
+            throw new AuthorizationException("Only admins can add phone numbers");
+        }
+    }
+    public static void validateNoOtherPhoneInRepository(PhoneRepository phoneRepository,Phone phone) {
+        boolean userHasPhone = true;
+        try {
+            phoneRepository.findPhone(phone.getAdminUser());
+        } catch (EntityNotFoundException e) {
+            userHasPhone = false;
+        }
+        if (userHasPhone) {
+            throw new AuthorizationException("You are only allowed to add one phone");
+        }
+    }
 
     public static void masterUserAccessDenied(int id) {
         if(id == UserServiceImpl.DATA_BASE_USER_ID){

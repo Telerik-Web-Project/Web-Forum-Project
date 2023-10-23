@@ -40,7 +40,8 @@ public class PostServiceImpl implements PostService {
         List<Post> tagPosts = postRepository.getAll();
         Tag repoTag = tagRepository.get(tag);
         return tagPosts.stream()
-                .filter(post -> post.getTags().stream().anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
+                .filter(post -> post.getTags().stream().
+                        anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
                 .collect(Collectors.toList());
     }
 

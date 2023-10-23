@@ -106,10 +106,6 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
-
-
-
-
     @Override
     public User createUser(User user) {
         try (Session session = sessionFactory.openSession()) {
@@ -172,7 +168,6 @@ public class UserRepositoryImpl implements UserRepository {
             session.getTransaction().commit();
         }
     }
-
     private String generateOrderBy(UserFilter userFilter) {
         if (userFilter.getSortBy().isEmpty()) {
             return "";

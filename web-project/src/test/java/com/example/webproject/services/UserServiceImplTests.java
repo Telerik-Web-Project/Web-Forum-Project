@@ -2,7 +2,10 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.exceptions.UserBannedException;
 import com.example.webproject.models.User;
+import com.example.webproject.repositories.CommentRepository;
+import com.example.webproject.repositories.PostRepository;
 import com.example.webproject.repositories.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,10 @@ public class UserServiceImplTests {
     @Mock
     private UserRepository repository;
 
+    @Mock
+    private CommentRepository commentRepository;
+    @Mock
+    private PostRepository postRepository;
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -30,9 +37,9 @@ public class UserServiceImplTests {
         Mockito.when(repository.getById(Mockito.anyInt()))
                 .thenReturn(user);
 
-        User methodUser = userService.getById(user.getId());
+        User testUser = userService.getById(user.getId());
 
-        Assertions.assertEquals(user,methodUser);
+        Assertions.assertEquals(user,testUser);
     }
 
     @Test
@@ -88,14 +95,16 @@ public class UserServiceImplTests {
         Mockito.verify(repository, Mockito.times(1)).createUser(user);
     }
     @Test
-    public void deleteUser_Should_Not_Call_Repository_When_NonAdmin_User_Tries_To_Delete_Other_User() {
+    public void deleteUser_Should_Throw_When_NonAdmin_User_Tries_To_Delete_Other_User() {
         User mockUser = createMockUser();
-        mockUser.setAdmin(false);
 
         User userToBeDeleted = createMockUser();
+
         userToBeDeleted.setUsername("otherUsername");
 
-        Mockito.verify(repository, Mockito.times(0)).deleteUser(userToBeDeleted);
+        Assertions.assertThrows(AuthorizationException.class,
+                ()->userService.deleteUser(mockUser,userToBeDeleted));
+
     }
     @Test
     public void deleteUser_Should_Call_Repository_When_NonAdmin_User_Deletes_Themselves() {
@@ -118,38 +127,7 @@ public class UserServiceImplTests {
 
         Mockito.verify(repository, Mockito.times(1)).deleteUser(otherUser);
     }
-    /*@Test
-    public void updateUser_Should_Not_Call_Repository_User_Tries_To_Update_Other_User() {
-        User normalUser = createMockUser();
 
-        User userToBeUpdated = createMockUser();
-        userToBeUpdated.setUsername("otherUser");
-        assertThrows(AuthorizationException.class,
-                () -> userService.updateUser(normalUser.getId(),normalUser,userToBeUpdated));
-        Mockito.verify(repository, Mockito.times(0)).updateUser(userToBeUpdated);
-    }
-
-
-    @Test
-    public void updateUser_Should_Call_Repository_When_User_Tries_To_Update_Themselves() {
-        User mockUser = createMockUser();
-
-        User userToBeUpdated = createMockUser();
-
-        userService.updateUser(mockUser.getId(),mockUser,userToBeUpdated);
-
-        Mockito.verify(repository, Mockito.times(1)).updateUser(userToBeUpdated);
-    }*/
-    @Test
-    public void get_User_Posts_Should_Not_Call_Repository_IfLoggedUser_IsBanned(){
-        User loggedUser = createMockUser();
-        loggedUser.setBlocked(true);
-
-
-        Mockito.verify(repository, Mockito.times(0))
-                .getUserPosts(repository.getById(Mockito.anyInt()));
-
-    }
     @Test
     public void get_User_Posts_Should_Call_Repository_IfLoggedUser_Is_Not_Banned(){
         User loggedUser = createMockUser();
@@ -158,6 +136,34 @@ public class UserServiceImplTests {
 
         Mockito.verify(repository, Mockito.times(1))
                 .getUserPosts(repository.getById(Mockito.anyInt()));
+    }
+    @Test
+    public void get_User_Posts_Should_Throw_When_LoggedUser_Is_Banned(){
+        User loggedUser = createMockUser();
+        loggedUser.setBlocked(true);
+        User userToCheckPosts = createMockUser();
+
+        Assertions.assertThrows(UserBannedException.class,
+                ()->userService.getUserPosts(loggedUser,userToCheckPosts));
+
+        Mockito.verify(repository, Mockito.times(0))
+                .getUserPosts(repository.getById(Mockito.anyInt()));
+    }
+    @Test
+    public void change_Ban_Status_Should_Ban_User(){
+        User mockUser = createMockUser();
+
+        userService.changeBanStatus(mockUser);
+
+        Assertions.assertTrue(mockUser.isBlocked());
+    }
+    @Test
+    public void change_Admin_Status_Should_Make_User_Admin(){
+        User mockUser = createMockUser();
+
+        userService.changeAdminStatus(mockUser);
+
+        Assertions.assertTrue(mockUser.isAdmin());
     }
 }
 
