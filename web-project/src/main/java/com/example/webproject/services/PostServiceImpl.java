@@ -35,6 +35,7 @@ public class PostServiceImpl implements PostService {
     public Post get(int id) {
         return postRepository.get(id);
     }
+
     @Override
     public List<Post> getPostsWithTag(String tag){
         List<Post> tagPosts = postRepository.getAll();
@@ -121,6 +122,10 @@ public class PostServiceImpl implements PostService {
         commentRepository.updateComment(comment);
     }
 
+    @Override
+    public List<Post> getTenMostCommentedPosts() {
+        return commentRepository.getTenMostCommentedPosts();
+    }
 
     @Override
     public List<Post> getPostsAsAnonymousUser() {
@@ -136,4 +141,5 @@ public class PostServiceImpl implements PostService {
         ValidationHelper.validatePostExists(postRepository,post);
         return postRepository.getLikesCount(post);
     }
+
 }
