@@ -121,10 +121,6 @@ public class PostServiceImpl implements PostService {
         commentRepository.updateComment(comment);
     }
 
-    @Override
-    public List<Post> getTenMostCommentedPosts() {
-        return commentRepository.getTenMostCommentedPosts();
-    }
 
     @Override
     public List<Post> getPostsAsAnonymousUser() {
@@ -140,24 +136,4 @@ public class PostServiceImpl implements PostService {
         ValidationHelper.validatePostExists(postRepository,post);
         return postRepository.getLikesCount(post);
     }
-
-    /*private void verifyPostExists(Post post) {
-        Post existingPost = postRepository.get(post.getId());
-        if(existingPost.getId() != post.getId()) {
-            throw new EntityNotFoundException("Post", "id", String.valueOf(post.getId()));
-        }
-    }*/
-
-  /*  private void checkModifyPermissions(Post post, User user) {
-        Post postToUpdate = postRepository.get(post.getId());
-        if (!(user.isAdmin() || postToUpdate.getPostCreator().equals(user))) {
-            throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
-        }
-    }*/
-
-   /* private void checkIfBanned(User user) {
-        if (user.isBlocked()) {
-            throw new UserBannedException();
-        }
-    }*/
 }
