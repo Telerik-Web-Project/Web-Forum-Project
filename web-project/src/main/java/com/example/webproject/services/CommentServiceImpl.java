@@ -13,8 +13,7 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-    public static final String BLOCKED_ACCOUNT_ERROR = "Your account has been blocked by an admin, currently you are not able to post,update or delete comments.";
-    public static final String AUTHORIZATION_ERROR = "You are not able to update or delete other peoples comments.";
+
     private CommentRepository commentRepository;
 
     public CommentServiceImpl(CommentRepository commentRepository) {
@@ -33,14 +32,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void updateComment(Comment comment, User user, int id) {
-//        Comment repositoryComment = commentRepository.get(id);
-//       if(repositoryComment.getUser().getId() == user.getId() || user.isAdmin()) {
-//           if(user.isBlocked()){
-//               throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
-//           }
-//           comment.setUser(user);
-//           commentRepository.updateComment(comment);
-//        } else throw new AuthorizationException(AUTHORIZATION_ERROR);
         ValidationHelper.validateCommentExists(commentRepository, comment);
         ValidationHelper.checkIfBanned(user);
         ValidationHelper.validateModifyPermissions(commentRepository, comment, user);

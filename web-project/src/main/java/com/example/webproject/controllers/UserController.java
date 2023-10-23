@@ -112,12 +112,6 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
-
-   /* private static void validateUpdatePermission(int id, User user) {
-        if (user.getId() != id) {
-            throw new AuthorizationException("You can modify only your personal details");
-        }
-    }*/
 }
 
 

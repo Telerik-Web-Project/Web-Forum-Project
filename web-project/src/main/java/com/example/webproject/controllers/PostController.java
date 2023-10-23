@@ -43,12 +43,8 @@ public class PostController {
                              @RequestParam(required = false) String content,
                              @RequestParam(required = false) String sortBy,
                              @RequestParam(required = false) String sortOrder) {
-        if (!headers.containsKey("Authorization")) {
-            return postService.getPostsAsAnonymousUser();
-        } else {
-            PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
-            return postService.getAll(filter);
-        }
+        PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
+        return postService.getAll(filter);
     }
 
     @GetMapping("/mostCommented")

@@ -24,7 +24,7 @@ public interface PostService {
     void likePost(User user, Post post);
 
     void addComment(User user, Post post, Comment comment);
-    List<Post> getPostsAsAnonymousUser();
+
     List<Comment> getPostComments(Post post);
 
     void updateComment(User user, Comment comment);
