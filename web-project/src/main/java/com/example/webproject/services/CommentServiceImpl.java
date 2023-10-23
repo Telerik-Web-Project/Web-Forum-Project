@@ -1,19 +1,16 @@
 package com.example.webproject.services;
 
-import com.example.webproject.exceptions.AuthorizationException;
-import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.Comment;
+import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.repositories.CommentRepository;
-import com.example.webproject.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-
     private CommentRepository commentRepository;
 
     public CommentServiceImpl(CommentRepository commentRepository) {
@@ -52,5 +49,10 @@ public class CommentServiceImpl implements CommentService {
         ValidationHelper.validateModifyPermissions(commentRepository, repositoryComment, user);
         ValidationHelper.checkIfBanned(user);
         commentRepository.deleteComment(repositoryComment);
+    }
+
+    @Override
+    public List<Post> getTenMostCommentedPosts() {
+        return commentRepository.getTenMostCommentedPosts();
     }
 }

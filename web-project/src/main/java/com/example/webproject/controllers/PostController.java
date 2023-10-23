@@ -49,7 +49,7 @@ public class PostController {
 
     @GetMapping("/mostCommented")
     public List<Post> getTenMostCommentedPosts () {
-        return postService.getTenMostCommentedPosts();
+        return commentService.getTenMostCommentedPosts();
     }
 
     @GetMapping("/{id}")
