@@ -54,7 +54,6 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             query.setParameter("user", user);
             List<Phone> phones = query.list();
             if (phones.isEmpty()) {
-                // TODO: 21-Oct-23 check for err msg
                 throw new EntityNotFoundException("User", "phone number", "");
             }
             return phones.get(0);

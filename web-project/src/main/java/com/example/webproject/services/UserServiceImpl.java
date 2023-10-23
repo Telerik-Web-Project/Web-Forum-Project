@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addPhoneNumber(Phone phone) {
-        validateUserIsAdmin(phoneRepository,phone);
         checkIfBanned(phone.getAdminUser());
+        validateUserIsAdmin(phoneRepository,phone);
         validatePhone(phoneRepository,phone);
         validateNoOtherPhoneInRepository(phoneRepository,phone);
 

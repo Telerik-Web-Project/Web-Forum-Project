@@ -88,7 +88,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/phoneNumber")
-    public void deleteUser(@RequestHeader HttpHeaders httpHeaders) {
+    public void deletePhone(@RequestHeader HttpHeaders httpHeaders) {
         try {
             User user = authenticationHelper.getUser(httpHeaders);
             userService.deletePhoneNumber(user);
