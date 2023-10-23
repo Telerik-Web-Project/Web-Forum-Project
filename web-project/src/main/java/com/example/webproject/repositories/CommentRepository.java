@@ -13,4 +13,6 @@ public interface CommentRepository {
     void updateComment (Comment comment);
     void deleteComment (Comment comment);
     List<Comment> getUserComments(User user);
+
+    List<Post> getTenMostCommentedPosts();
 }

@@ -41,6 +41,20 @@ public class CommentRepositoryImpl implements CommentRepository {
             return new ArrayList<>(result.list());
         }
     }
+
+    @Override
+    public List<Post> getTenMostCommentedPosts() {
+        try(Session session = sessionFactory.openSession()) {
+            Query<Post> query = session.createQuery("SELECT c.post " +
+                    "FROM Comment c " +
+                    "GROUP BY c.post " +
+                    "ORDER BY COUNT(c.id) DESC", Post.class);
+            query.setMaxResults(10);
+            return query.list();
+
+        }
+    }
+
     @Override
     public void createComment(Comment comment) {
         try (Session session = sessionFactory.openSession()) {
