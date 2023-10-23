@@ -28,4 +28,6 @@ public interface PostService {
     List<Comment> getPostComments(Post post);
 
     void updateComment(User user, Comment comment);
+
+    List<Post> getTenMostCommentedPosts();
 }
