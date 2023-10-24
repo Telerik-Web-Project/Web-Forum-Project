@@ -2,17 +2,15 @@ package com.example.webproject.services;
 
 import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.Comment;
+import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
-import com.example.webproject.repositories.contracts.CommentRepository;
-import com.example.webproject.services.contracts.CommentService;
+import com.example.webproject.repositories.CommentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-    public static final String BLOCKED_ACCOUNT_ERROR = "Your account has been blocked by an admin, currently you are not able to post,update or delete comments.";
-    public static final String AUTHORIZATION_ERROR = "You are not able to update or delete other peoples comments.";
     private CommentRepository commentRepository;
 
     public CommentServiceImpl(CommentRepository commentRepository) {
@@ -31,14 +29,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void updateComment(Comment comment, User user, int id) {
-//        Comment repositoryComment = commentRepository.get(id);
-//       if(repositoryComment.getUser().getId() == user.getId() || user.isAdmin()) {
-//           if(user.isBlocked()){
-//               throw new AuthorizationException(BLOCKED_ACCOUNT_ERROR);
-//           }
-//           comment.setUser(user);
-//           commentRepository.updateComment(comment);
-//        } else throw new AuthorizationException(AUTHORIZATION_ERROR);
         ValidationHelper.validateCommentExists(commentRepository, comment);
         ValidationHelper.checkIfBanned(user);
         ValidationHelper.validateModifyPermissions(commentRepository, comment, user);
@@ -59,5 +49,10 @@ public class CommentServiceImpl implements CommentService {
         ValidationHelper.validateModifyPermissions(commentRepository, repositoryComment, user);
         ValidationHelper.checkIfBanned(user);
         commentRepository.deleteComment(repositoryComment);
+    }
+
+    @Override
+    public List<Post> getTenMostCommentedPosts() {
+        return commentRepository.getTenMostCommentedPosts();
     }
 }

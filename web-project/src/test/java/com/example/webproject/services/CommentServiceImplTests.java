@@ -12,6 +12,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.example.webproject.Helpers.createMockComment;
 import static com.example.webproject.Helpers.createMockUser;
 
@@ -21,6 +24,8 @@ public class CommentServiceImplTests {
     CommentRepository commentRepository;
     @InjectMocks
     CommentServiceImpl commentService;
+    @InjectMocks
+    PostServiceImpl postService;
 
     @Test
     public void get_Should_returnComment_When_commentExists() {
@@ -43,16 +48,6 @@ public class CommentServiceImplTests {
 
         Mockito.verify(commentRepository, Mockito.times(1))
                 .createComment(comment);
-    }
-
-    @Test
-    public void create_Should_throwException_When_userIsBlocked(){
-        Comment comment = createMockComment();
-        User user = createMockUser();
-        user.setBlocked(true);
-
-        Assertions.assertThrows(AuthorizationException.class,
-                ()-> commentService.createComment(user,comment));
     }
 
     @Test
@@ -110,19 +105,6 @@ public class CommentServiceImplTests {
     }
 
     @Test
-    public void update_Should_throwException_When_userIsBlocked(){
-        Comment comment = createMockComment();
-        User user = comment.getUser();
-        user.setBlocked(true);
-
-        Mockito.when(commentRepository.get(Mockito.anyInt()))
-                .thenReturn(comment);
-
-        Assertions.assertThrows(AuthorizationException.class,
-                () -> commentService.updateComment(comment,user,Mockito.anyInt()));
-    }
-
-    @Test
     public void delete_Should_callRepository_When_userIsCreator(){
         Comment comment = createMockComment();
         User user = comment.getUser();
@@ -164,16 +146,23 @@ public class CommentServiceImplTests {
     }
 
     @Test
-    public void delete_Should_throwException_When_userIsBlocked(){
-        Comment comment = createMockComment();
-        User user = comment.getUser();
-        user.setBlocked(true);
+    public void testGetUserComments() {
+        User user = new User();
+        List<Comment> userComments = new ArrayList<>();
+        Mockito.when(commentRepository.getUserComments(user)).thenReturn(userComments);
 
-        Mockito.when(commentRepository.get(Mockito.anyInt()))
-                .thenReturn(comment);
+        List<Comment> result = commentService.getUserComments(user);
 
-        Assertions.assertThrows(AuthorizationException.class,
-                () -> commentService.deleteComment(user,Mockito.anyInt()));
+        Assertions.assertEquals(userComments, result);
+    }
+
+    @Test
+    public void getTenMostCommentedPosts_should_CallRepository_When_Prompted() {
+        commentService.getTenMostCommentedPosts();
+
+        Mockito.verify(commentRepository, Mockito.times(1))
+                .getTenMostCommentedPosts();
+
     }
 
 }

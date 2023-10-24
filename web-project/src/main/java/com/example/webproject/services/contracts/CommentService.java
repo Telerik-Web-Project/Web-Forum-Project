@@ -1,6 +1,7 @@
 package com.example.webproject.services.contracts;
 
 import com.example.webproject.models.Comment;
+import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface CommentService {
     void updateComment(Comment comment, User user, int id);
 
     void deleteComment(User user, int id);
-
+    List<Post> getTenMostCommentedPosts();
 }

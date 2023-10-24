@@ -36,13 +36,13 @@ public class PostServiceImpl implements PostService {
     public Post get(int id) {
         return postRepository.get(id);
     }
+
     @Override
     public List<Post> getPostsWithTag(String tag){
         List<Post> tagPosts = postRepository.getAll();
         Tag repoTag = tagRepository.get(tag);
         return tagPosts.stream()
-                .filter(post -> post.getTags().stream().
-                        anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
+                .filter(post -> post.getTags().stream().anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
                 .collect(Collectors.toList());
     }
 
@@ -128,11 +128,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsAsAnonymousUser() {
-        return postRepository.getPostsAsAnonymousUser();
-    }
-
-    @Override
     public List<Comment> getPostComments(Post post) {
         return postRepository.getPostComments(post);
     }
@@ -142,23 +137,4 @@ public class PostServiceImpl implements PostService {
         return postRepository.getLikesCount(post);
     }
 
-    /*private void verifyPostExists(Post post) {
-        Post existingPost = postRepository.get(post.getId());
-        if(existingPost.getId() != post.getId()) {
-            throw new EntityNotFoundException("Post", "id", String.valueOf(post.getId()));
-        }
-    }*/
-
-  /*  private void checkModifyPermissions(Post post, User user) {
-        Post postToUpdate = postRepository.get(post.getId());
-        if (!(user.isAdmin() || postToUpdate.getPostCreator().equals(user))) {
-            throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
-        }
-    }*/
-
-   /* private void checkIfBanned(User user) {
-        if (user.isBlocked()) {
-            throw new UserBannedException();
-        }
-    }*/
 }

@@ -2,6 +2,9 @@ package com.example.webproject;
 
 import com.example.webproject.models.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Helpers {
     public static User createMockUser() {
         var mockUser = new User();
@@ -20,10 +23,11 @@ public class Helpers {
         mockPost.setTitle("TestTitle");
         mockPost.setPostCreator(createMockUser());
         mockPost.setContent("TestContent");
+        mockPost.setTags(createMockTag());
         return mockPost;
     }
 
-    public static UserFilter createMockUserFilterOptions() {
+    public static UserFilter createMockUserFilter() {
         return new UserFilter("testFirstName",
                 "testUsername",
                 "testEmail",
@@ -31,8 +35,11 @@ public class Helpers {
                 "");
     }
 
-    public static PostFilter createMockPostFilterOptions() {
-        return new PostFilter();
+    public static PostFilter createMockPostFilter(){
+        return new PostFilter("Test Title",
+                "Test Content",
+                "Test Sort",
+                "Test order");
     }
     public static Phone createMockPhone(){
         Phone phone = new Phone();
@@ -47,5 +54,11 @@ public class Helpers {
         mockComment.setPost(createMockPost());
         mockComment.setUser(createMockUser());
         return mockComment;
+    }
+
+    public static Tag createMockTag(){
+        Tag tag = new Tag();
+        tag.setName("test");
+        return tag;
     }
 }
