@@ -1,8 +1,8 @@
 package com.example.webproject.helpers;
 
-import com.example.webproject.models.UpdateUserDto;
+import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.models.User;
-import com.example.webproject.models.UserDto;
+import com.example.webproject.dtos.UserDto;
 import org.springframework.stereotype.Component;
 
 @Component

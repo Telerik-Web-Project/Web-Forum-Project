@@ -1,4 +1,4 @@
-package com.example.webproject.models;
+package com.example.webproject.dtos;
 
 
 import jakarta.validation.constraints.NotNull;

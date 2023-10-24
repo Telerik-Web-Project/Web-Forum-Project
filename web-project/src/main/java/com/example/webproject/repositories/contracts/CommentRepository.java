@@ -1,4 +1,4 @@
-package com.example.webproject.repositories;
+package com.example.webproject.repositories.contracts;
 
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;

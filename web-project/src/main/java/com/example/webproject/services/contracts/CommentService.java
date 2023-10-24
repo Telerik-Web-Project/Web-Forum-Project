@@ -1,4 +1,4 @@
-package com.example.webproject.services;
+package com.example.webproject.services.contracts;
 
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.User;

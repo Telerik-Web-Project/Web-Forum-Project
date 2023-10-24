@@ -1,8 +1,8 @@
 package com.example.webproject.helpers;
 
 import com.example.webproject.models.Comment;
-import com.example.webproject.models.CommentDto;
-import com.example.webproject.repositories.CommentRepository;
+import com.example.webproject.dtos.CommentDto;
+import com.example.webproject.repositories.contracts.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

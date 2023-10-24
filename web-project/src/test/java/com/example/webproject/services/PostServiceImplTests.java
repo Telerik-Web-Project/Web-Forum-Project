@@ -6,7 +6,7 @@
 //import com.example.webproject.models.UserFilter;
 //import com.example.webproject.models.Post;
 //import com.example.webproject.models.User;
-//import com.example.webproject.repositories.PostRepository;
+//import com.example.webproject.repositories.contracts.PostRepository;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;

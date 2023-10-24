@@ -4,6 +4,7 @@ import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
+import com.example.webproject.repositories.contracts.CommentRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;

@@ -3,7 +3,7 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.User;
-import com.example.webproject.repositories.CommentRepository;
+import com.example.webproject.repositories.contracts.CommentRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

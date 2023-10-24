@@ -8,10 +8,10 @@ import com.example.webproject.models.Comment;
 import com.example.webproject.models.Phone;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
-import com.example.webproject.repositories.CommentRepository;
-import com.example.webproject.repositories.PhoneRepository;
-import com.example.webproject.repositories.PostRepository;
-import com.example.webproject.repositories.UserRepository;
+import com.example.webproject.repositories.contracts.CommentRepository;
+import com.example.webproject.repositories.contracts.PhoneRepository;
+import com.example.webproject.repositories.contracts.PostRepository;
+import com.example.webproject.repositories.contracts.UserRepository;
 import com.example.webproject.services.PostServiceImpl;
 import com.example.webproject.services.UserServiceImpl;
 

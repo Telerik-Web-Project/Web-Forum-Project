@@ -1,4 +1,4 @@
-package com.example.webproject.services;
+package com.example.webproject.services.contracts;
 import com.example.webproject.models.Phone;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;

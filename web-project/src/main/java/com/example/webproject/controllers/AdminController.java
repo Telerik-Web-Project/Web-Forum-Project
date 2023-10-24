@@ -1,20 +1,18 @@
 package com.example.webproject.controllers;
 
+import com.example.webproject.dtos.PhoneDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.models.*;
-import com.example.webproject.services.UserService;
+import com.example.webproject.services.contracts.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin")

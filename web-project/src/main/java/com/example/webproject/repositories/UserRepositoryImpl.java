@@ -1,10 +1,10 @@
 package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
-import com.example.webproject.models.Phone;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
+import com.example.webproject.repositories.contracts.UserRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -19,7 +19,6 @@ import java.util.Map;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
     private final SessionFactory sessionFactory;
-
     @Autowired
     public UserRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -129,6 +128,8 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User deleteUser(User user) {
         try (Session session = sessionFactory.openSession()) {
+            updateUserComments(user.getId());
+            updateUserPosts(user.getId());
             deleteUserLikedPostsByUserId(user.getId());
             deleteUserPhones(user.getId());
             session.beginTransaction();
@@ -146,6 +147,7 @@ public class UserRepositoryImpl implements UserRepository {
             return query.uniqueResult().intValue();
         }
     }
+
 
     private void deleteUserLikedPostsByUserId(int userId) {
         try (Session session = sessionFactory.openSession()) {
@@ -165,6 +167,25 @@ public class UserRepositoryImpl implements UserRepository {
             Query<?> query = session.createNativeQuery(queryString, User.class);
             query.setParameter("userId", userId);
             query.executeUpdate();
+            session.getTransaction().commit();
+        }
+    }
+    private void updateUserComments(int userId) {
+        String queryString = "UPDATE COMMENTS SET user_id=1 where user_id=:userId";
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.createNativeQuery(queryString, Integer.class)
+                    .setParameter("userId",userId).executeUpdate();
+
+            session.getTransaction().commit();
+        }
+    }
+    private void updateUserPosts(int userId) {
+        String queryString = "UPDATE POSTS SET user_id=1 where user_id=:userId";
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.createNativeQuery(queryString, Integer.class)
+                    .setParameter("userId",userId).executeUpdate();
             session.getTransaction().commit();
         }
     }

@@ -1,12 +1,10 @@
 package com.example.webproject.services;
 
-import com.example.webproject.exceptions.AuthorizationException;
-import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.User;
-import com.example.webproject.repositories.CommentRepository;
-import com.example.webproject.repositories.PostRepository;
+import com.example.webproject.repositories.contracts.CommentRepository;
+import com.example.webproject.services.contracts.CommentService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

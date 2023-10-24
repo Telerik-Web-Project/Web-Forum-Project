@@ -3,6 +3,7 @@ package com.example.webproject.repositories;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.Phone;
 import com.example.webproject.models.User;
+import com.example.webproject.repositories.contracts.PhoneRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;

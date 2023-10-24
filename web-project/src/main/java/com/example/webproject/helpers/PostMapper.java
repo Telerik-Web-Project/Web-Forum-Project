@@ -1,9 +1,9 @@
 package com.example.webproject.helpers;
 
 import com.example.webproject.models.Post;
-import com.example.webproject.models.PostDto;
-import com.example.webproject.services.PostService;
-import com.example.webproject.services.UserService;
+import com.example.webproject.dtos.PostDto;
+import com.example.webproject.services.contracts.PostService;
+import com.example.webproject.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
