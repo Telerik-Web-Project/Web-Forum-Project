@@ -1,5 +1,7 @@
 package com.example.webproject.controllers;
 
+import com.example.webproject.dtos.CommentDto;
+import com.example.webproject.dtos.PostDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
@@ -8,8 +10,8 @@ import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.CommentMapper;
 import com.example.webproject.helpers.PostMapper;
 import com.example.webproject.models.*;
-import com.example.webproject.services.CommentService;
-import com.example.webproject.services.PostService;
+import com.example.webproject.services.contracts.CommentService;
+import com.example.webproject.services.contracts.PostService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,12 +45,8 @@ public class PostController {
                              @RequestParam(required = false) String content,
                              @RequestParam(required = false) String sortBy,
                              @RequestParam(required = false) String sortOrder) {
-        if (!headers.containsKey("Authorization")) {
-            return postService.getPostsAsAnonymousUser();
-        } else {
-            PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
-            return postService.getAll(filter);
-        }
+        PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
+        return postService.getAll(filter);
     }
 
     @GetMapping("/mostCommented")

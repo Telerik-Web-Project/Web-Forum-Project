@@ -2,7 +2,7 @@ package com.example.webproject.helpers;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.User;
-import com.example.webproject.services.UserService;
+import com.example.webproject.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;

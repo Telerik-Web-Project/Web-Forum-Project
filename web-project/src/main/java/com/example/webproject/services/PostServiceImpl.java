@@ -3,9 +3,10 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.*;
-import com.example.webproject.repositories.CommentRepository;
-import com.example.webproject.repositories.PostRepository;
-import com.example.webproject.repositories.TagRepository;
+import com.example.webproject.repositories.contracts.CommentRepository;
+import com.example.webproject.repositories.contracts.PostRepository;
+import com.example.webproject.repositories.contracts.TagRepository;
+import com.example.webproject.services.contracts.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +42,7 @@ public class PostServiceImpl implements PostService {
         List<Post> tagPosts = postRepository.getAll();
         Tag repoTag = tagRepository.get(tag);
         return tagPosts.stream()
-                .filter(post -> post.getTags().stream().
-                        anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
+                .filter(post -> post.getTags().stream().anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
                 .collect(Collectors.toList());
     }
 
@@ -122,10 +122,9 @@ public class PostServiceImpl implements PostService {
         commentRepository.updateComment(comment);
     }
 
-
-    @Override
-    public List<Post> getPostsAsAnonymousUser() {
-        return postRepository.getPostsAsAnonymousUser();
+    //@Override
+    public List<Post> getTenMostCommentedPosts() {
+        return commentRepository.getTenMostCommentedPosts();
     }
 
     @Override

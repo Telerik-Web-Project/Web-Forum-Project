@@ -2,6 +2,7 @@ package com.example.webproject.repositories;
 
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.Tag;
+import com.example.webproject.repositories.contracts.TagRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class TagRepositoryImpl implements TagRepository{
+public class TagRepositoryImpl implements TagRepository {
     private final SessionFactory sessionFactory;
     @Autowired
     public TagRepositoryImpl(SessionFactory sessionFactory) {

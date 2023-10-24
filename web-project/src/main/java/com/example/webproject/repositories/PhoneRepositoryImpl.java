@@ -3,6 +3,7 @@ package com.example.webproject.repositories;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.Phone;
 import com.example.webproject.models.User;
+import com.example.webproject.repositories.contracts.PhoneRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -54,7 +55,6 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             query.setParameter("user", user);
             List<Phone> phones = query.list();
             if (phones.isEmpty()) {
-                // TODO: 21-Oct-23 check for err msg
                 throw new EntityNotFoundException("User", "phone number", "");
             }
             return phones.get(0);

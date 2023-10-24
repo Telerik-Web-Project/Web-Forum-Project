@@ -1,13 +1,10 @@
 package com.example.webproject.services;
 
-import com.example.webproject.exceptions.AuthorizationException;
-import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.*;
-import com.example.webproject.repositories.CommentRepository;
-import com.example.webproject.repositories.PhoneRepository;
-import com.example.webproject.repositories.PostRepository;
-import com.example.webproject.repositories.UserRepository;
+import com.example.webproject.repositories.contracts.PhoneRepository;
+import com.example.webproject.repositories.contracts.UserRepository;
+import com.example.webproject.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,16 +17,13 @@ public class UserServiceImpl implements UserService {
     public static final int DATA_BASE_USER_ID = 1;
     private static final String ADMIN_USER_ERR_MESSAGE = "Only admins can delete other users";
     private final UserRepository userRepository;
-    private final CommentRepository commentRepository;
-    private  final PostRepository postRepository;
+
     private final PhoneRepository phoneRepository;
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, PostRepository postRepository, PhoneRepository phoneRepository) {
+    public UserServiceImpl(UserRepository userRepository, PhoneRepository phoneRepository) {
         this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
         this.phoneRepository = phoneRepository;
     }
     @Override
@@ -58,6 +52,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User updateUser(User loggedUser, User userToBeUpdated) {
+        ValidationHelper.checkIfBanned(loggedUser);
         ValidationHelper.validateEmail(userRepository,userToBeUpdated);
         updateUserDetails(loggedUser, userToBeUpdated);
         userRepository.updateUser(loggedUser);
@@ -66,7 +61,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(User loggedUser, User userToBeDeleted) {
         ValidationHelper.checkPermission(loggedUser, userToBeDeleted, ADMIN_USER_ERR_MESSAGE);
-        saveDeletedUserDataInDataBase(userToBeDeleted);
         userRepository.deleteUser(userToBeDeleted);
     }
     @Override
@@ -83,8 +77,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addPhoneNumber(Phone phone) {
-        validateUserIsAdmin(phoneRepository,phone);
         checkIfBanned(phone.getAdminUser());
+        validateUserIsAdmin(phoneRepository,phone);
         validatePhone(phoneRepository,phone);
         validateNoOtherPhoneInRepository(phoneRepository,phone);
 
@@ -110,25 +104,27 @@ public class UserServiceImpl implements UserService {
         phoneRepository.updatePhone(oldPhone);
     }
 
-    private void saveDeletedUserDataInDataBase(User userToBeDeleted) {
-        List<Comment> userComments = commentRepository.getUserComments(userToBeDeleted);
-        User defaultUser = userRepository.getById(DATA_BASE_USER_ID);
-        for (Comment comment : userComments) {
-            comment.setUser(defaultUser);
-            commentRepository.updateComment(comment);
-        }
-        List<Post> userPosts = userRepository.getUserPosts(userToBeDeleted);
-        for (Post post : userPosts) {
-            post.setPostCreator(defaultUser);
-            postRepository.updatePost(post);
-        }
-    }
     private void updateUserDetails(User loggedUser, User userToBeUpdated) {
         loggedUser.setFirstName(userToBeUpdated.getFirstName());
         loggedUser.setLastName(userToBeUpdated.getLastName());
         loggedUser.setEmail(userToBeUpdated.getEmail());
         loggedUser.setPassword(userToBeUpdated.getPassword());
     }
+
+    /*    private void saveDeletedUserDataInDataBase(User userToBeDeleted) {
+     *//*  List<Comment> userComments = commentRepository.getUserComments(userToBeDeleted);
+        User defaultUser = userRepository.getById(DATA_BASE_USER_ID);
+        for (Comment comment : userComments) {
+            comment.setUser(defaultUser);
+        }
+        commentRepository.updateComment(userComments);*//*
+        User defaultUser = userRepository.getById(DATA_BASE_USER_ID);
+        List<Post> userPosts = userRepository.getUserPosts(userToBeDeleted);
+        for (Post post : userPosts) {
+            post.setPostCreator(defaultUser);
+            postRepository.updatePost(post);
+        }
+    }*/
     /*private void validateEmail(User userToBeUpdated) {
         boolean emailExists = true;
         try {

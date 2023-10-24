@@ -1,5 +1,7 @@
 package com.example.webproject.controllers;
 
+import com.example.webproject.dtos.UpdateUserDto;
+import com.example.webproject.dtos.UserDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
@@ -7,7 +9,7 @@ import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
 import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.*;
-import com.example.webproject.services.UserService;
+import com.example.webproject.services.contracts.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -89,7 +91,6 @@ public class UserController {
             ValidationHelper.validateUpdatePermission(id, user);
             User userToBeUpdate = userMapper.fromUpdateUserDto(updateUserDto);
             return userService.updateUser(user, userToBeUpdate);
-
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (AuthorizationException e) {
@@ -112,12 +113,6 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
-
-   /* private static void validateUpdatePermission(int id, User user) {
-        if (user.getId() != id) {
-            throw new AuthorizationException("You can modify only your personal details");
-        }
-    }*/
 }
 
 

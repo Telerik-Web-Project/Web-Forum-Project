@@ -41,7 +41,12 @@ public class Helpers {
                 "Test Sort",
                 "Test order");
     }
-
+    public static Phone createMockPhone(){
+        Phone phone = new Phone();
+        phone.setPhone_id(1);
+        phone.setPhoneNumber("1234567");
+        return phone;
+    }
     public static Comment createMockComment() {
         var mockComment = new Comment();
         mockComment.setId(1);

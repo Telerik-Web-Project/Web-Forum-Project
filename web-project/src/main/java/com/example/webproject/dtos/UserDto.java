@@ -1,7 +1,8 @@
-package com.example.webproject.models;
+package com.example.webproject.dtos;
+import com.example.webproject.dtos.UpdateUserDto;
 import jakarta.validation.constraints.NotNull;
 
-public class UserDto extends  UpdateUserDto{
+public class UserDto extends UpdateUserDto {
     @NotNull(message = "Username can't be empty!")
     private String username;
 
