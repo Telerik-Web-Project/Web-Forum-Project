@@ -156,13 +156,4 @@ public class CommentServiceImplTests {
         Assertions.assertEquals(userComments, result);
     }
 
-    @Test
-    public void getTenMostCommentedPosts_should_CallRepository_When_Prompted() {
-        commentService.getTenMostCommentedPosts();
-
-        Mockito.verify(commentRepository, Mockito.times(1))
-                .getTenMostCommentedPosts();
-
-    }
-
 }

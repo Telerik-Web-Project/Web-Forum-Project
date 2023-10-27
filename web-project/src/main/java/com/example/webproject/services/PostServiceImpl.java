@@ -122,9 +122,9 @@ public class PostServiceImpl implements PostService {
         commentRepository.updateComment(comment);
     }
 
-    //@Override
+    @Override
     public List<Post> getTenMostCommentedPosts() {
-        return commentRepository.getTenMostCommentedPosts();
+        return postRepository.getTenMostCommentedPosts();
     }
 
     @Override

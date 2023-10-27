@@ -1,7 +1,10 @@
 package com.example.webproject.repositories.contracts;
 
 import com.example.webproject.models.Phone;
+import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
+
+import java.util.List;
 
 public interface PhoneRepository {
     Phone findPhone(String phoneNumber);
@@ -13,4 +16,5 @@ public interface PhoneRepository {
     void deletePhone(Phone phone);
 
     Phone createPhone(Phone phone);
+
 }

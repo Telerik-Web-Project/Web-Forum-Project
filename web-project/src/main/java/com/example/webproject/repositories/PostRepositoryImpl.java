@@ -27,7 +27,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<Post> getAll(PostFilter filter) {
-        try(Session session = sessionFactory.openSession()){
+        try (Session session = sessionFactory.openSession()) {
             List<String> filters = new ArrayList<>();
             Map<String, Object> params = new HashMap<>();
             filter.getTitle().ifPresent(value -> {
@@ -47,11 +47,12 @@ public class PostRepositoryImpl implements PostRepository {
                         .append(String.join(" and ", filters));
             }
             queryString.append(generateOrderBy(filter));
-            Query<Post> query = session.createQuery(queryString.toString(),Post.class);
+            Query<Post> query = session.createQuery(queryString.toString(), Post.class);
             query.setProperties(params);
             return query.list();
         }
     }
+
     //TODO check if constant  MASTER_USER_ID works properly !!!
     public List<Post> getPostsAsAnonymousUser() {
         try (Session session = sessionFactory.openSession()) {
@@ -61,7 +62,7 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getAll(){
+    public List<Post> getAll() {
         try (Session session = sessionFactory.openSession()) {
             Query<Post> query = session.createQuery("from Post", Post.class);
             return query.list();
@@ -79,9 +80,9 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<Comment> getPostComments(Post post) {
-        try(Session session = sessionFactory.openSession()){
+        try (Session session = sessionFactory.openSession()) {
             Query<Comment> result = session.createQuery("from Comment where post.id=:id", Comment.class);
-            result.setParameter("id",post.getId());
+            result.setParameter("id", post.getId());
             return result.list();
         }
     }
@@ -96,6 +97,7 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
+
     @Override
     public Post createPost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -105,6 +107,7 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
+
     @Override
     public Post updatePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -114,6 +117,7 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
+
     @Override
     public Post deletePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
@@ -124,6 +128,7 @@ public class PostRepositoryImpl implements PostRepository {
             return post;
         }
     }
+
     private void deletePostComments(int postId) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
@@ -134,6 +139,7 @@ public class PostRepositoryImpl implements PostRepository {
             session.getTransaction().commit();
         }
     }
+
     private String generateOrderBy(PostFilter filter) {
         if (filter.getSortBy().isEmpty()) {
             return "";
@@ -155,5 +161,18 @@ public class PostRepositoryImpl implements PostRepository {
             orderBy = String.format("%s desc", orderBy);
         }
         return orderBy;
+    }
+
+    @Override
+    public List<Post> getTenMostCommentedPosts() {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Post> query = session.createQuery("SELECT c.post " +
+                    "FROM Comment c " +
+                    "GROUP BY c.post " +
+                    "ORDER BY COUNT(c.id) DESC", Post.class);
+            query.setMaxResults(10);
+            return query.list();
+
+        }
     }
 }

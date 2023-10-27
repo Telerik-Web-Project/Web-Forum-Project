@@ -19,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.example.webproject.Helpers.createMockPhone;
 import static com.example.webproject.Helpers.createMockUser;
+import static com.example.webproject.helpers.ValidationHelper.*;
+import static com.example.webproject.helpers.ValidationHelper.validatePhone;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -207,6 +209,9 @@ public class UserServiceImplTests {
         phone.setAdminUser(user);
 
         Mockito.when(phoneRepository.
+                findPhone(phone.getAdminUser())).thenThrow(EntityNotFoundException.class);
+
+        Mockito.when(phoneRepository.
                 findPhone(phone.getPhoneNumber())).thenReturn(phone);
 
         Assertions.assertThrows(EntityDuplicateException.class,()->userService.addPhoneNumber(phone));
@@ -222,13 +227,12 @@ public class UserServiceImplTests {
         phone.setAdminUser(user);
 
         Mockito.when(phoneRepository.
-                findPhone(Mockito.anyString())).thenThrow(EntityNotFoundException.class);
-
-        Mockito.when(phoneRepository.
                 findPhone(Mockito.any(User.class))).thenReturn(phone);
+
 
         Assertions.assertThrows(AuthorizationException.class,()->userService.addPhoneNumber(phone));
     }
+
 
     @Test
     public void add_Phone_Should_Call_Repository_When_User_Is_Admin_And_Passed_Valid_Phone(){
@@ -294,7 +298,7 @@ public class UserServiceImplTests {
         Mockito.verify(userRepository,Mockito.times(1)).updateUser(loggedUser);
     }
     @Test
-    public void update_Should_Throw_When_User_Is_Banned(){
+    public void update_User_Should_Throw_When_User_Is_Banned(){
         User loggedUser = createMockUser();
         User userToBeUpdated = createMockUser();
 
@@ -305,6 +309,31 @@ public class UserServiceImplTests {
 
         Assertions.assertThrows(UserBannedException.class,
                 ()->userService.updateUser(loggedUser,userToBeUpdated));
+    }
+    @Test
+    public void update_Phone_Should_Throw_When_User_IsBanned(){
+        User user = createMockUser();
+        user.setBlocked(true);
+
+        Phone phone = createMockPhone();
+        phone.setAdminUser(user);
+
+        Assertions.assertThrows(UserBannedException.class,
+                ()->userService.updatePhoneNumber(user,phone));
+    }
+    @Test
+    public void update_Phone_Should_Throw_When_Duplicate_Phone_Number(){
+        User user = createMockUser();
+
+        Phone phone = createMockPhone();
+
+        phone.setAdminUser(user);
+
+        Mockito.when(phoneRepository.findPhone(Mockito.any(String.class)))
+                .thenReturn(phone);
+        Assertions.assertThrows(EntityDuplicateException.
+                class,()->userService.updatePhoneNumber(user,phone));
+
     }
 }
 

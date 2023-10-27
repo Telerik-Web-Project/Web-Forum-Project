@@ -17,4 +17,5 @@ public interface PostRepository {
     int getLikesCount(Post post);
     List<Post> getPostsAsAnonymousUser();
     List<Comment> getPostComments(Post post);
+    List<Post> getTenMostCommentedPosts();
 }
