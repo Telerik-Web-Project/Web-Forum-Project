@@ -39,11 +39,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getPostsWithTag(String tag){
-        List<Post> tagPosts = postRepository.getAll();
         Tag repoTag = tagRepository.get(tag);
-        return tagPosts.stream()
-                .filter(post -> post.getTags().stream().anyMatch(tag1 -> tag1.getName().equals(repoTag.getName())))
-                .collect(Collectors.toList());
+        return postRepository.getPostsWithTags(repoTag);
     }
 
     @Override
