@@ -91,19 +91,15 @@ public class PostServiceImplTests {
     @Test
     public void getPostsWithTag_Should_callRepository(){
         Tag mockTag = createMockTag();
-        List<Post> mockPostList = new ArrayList<>();
 
-
-        Mockito.when(postRepository.getAll())
-                        .thenReturn(mockPostList);
 
         Mockito.when(tagRepository.get(mockTag.getName()))
                         .thenReturn(mockTag);
 
         postService.getPostsWithTag(mockTag.getName());
 
-        Mockito.verify(tagRepository, Mockito.times(1))
-                .get(Mockito.anyString());
+        Mockito.verify(postRepository, Mockito.times(1))
+                .getPostsWithTags(mockTag);
     }
 
     @Test
