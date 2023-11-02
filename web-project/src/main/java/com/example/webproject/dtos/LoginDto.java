@@ -3,13 +3,16 @@ package com.example.webproject.dtos;
 import jakarta.validation.constraints.NotEmpty;
 
 public class LoginDto {
-    @NotEmpty(message = "Username cannot be empty")
+
+    @NotEmpty(message = "Username can't be empty")
     private String username;
-    @NotEmpty(message = "Password cannot be empty")
+
+    @NotEmpty(message = "Password can't be empty")
     private String password;
 
     public LoginDto() {
     }
+
     public String getUsername() {
         return username;
     }
@@ -25,4 +28,6 @@ public class LoginDto {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }
+

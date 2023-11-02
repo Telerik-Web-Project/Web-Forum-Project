@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>FORUM | Home Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body id="home-body">
+    <div id="home-div">
+    <header id="home-header" th:fragment="header">
+        <a href="#" class="logo" th:href="@{/}"><i class="ri-home-4-fill"></i><span>Rocket Forum</span></a>
+
+        <ul class="navbar">
+            <li><a href="#" class="active" th:href="@{/}" th:text="#{navigation.home}">Home</a></li>
+            <li><a href="#" th:href="@{/}" th:text="#{navigation.posts}">Posts</a></li>
+            <li><a href="#" th:href="@{/}" th:text="#{navigation.users}">Users</a></li>
+        </ul>
+        <div class="main">
+            <a href="#" class="user" th:href="@{/auth/login}"> <i class="ri-user-fill"></i>Sign In</a>
+            <a href="#">Register</a>
+            <div class="bx bx-menu" id="menu-icon"></div>
+        </div>
+    </header>
+    </div>
+    <footer>
+            <p>&copy; <span id="current-year"></span> Forum</p>
+            <p id="local-time"></p>
+    </footer>
+<!--jslink-->
+<script type="text/javascript" src="../static/js/script.js" th:src="@{/js/script.js}"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+/*HEADER NAV BAR START*/
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    list-style: none;
+}
+:root{
+    --bg-color: #222327;
+    --text-color: #fff;
+    --main-color: #29fd53;
+}
+body{
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+#home-header{
+    position: fixed;
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    padding: 28px 12%;
+    transition: all .50s ease;
+}
+.logo{
+    display: flex;
+    align-items: center;
+}
+.logo i{
+    color: var(--main-color);
+    font-size: 28px;
+    margin-right: 3px;
+}
+.logo span{
+    color: var(--text-color);
+    font-size: 1.7rem;
+    font-weight: 600;
+}
+
+.navbar{
+    display: flex;
+}
+.navbar a{
+    color: var(--text-color);
+    margin: 0px 30px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 5px 0;
+    transition: all .4s ease;
+}
+.navbar a:hover{
+    color: var(--main-color);
+}
+.navbar a.active{
+    color: var(--main-color);
+}
+
+.main{
+    display: flex;
+    align-items: center;
+}
+.main a{
+    margin-right: 20px;
+    margin-left: 10px;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.4s ease;
+}
+.main a:hover{
+    color: var(--main-color);
+}
+
+.user{
+    display: flex;
+    align-items: center;
+}
+.user i{
+    color: var(--main-color);
+    font-size: 28px;
+}
+#menu-icon{
+    font-size: 35px;
+    color: var(--text-color);
+    cursor: pointer;
+    z-index: 10001;
+    display: none;
+}
+@media (max-width: 1100px) {
+    header{
+        padding: 14px 2%;
+        transition: .2s;
+    }
+    .navbar a{
+        padding: 5px 0;
+        margin: 0px 20px;
+
+    }
+}
+@media (max-width: 1000px){
+   #menu-icon{
+       display: block;
+   }
+   .navbar{
+       position: absolute;
+       top: 100%;
+       right: -100%;
+       width: 270px;
+       height: 29vh;
+       background: var(--main-color);
+       display: flex;
+       flex-direction: column;
+       justify-content: flex-start;
+       border-radius: 10px;
+       transition: all .4s ease;
+   }
+   .navbar a{
+       display: block;
+       margin: 12px 0;
+       padding: 0px 25px;
+       transition: all .4s ease;
+   }
+    .navbar a:hover{
+        color: var(--text-color);
+        transform: translateY(10px);
+    }
+    .navbar a.active{
+        color: var(--text-color);
+    }
+    .navbar.open{
+        right: 2%;
+    }
+}
+/*HEADER NAV BAR END*/
+
+/*FOOTER START*/
+footer{
+    text-align: center;
+    padding: 10px 50px 10px 50px;
+    border-top: 1px solid #dee2e6;
+}
+/*FOOTER END*/
+/*LOGIN FORM START*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif, poppins;
+}
+
+body.login {
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 97vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form {
+ width: 350px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(5px);
+    border: 2px solid;
+    border-radius: 7px;
+    align-items: center;
+    padding-top: 30px;
+}
+
+.form h4 {
+    font-family: sans-serif, poppins;
+    font-weight: bolder;
+    font-size: 20px;
+}
+.form .login {
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+}
+.login input, button{
+    margin: 10px;
+    padding: 10px 15px;
+    border-radius: 60px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login button{
+    background-color: var(--main-color);
+    border-style: hidden;
+    font-family: sans-serif, poppins;
+    font-size: 17px;
+    text-transform: uppercase;
+}
+
+.login button:active{
+    transform: scale(0.95);
+}
+
+
+.login input{
+    background-color: whitesmoke;
+    border: none;
+    letter-spacing: 1px;
+    text-indent: 35px;
+    background-image: url("/static/images/user.png");
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 15px;
+}
+
+.login input:nth-child(2){
+    background-color: whitesmoke;
+    border: none;
+    text-indent: 35px;
+    background-image: url("/static/images/password.png");
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 15px;
+}
+.login input::placeholder {
+    font-size: 14px;
+}
+.remember {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    font-family: sans-serif;
+}
+/*LOGIN FORM END*/
