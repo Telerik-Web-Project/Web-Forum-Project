@@ -22,8 +22,13 @@ public class UserMapper {
         user.setPassword(updateUserDto.getPassword());
         user.setEmail(updateUserDto.getEmail());
         return user;
-    } {
-
     }
-
+    public UpdateUserDto fromUserToDto(User user){
+        UpdateUserDto updateUserDto = new UpdateUserDto();
+        updateUserDto.setFirstName(user.getFirstName());
+        updateUserDto.setLastName(user.getLastName());
+        updateUserDto.setEmail(user.getEmail());
+        updateUserDto.setPassword(user.getPassword());
+        return updateUserDto;
+    }
 }
