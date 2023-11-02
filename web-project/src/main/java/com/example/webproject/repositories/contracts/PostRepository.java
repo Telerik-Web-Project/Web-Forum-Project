@@ -3,6 +3,7 @@ package com.example.webproject.repositories.contracts;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.PostFilter;
+import com.example.webproject.models.Tag;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface PostRepository {
     int getLikesCount(Post post);
     List<Post> getPostsAsAnonymousUser();
     List<Comment> getPostComments(Post post);
+    List<Post> getTenMostCommentedPosts();
+    List<Post> getPostsWithTags(Tag tag);
 }

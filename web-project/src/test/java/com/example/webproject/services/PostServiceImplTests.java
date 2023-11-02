@@ -3,11 +3,11 @@ package com.example.webproject.services;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
-import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.*;
 import com.example.webproject.repositories.CommentRepositoryImpl;
-import com.example.webproject.repositories.PostRepository;
+
 import com.example.webproject.repositories.TagRepositoryImpl;
+import com.example.webproject.repositories.contracts.PostRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,8 +30,6 @@ public class PostServiceImplTests {
     @Mock
     private CommentRepositoryImpl commentRepository;
 
-    @Mock
-    private CommentServiceImpl commentService;
 
     @Mock
     private TagRepositoryImpl tagRepository;
@@ -93,19 +91,15 @@ public class PostServiceImplTests {
     @Test
     public void getPostsWithTag_Should_callRepository(){
         Tag mockTag = createMockTag();
-        List<Post> mockPostList = new ArrayList<>();
 
-
-        Mockito.when(postRepository.getAll())
-                        .thenReturn(mockPostList);
 
         Mockito.when(tagRepository.get(mockTag.getName()))
                         .thenReturn(mockTag);
 
         postService.getPostsWithTag(mockTag.getName());
 
-        Mockito.verify(tagRepository, Mockito.times(1))
-                .get(Mockito.anyString());
+        Mockito.verify(postRepository, Mockito.times(1))
+                .getPostsWithTags(mockTag);
     }
 
     @Test
@@ -514,7 +508,7 @@ public class PostServiceImplTests {
     public void getTenMostCommentedPosts_should_CallRepository_When_Prompted() {
         postService.getTenMostCommentedPosts();
 
-        Mockito.verify(commentRepository, Mockito.times(1))
+        Mockito.verify(postRepository, Mockito.times(1))
                 .getTenMostCommentedPosts();
 
     }

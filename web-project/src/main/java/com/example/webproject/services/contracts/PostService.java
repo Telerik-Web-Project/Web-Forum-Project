@@ -26,6 +26,6 @@ public interface PostService {
     void addComment(User user, Post post, Comment comment);
 
     List<Comment> getPostComments(Post post);
-
+    List<Post> getTenMostCommentedPosts();
     void updateComment(User user, Comment comment);
 }

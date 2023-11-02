@@ -40,7 +40,7 @@ public class PostController {
 
     //TODO implement get10mostLikedPosts
     @GetMapping()
-    public List<Post> getAll(@RequestHeader(required = false) HttpHeaders headers,
+    public List<Post> getAll(
                              @RequestParam(required = false) String title,
                              @RequestParam(required = false) String content,
                              @RequestParam(required = false) String sortBy,
@@ -51,7 +51,7 @@ public class PostController {
 
     @GetMapping("/mostCommented")
     public List<Post> getTenMostCommentedPosts () {
-        return commentService.getTenMostCommentedPosts();
+        return postService.getTenMostCommentedPosts();
     }
 
     @GetMapping("/{id}")

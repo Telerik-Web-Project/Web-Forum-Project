@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
@@ -40,8 +40,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public List<Comment> getUserComments(User user) {
-        List<Comment> userComments = commentRepository.getUserComments(user);
-        return userComments;
+        return commentRepository.getUserComments(user);
     }
 
     @Override
@@ -50,10 +49,5 @@ public class CommentServiceImpl implements CommentService {
         ValidationHelper.validateModifyPermissions(commentRepository, repositoryComment, user);
         ValidationHelper.checkIfBanned(user);
         commentRepository.deleteComment(repositoryComment);
-    }
-
-    @Override
-    public List<Post> getTenMostCommentedPosts() {
-        return commentRepository.getTenMostCommentedPosts();
     }
 }

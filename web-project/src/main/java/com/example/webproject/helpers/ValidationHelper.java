@@ -100,9 +100,7 @@ public class ValidationHelper {
         }
     }
     public static void validateUserIsAdmin(PhoneRepository phoneRepository,Phone phone) {
-        if (phone.getAdminUser().isAdmin()) {
-            phoneRepository.createPhone(phone);
-        } else {
+        if (!phone.getAdminUser().isAdmin()) {
             throw new AuthorizationException("Only admins can add phone numbers");
         }
     }
@@ -121,7 +119,6 @@ public class ValidationHelper {
     public static void masterUserAccessDenied(int id) {
         if(id == UserServiceImpl.DATA_BASE_USER_ID){
             throw new AuthorizationException("Access denied for master user !");
-            //TODO check if error message if correct
         }
     }
     public static void validateUpdatePermission(int id, User user) {

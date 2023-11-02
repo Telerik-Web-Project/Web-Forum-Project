@@ -16,5 +16,5 @@ public interface CommentService {
     void updateComment(Comment comment, User user, int id);
 
     void deleteComment(User user, int id);
-    List<Post> getTenMostCommentedPosts();
+
 }
