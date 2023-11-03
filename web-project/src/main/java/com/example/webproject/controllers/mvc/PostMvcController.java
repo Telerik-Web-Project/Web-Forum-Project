@@ -43,6 +43,12 @@ public class PostMvcController {
         this.commentMapper = commentMapper;
     }
 
+    @ModelAttribute("isAuthenticated")
+    public boolean populateIsAuthenticated(HttpSession session) {
+
+        return session.getAttribute("currentUser") != null;
+    }
+
     @GetMapping
     public String getAll(@Valid @ModelAttribute("postFilter") PostFilterDto filterDto, Model model) {
         PostFilter postFilter = new PostFilter(
@@ -51,9 +57,10 @@ public class PostMvcController {
                 filterDto.getSortBy(),
                 filterDto.getSortOrder()
         );
+        model.addAttribute("postService", postService);
         model.addAttribute("posts", postService.getAll(postFilter));
         model.addAttribute("postFilter", filterDto);
-        return "AllPostsView";
+        return "PostsView";
     }
 
 //    @GetMapping("/mostCommented")
@@ -91,7 +98,7 @@ public class PostMvcController {
         return "AllPostsView";
     }
 
-    @GetMapping()
+    @GetMapping("/create")
     public String showCreatePostView(Model model, HttpSession session) {
         try {
             authenticationHelper.tryGetCurrentUser(session);
