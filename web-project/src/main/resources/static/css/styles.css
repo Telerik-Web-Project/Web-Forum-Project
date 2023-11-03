@@ -1,4 +1,4 @@
-
+/*HEADER NAV BAR START*/
 *{
     padding: 0;
     margin: 0;
@@ -8,12 +8,13 @@
     list-style: none;
 }
 :root{
-    --bg-color: #222327;
-    --text-color: #fff;
-    --main-color: #29fd53;
+    --bg-color: #f1f5f9;
+    --text-color: black;
+    --main-color: #624bff;
+    /*#624bff*/
 }
 body{
-    min-height: 100vh;
+    min-height: auto;
     background-color: var(--bg-color);
     color: var(--text-color);
 }
@@ -36,7 +37,7 @@ body{
     align-items: center;
 }
 .logo i{
-    color: var(--main-color);
+    color: var(--text-color);
     font-size: 28px;
     margin-right: 3px;
 }
@@ -58,10 +59,10 @@ body{
     transition: all .4s ease;
 }
 .navbar a:hover{
-    color: var(--main-color);
+    color: var(--bg-color);
 }
 .navbar a.active{
-    color: var(--main-color);
+    color: var(--bg-color);
 }
 
 .main{
@@ -77,7 +78,7 @@ body{
     transition: all 0.4s ease;
 }
 .main a:hover{
-    color: var(--main-color);
+    color: var(--text-color);
 }
 
 .user{
@@ -85,8 +86,12 @@ body{
     align-items: center;
 }
 .user i{
-    color: var(--main-color);
+    color: var(--text-color);
     font-size: 28px;
+    transition: .4s ease;
+}
+.user i:hover{
+    color: var(--bg-color);
 }
 #menu-icon{
     font-size: 35px;
@@ -130,11 +135,11 @@ body{
        transition: all .4s ease;
    }
     .navbar a:hover{
-        color: var(--text-color);
+        color: var(--bg-color);
         transform: translateY(10px);
     }
     .navbar a.active{
-        color: var(--text-color);
+        color: var(--bg-color);
     }
     .navbar.open{
         right: 2%;
@@ -142,17 +147,114 @@ body{
 }
 /*HEADER NAV BAR END*/
 
-/*FOOTER START*/
 footer {
-    background-color: var(--bg-color);
-    color: #fff;
-    padding: 10px;
+    /*width: 100%;*/
+    /*background-color: var(--bg-color);*/
+    /*color: var(--text-color);*/
     text-align: center;
-    position: absolute;
-    bottom: 0;
+    /*padding: 10px;*/
+    /*position: absolute; bottom: 0; left: 0; right: 0;*/
+    position: relative;
+    bottom: 50px;
     width: 100%;
+    height: 10px;   /* Height of the footer */
 }
 /*FOOTER END*/
+
+/*MOST COMMENTED START*/
+.top-commented {
+    font-family: Leelawadee, serif;
+    min-height: 50vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+.bodytest {
+    background: transparent;
+    border: solid 2px;
+    border-radius: 10px;
+    margin: 50px auto 100px auto; /* Added margin at the top */
+    width: 80%; /* Adjust as needed */
+    padding: 30px 10px 10px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: 1px 1px 3px 1px var(--text-color);
+}
+
+.top-title {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: var(--text-color) 1px 0 2px;
+}
+
+.post-wrapper {
+    width: 90%;
+}
+
+.post-container {
+    display: grid;
+    grid-template-columns: 40px 3fr 1fr 1fr;
+    align-items: center;
+    margin: 10px;
+    border: 1px solid lightgray;
+    top: 100px;
+    padding: 3px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 1px 1px 3px 1px var(--text-color);
+}
+
+.profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.like{
+    width: 25px;
+    height: 25px;
+}
+
+.comment{
+    width: 25px;
+    height: 25px;
+}
+
+.comments-container, .like-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push them to the right */
+    margin-right: 10px; /* Adjust as needed */
+}
+
+.comment, .like-count, .comment-count {
+    margin: 6px;
+}
+
+.comment-count {
+    margin-top: 12px;
+}
+.like-count{
+    margin-top: 12px;
+}
+
+.post-title {
+    text-align: left;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-left: 60px;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/*MOST COMMENTED END*/
 /*LOGIN FORM START*/
 *{
     margin: 0;
@@ -161,14 +263,15 @@ footer {
     font-family: sans-serif, poppins;
 }
 
-body.login {
-    min-height: 100vh;
+.div-login {
+    min-height: 50vh;
     background-color: var(--bg-color);
     color: var(--text-color);
-    height: 97vh;
+    height: 50vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-bottom: 50px;
 }
 .form {
  width: 350px;
@@ -242,83 +345,4 @@ body.login {
     align-items: center;
     font-family: sans-serif;
 }
-.cell {
-    display: table-cell;
-    width: 20%;
-    padding: 12px;
-    border-bottom: 1px solid #dee2e6;
-}
-.body-test {
-    border: 5px solid;
-    border-radius: 10px;
-    margin: 300px 20px 20px 20px;
-    width: 90%;
-    padding: 50px 20px 20px 20px;
-    position: relative;
-}
-
-.top-title {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.5em;
-    font-weight: bold;
-    text-align: center;
-}
-
-.line {
-    color :black;
-    width: 100%;
-    height: 2px;
-    background-color: black;
-    position: absolute;
-    top: 45px;
-    left: 0;
-}
-
-.post-wrapper {
-    width: 100%; /* Adjust the width as needed */
-}
-
-.post-container {
-    display: grid;
-    grid-template-columns: 50px 1fr 1fr 1fr;
-    align-items: center;
-    margin: 20px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.profile-picture {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.post-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: 10px;
-}
-
-.post-title, .like-count, .comment-count {
-    margin: 10px 0;
-}
-
-.post-title {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-.centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
 /*LOGIN FORM END*/

@@ -13,9 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body id="home-body">
-    <div id="home-div">
-
-    <header id="home-header" th:fragment="header">
+    <div id="home-div" th:fragment="header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#0099ff" fill-opacity="1" d="M0,0L40,37.3C80,75,160,149,240,192C320,235,400,245,480,240C560,235,640,213,720,186.7C800,160,880,128,960,128C1040,128,1120,160,1200,192C1280,224,1360,256,1400,272L1440,288L1440,0L1400,0C1360,0,1280,0,1200,0C1120,0,1040,0,960,0C880,0,800,0,720,0C640,0,560,0,480,0C400,0,320,0,240,0C160,0,80,0,40,0L0,0Z"></path></svg>
+    <header id="home-header">
         <a href="#" class="logo" th:href="@{/}"><i class="ri-home-4-fill"></i><span>Rocket Forum</span></a>
 
         <ul class="navbar">
@@ -30,33 +30,29 @@
         </div>
     </header>
     </div>
-
- <div class="body-test centered" >
-        <div class="top-title">Top 10 Most Commented Posts</div>
-        <div class="line"></div>
-        <div class="post-wrapper">
-            <div class="post-container" th:each="post:${topPosts}">
-                <img class="profile-picture" src="profile1.jpg" alt="Profile Picture">
-                <div class="post-title" th:text="${post.getTitle()}">Post Title 1</div>
-                <div class="like-count" th:unless="${post.likes} and ${#lists.size(post.likes) > 0}" th:else th:text="'Likes: ' + ${#lists.size(post.likes)}"></div>
-                <div class="comment-count">Comments: 50</div>
-            </div>&ndash;&gt;
-
-<!--           &lt;!&ndash; <div class="post-container">-->
-<!--                <img class="profile-picture" src="profile2.jpg" alt="Profile Picture">-->
-<!--                <div class="post-title">Post Title 2</div>-->
-<!--                <div class="like-count">Likes: 150</div>-->
-<!--                <div class="comment-count">Comments: 75</div>-->
-<!--            </div>&ndash;&gt;-->
-    <div>
-
+    <div class="top-commented">
+        <div class="bodytest">
+            <div class="top-title">MOST COMMENTED</div>
+            <div class="post-wrapper">
+                <div class="post-container" th:each="post : ${topPosts}">
+                    <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}" alt="Profile Picture">
+                    <div class="post-title" th:text="${post.title}">This new Rocket forum is looking great</div>
+                    <div class="like-container">
+                        <img class="like" src="../static/images/like.png" th:src="@{/images/like.png}" alt="">
+                        <div class="like-count" th:text="${post.likeCounts}">100</div>
+                    </div>
+                    <div class="comments-container">
+                        <img class="comment" src="../static/images/chat.png" th:src="@{/images/chat.png}" alt="">
+                        <div class="comment-count" th:text="${postService.getPostComments(post).size()}">50</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <footer class="footer">
-            <p>&copy; <span id="current-year" ></span> Forum</p>
+    <footer th:fragment="footer">
+            <p>&copy; <span id="current-year" ></span> Rocket Forum</p>
             <p id="local-time" ></p>
     </footer>
-<!--jslink-->
 <script type="text/javascript" src="../static/js/script.js" th:src="@{/js/script.js}"></script>
 </body>
 </html>

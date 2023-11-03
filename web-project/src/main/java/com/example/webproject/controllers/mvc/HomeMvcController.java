@@ -40,6 +40,7 @@ public class HomeMvcController {
     public String showHomePage(Model model) {
         int activeUsers = userService.getUsersCount();
         List<Post> topPosts = postService.getTenMostCommentedPosts();
+        model.addAttribute("postService",postService);
         model.addAttribute("usersCount",activeUsers);
         model.addAttribute("topPosts",topPosts);
         return "HomeView";
