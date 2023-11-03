@@ -13,8 +13,8 @@ function updateLocalTime() {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
-    localTimeElement.textContent = `Local time:${hours}:${minutes}`;
+    localTimeElement.textContent = `Local time : ${hours}:${minutes}`;
 }
-
 setInterval(updateLocalTime, 1000);
 updateLocalTime();
+

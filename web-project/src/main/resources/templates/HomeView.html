@@ -14,6 +14,7 @@
 </head>
 <body id="home-body">
     <div id="home-div">
+
     <header id="home-header" th:fragment="header">
         <a href="#" class="logo" th:href="@{/}"><i class="ri-home-4-fill"></i><span>Rocket Forum</span></a>
 
@@ -29,7 +30,29 @@
         </div>
     </header>
     </div>
-    <footer>
+
+ <div class="body-test centered" >
+        <div class="top-title">Top 10 Most Commented Posts</div>
+        <div class="line"></div>
+        <div class="post-wrapper">
+            <div class="post-container" th:each="post:${topPosts}">
+                <img class="profile-picture" src="profile1.jpg" alt="Profile Picture">
+                <div class="post-title" th:text="${post.getTitle()}">Post Title 1</div>
+                <div class="like-count" th:unless="${post.likes} and ${#lists.size(post.likes) > 0}" th:else th:text="'Likes: ' + ${#lists.size(post.likes)}"></div>
+                <div class="comment-count">Comments: 50</div>
+            </div>&ndash;&gt;
+
+<!--           &lt;!&ndash; <div class="post-container">-->
+<!--                <img class="profile-picture" src="profile2.jpg" alt="Profile Picture">-->
+<!--                <div class="post-title">Post Title 2</div>-->
+<!--                <div class="like-count">Likes: 150</div>-->
+<!--                <div class="comment-count">Comments: 75</div>-->
+<!--            </div>&ndash;&gt;-->
+    <div>
+
+    </div>
+
+    <footer class="footer">
             <p>&copy; <span id="current-year" ></span> Forum</p>
             <p id="local-time" ></p>
     </footer>

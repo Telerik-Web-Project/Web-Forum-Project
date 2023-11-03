@@ -1,4 +1,4 @@
-package com.example.webproject.controllers;
+package com.example.webproject.controllers.rest;
 
 import com.example.webproject.dtos.CommentDto;
 import com.example.webproject.dtos.PostDto;

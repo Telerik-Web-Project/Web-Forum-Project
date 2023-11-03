@@ -1,4 +1,4 @@
-package com.example.webproject.controllers;
+package com.example.webproject.controllers.mvc;
 import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.dtos.UserDto;
 import com.example.webproject.dtos.UserFilterDto;
