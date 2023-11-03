@@ -3,6 +3,7 @@ import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -41,5 +42,27 @@ public class AuthenticationHelper {
             return "";
         }
         return input.charAt(0) + getUsername(input.substring(1));
+    }
+
+    public User tryGetCurrentUser(HttpSession session) {
+        String currentUsername = (String) session.getAttribute("currentUser");
+
+        if (currentUsername == null) {
+            throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
+        }
+
+        return userService.getByUsername(currentUsername);
+    }
+
+    public User verifyAuthentication(String username, String password) {
+        try {
+            User user = userService.getByUsername(username);
+            if (!user.getPassword().equals(password)) {
+                throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
+            }
+            return user;
+        } catch (EntityNotFoundException e) {
+            throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
+        }
     }
 }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>FORUM | Home Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body id="home-body">
+    <div id="home-div">
+
+    <header id="home-header" th:fragment="header">
+        <a href="#" class="logo" th:href="@{/}"><i class="ri-home-4-fill"></i><span>Rocket Forum</span></a>
+
+        <ul class="navbar">
+            <li><a href="#" class="active" th:href="@{/}" th:text="#{navigation.home}">Home</a></li>
+            <li><a href="#" th:href="@{/}" th:text="#{navigation.posts}">Posts</a></li>
+            <li><a href="#" th:href="@{/}" th:text="#{navigation.users}">Users</a></li>
+        </ul>
+        <div class="main">
+            <a href="#" class="user" th:href="@{/auth/login}"> <i class="ri-user-fill"></i>Sign In</a>
+            <a href="#">Register</a>
+            <div class="bx bx-menu" id="menu-icon"></div>
+        </div>
+    </header>
+    </div>
+
+ <div class="body-test centered" >
+        <div class="top-title">Top 10 Most Commented Posts</div>
+        <div class="line"></div>
+        <div class="post-wrapper">
+            <div class="post-container" th:each="post:${topPosts}">
+                <img class="profile-picture" src="profile1.jpg" alt="Profile Picture">
+                <div class="post-title" th:text="${post.getTitle()}">Post Title 1</div>
+                <div class="like-count" th:unless="${post.likes} and ${#lists.size(post.likes) > 0}" th:else th:text="'Likes: ' + ${#lists.size(post.likes)}"></div>
+                <div class="comment-count">Comments: 50</div>
+            </div>&ndash;&gt;
+
+<!--           &lt;!&ndash; <div class="post-container">-->
+<!--                <img class="profile-picture" src="profile2.jpg" alt="Profile Picture">-->
+<!--                <div class="post-title">Post Title 2</div>-->
+<!--                <div class="like-count">Likes: 150</div>-->
+<!--                <div class="comment-count">Comments: 75</div>-->
+<!--            </div>&ndash;&gt;-->
+    <div>
+
+    </div>
+
+    <footer class="footer">
+            <p>&copy; <span id="current-year" ></span> Forum</p>
+            <p id="local-time" ></p>
+    </footer>
+<!--jslink-->
+<script type="text/javascript" src="../static/js/script.js" th:src="@{/js/script.js}"></script>
+</body>
+</html>

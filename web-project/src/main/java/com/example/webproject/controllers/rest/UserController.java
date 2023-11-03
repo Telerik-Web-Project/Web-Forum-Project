@@ -1,4 +1,4 @@
-package com.example.webproject.controllers;
+package com.example.webproject.controllers.rest;
 
 import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.dtos.UserDto;
@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
     private final AuthenticationHelper authenticationHelper;
@@ -86,11 +86,11 @@ public class UserController {
     @PutMapping("/{id}")
     public User updateUser(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody UpdateUserDto updateUserDto) {
         try {
-            ValidationHelper.masterUserAccessDenied(id);
+//            ValidationHelper.masterUserAccessDenied(id);
             User user = authenticationHelper.getUser(headers);
             ValidationHelper.validateUpdatePermission(id, user);
-            User userToBeUpdate = userMapper.fromUpdateUserDto(updateUserDto);
-            return userService.updateUser(user, userToBeUpdate);
+            User userToBeUpdated = userMapper.fromUpdateUserDto(updateUserDto);
+            return userService.updateUser(user, userToBeUpdated);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (AuthorizationException e) {
