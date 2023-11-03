@@ -70,7 +70,6 @@ public class PostController {
       }catch (EntityNotFoundException e){
           throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
       }
-
     }
     @PostMapping("/{id}/tags")
     public void addTagToPost(@PathVariable int id, @RequestBody Tag tag, @RequestHeader HttpHeaders headers){
@@ -219,5 +218,4 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
-
 }
