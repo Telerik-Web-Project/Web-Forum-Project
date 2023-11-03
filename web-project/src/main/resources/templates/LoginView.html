@@ -19,7 +19,7 @@
 
         <ul class="navbar">
             <li><a href="#" class="active" th:href="@{/}" th:text="#{navigation.home}">Home</a></li>
-            <li><a href="#" th:href="@{/}" th:text="#{navigation.posts}">Posts</a></li>
+            <li><a href="#" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
             <li><a href="#" th:href="@{/}" th:text="#{navigation.users}">Users</a></li>
         </ul>
         <div class="main">
@@ -32,17 +32,17 @@
 <div class="div-login">
 <div class="form">
     <h4 th:text="#{login}">Login</h4>
-    <div class="login">
-        <input type="text" th:src="@{/images/user.png}" src="../static/images/user.png"  placeholder="Username">
-        <input type="password" src="../static/images/password.png" th:src="@{/images/password.png}" placeholder="Password">
-        <button th:text="#{sign.in}">Sign In</button>
+    <form class="login" action="#" th:action="@{/auth/login}" th:object="${login}" method="post">
+        <input type="text" th:field="*{username}" placeholder="Username">
+        <input type="password" th:field="*{password}" src="../static/images/password.png" th:src="@{/images/password.png}"  placeholder="Password">
+        <button  type="submit"  value="login" th:text="#{sign.in}">Sign In</button>
         <div class="suggest">
             <div class="remember">
             <input type="checkbox" checked>
             <span th:text="#{remember.me}">Remember Me</span>
             </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 </div>
