@@ -91,7 +91,7 @@ public class PostMvcController {
         return "AllPostsView";
     }
 
-    @GetMapping()
+    @GetMapping("/new")
     public String showCreatePostView(Model model, HttpSession session) {
         try {
             authenticationHelper.tryGetCurrentUser(session);
@@ -104,7 +104,7 @@ public class PostMvcController {
         return "Post-New";
     }
 
-    @PostMapping()
+    @PostMapping("/new")
     public String createPost(@Valid @ModelAttribute("post") PostDto postDto,
                              BindingResult errors,
                              Model model,

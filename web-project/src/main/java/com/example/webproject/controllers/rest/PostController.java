@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class PostController {
 
     private final AuthenticationHelper authenticationHelper;
@@ -47,6 +47,13 @@ public class PostController {
                              @RequestParam(required = false) String sortOrder) {
         PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
         return postService.getAll(filter);
+    }
+    @GetMapping("/")
+    public List<Post> getPaginatedPosts(
+            @RequestParam(name = "page",
+                    defaultValue = "1")
+                    int page) {
+        return postService.getPaginatedPosts(page);
     }
 
     @GetMapping("/mostCommented")

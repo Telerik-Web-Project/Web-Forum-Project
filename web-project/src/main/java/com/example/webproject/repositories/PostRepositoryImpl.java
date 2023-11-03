@@ -18,6 +18,7 @@ import java.util.Map;
 public class PostRepositoryImpl implements PostRepository {
 
     private static final String MASTER_USER_ID = "1";
+    private static final int POST_PER_PAGE = 5;
     private final SessionFactory sessionFactory;
 
     @Autowired
@@ -189,4 +190,14 @@ public class PostRepositoryImpl implements PostRepository {
             return query.list();
         }
     }
+    public List<Post> getPaginatedPosts(int page){
+        try (Session session = sessionFactory.openSession()) {
+            int offset = (page - 1) * POST_PER_PAGE;
+            Query<Post> query = session.createQuery("FROM Post", Post.class);
+            query.setFirstResult(offset);
+            query.setMaxResults(POST_PER_PAGE);
+            return query.list();
+        }
+    }
 }
+
