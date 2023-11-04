@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User updateUser(User loggedUser, User userToBeUpdated) {
+        ValidationHelper.validateUpdatePermission(userToBeUpdated.getId(), loggedUser);
         ValidationHelper.checkIfBanned(loggedUser);
         ValidationHelper.validateEmail(userRepository,userToBeUpdated);
         updateUserDetails(loggedUser, userToBeUpdated);
@@ -60,6 +61,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void deleteUser(User loggedUser, User userToBeDeleted) {
+        ValidationHelper.masterUserAccessDenied(userToBeDeleted.getId());
         ValidationHelper.checkPermission(loggedUser, userToBeDeleted, ADMIN_USER_ERR_MESSAGE);
         userRepository.deleteUser(userToBeDeleted);
     }

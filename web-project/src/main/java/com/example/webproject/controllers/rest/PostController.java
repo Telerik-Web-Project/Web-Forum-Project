@@ -50,11 +50,12 @@ public class PostController {
     }
     @GetMapping("/")
     public List<Post> getPaginatedPosts(
-            @RequestParam(name = "page",
-                    defaultValue = "1")
+            @RequestParam(name = "page")
                     int page) {
-        return postService.getPaginatedPosts(page);
+        return postService.getPaginatedPosts(pageParameterAssignment(page));
     }
+
+
 
     @GetMapping("/mostCommented")
     public List<Post> getTenMostCommentedPosts () {
@@ -224,5 +225,11 @@ public class PostController {
         } catch (UserBannedException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
+    }
+    private static int pageParameterAssignment(int page) {
+        if(page == 0){
+            page = 1;
+        }
+        return page;
     }
 }
