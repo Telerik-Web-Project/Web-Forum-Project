@@ -48,12 +48,12 @@ public class PostController {
         PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
         return postService.getAll(filter);
     }
-    @GetMapping("/")
-    public List<Post> getPaginatedPosts(
-            @RequestParam(name = "page")
-                    int page) {
-        return postService.getPaginatedPosts(pageParameterAssignment(page));
-    }
+//    @GetMapping("/")
+//    public List<Post> getPaginatedPosts(
+//            @RequestParam(name = "page")
+//                    int page) {
+//        return postService.getPaginatedPosts(pageParameterAssignment(page));
+//    }
 
 
 

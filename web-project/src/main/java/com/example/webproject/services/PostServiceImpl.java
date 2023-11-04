@@ -119,8 +119,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPaginatedPosts(int page) {
-        return postRepository.getPaginatedPosts(page);
+    public List<Post> getPaginatedPosts(int page, int postsPerPage) {
+        return postRepository.getPaginatedPosts(page,postsPerPage);
     }
 
 

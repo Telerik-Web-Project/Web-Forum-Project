@@ -13,6 +13,7 @@ import com.example.webproject.helpers.PostMapper;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
+import com.example.webproject.repositories.PostRepositoryImpl;
 import com.example.webproject.services.contracts.PostService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Controller
@@ -49,19 +52,60 @@ public class PostMvcController {
         return session.getAttribute("currentUser") != null;
     }
 
+//    @GetMapping
+//    public String getAll(@Valid @ModelAttribute("postFilter") PostFilterDto filterDto, Model model) {
+//        PostFilter postFilter = new PostFilter(
+//                filterDto.getTitle(),
+//                filterDto.getContent(),
+//                filterDto.getSortBy(),
+//                filterDto.getSortOrder()
+//        );
+//        model.addAttribute("postService", postService);
+//        model.addAttribute("posts", postService.getAll(postFilter));
+//        model.addAttribute("postFilter", filterDto);
+//        return "PostsView";
+//    }
+
+//    @GetMapping
+//    public String getPaginatedPosts(
+//            @RequestParam(name = "page")
+//            int page, Model model) {
+//        model.addAttribute("postService", postService);
+//        model.addAttribute("posts",postService.getPaginatedPosts(pageParameterAssignment(page)));
+//        return "PostsView";
+//    }
+//    private static int pageParameterAssignment(int page) {
+//        if(page == 0){
+//            page = 1;
+//        }
+//        return page;
+//    }
+
     @GetMapping
-    public String getAll(@Valid @ModelAttribute("postFilter") PostFilterDto filterDto, Model model) {
+    public String getPaginationPage(@RequestParam("page") int page,
+                                    Model model,
+                                    @Valid @ModelAttribute("postFilter") PostFilterDto filterDto) {
         PostFilter postFilter = new PostFilter(
                 filterDto.getTitle(),
                 filterDto.getContent(),
                 filterDto.getSortBy(),
                 filterDto.getSortOrder()
         );
+        int itemsPerPage = 5;
+
+        List<Post> dataList = postService.getPaginatedPosts(page, itemsPerPage);
+
+        int totalItems = postService.getAll(postFilter).size();
+        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+        model.addAttribute("posts", dataList);
         model.addAttribute("postService", postService);
-        model.addAttribute("posts", postService.getAll(postFilter));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("postFilter", filterDto);
         return "PostsView";
     }
+
 
 //    @GetMapping("/mostCommented")
 //    public String getTenMostCommentedPosts(Model model) {
