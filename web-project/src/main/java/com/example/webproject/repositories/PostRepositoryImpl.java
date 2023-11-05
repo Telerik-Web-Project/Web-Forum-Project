@@ -18,7 +18,6 @@ import java.util.Map;
 public class PostRepositoryImpl implements PostRepository {
 
     private static final String MASTER_USER_ID = "1";
-    private static final int POST_PER_PAGE = 5;
     private final SessionFactory sessionFactory;
 
     @Autowired
@@ -180,22 +179,20 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<Post> getPostsWithTags(Tag tag) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            String queryString = "select p.* from posts p " +
-                    "join forum.posts_tags p2 on p.post_id = p2.post_id " +
-                    "where p2.tag_id = :id";
-            Query<Post> query = session.createNativeQuery(queryString,Post.class);
-            query.setParameter("id", tag.getId());
-            session.getTransaction().commit();
+            Query<Post> query = session.createQuery("SELECT p " +
+                    "FROM Post p " +
+                    "JOIN p.tags t " +
+                    "WHERE t.id = :tagId", Post.class);
+            query.setParameter("tagId",tag.getId());
             return query.list();
         }
     }
-    public List<Post> getPaginatedPosts(int page){
+    public List<Post> getPaginatedPosts(int page, int postPerPage){
         try (Session session = sessionFactory.openSession()) {
-            int offset = (page - 1) * POST_PER_PAGE;
+            int offset = (page - 1) * postPerPage;
             Query<Post> query = session.createQuery("FROM Post", Post.class);
             query.setFirstResult(offset);
-            query.setMaxResults(POST_PER_PAGE);
+            query.setMaxResults(postPerPage);
             return query.list();
         }
     }
