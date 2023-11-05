@@ -13,9 +13,19 @@ const paginationFunction = async () => {
         const paginatedPosts = document.getElementById('paginated-posts');
 
         posts.forEach(post => {
-            const postElement = document.createElement('div');
-            postElement.textContent = post.title;
-            paginatedPosts.appendChild(postElement);
+            const postId = document.createElement('div');
+            postId.textContent=post.id
+
+            const postTitle = document.createElement('div');
+            postTitle.textContent = post.title;
+
+            const postLikes = document.createElement('div');
+            postLikes.textContent = `Likes: ${post.likeCounts}`
+
+            paginatedPosts.appendChild(postId);
+            paginatedPosts.appendChild(postTitle);
+            paginatedPosts.appendChild(postLikes);
+
         });
 
     } catch (error) {

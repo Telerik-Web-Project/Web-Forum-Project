@@ -134,9 +134,9 @@ public class PostServiceImpl implements PostService {
         return postRepository.getPostComments(post);
     }
 
-    public int getLikesCount(Post post) {
+    /*public int getLikesCount(Post post) {
         ValidationHelper.validatePostExists(postRepository,post);
         return postRepository.getLikesCount(post);
-    }
+    }*/
 
 }

@@ -70,14 +70,14 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    @Override
+   /* @Override
     public int getLikesCount(Post post) {
         try (Session session = sessionFactory.openSession()) {
             Query<Integer> query = session.createQuery(
                     "select count(l) from Post p join p.likes l where p.id = :postId", Integer.class);
             return query.list().size();
         }
-    }
+    }*/
 
     @Override
     public List<Comment> getPostComments(Post post) {
