@@ -30,4 +30,6 @@ public interface PostService {
     void updateComment(User user, Comment comment);
 
     List<Post> getPaginatedPosts(int page, int postsPerPage);
+
+    void dislikePost(User user, Post post);
 }

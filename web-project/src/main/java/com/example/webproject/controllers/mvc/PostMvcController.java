@@ -13,7 +13,6 @@ import com.example.webproject.helpers.PostMapper;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
-import com.example.webproject.repositories.PostRepositoryImpl;
 import com.example.webproject.services.contracts.PostService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -51,6 +50,10 @@ public class PostMvcController {
 
         return session.getAttribute("currentUser") != null;
     }
+    @ModelAttribute("user")
+    public User populateUser(HttpSession session){
+       return authenticationHelper.tryPopulateUser(session);
+    }
 
 //    @GetMapping
 //    public String getAll(@Valid @ModelAttribute("postFilter") PostFilterDto filterDto, Model model) {
@@ -82,7 +85,7 @@ public class PostMvcController {
 //    }
 
     @GetMapping
-    public String getPaginationPage(@RequestParam("page") int page,
+    public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
                                     @Valid @ModelAttribute("postFilter") PostFilterDto filterDto) {
         PostFilter postFilter = new PostFilter(
@@ -91,6 +94,9 @@ public class PostMvcController {
                 filterDto.getSortBy(),
                 filterDto.getSortOrder()
         );
+        if(page == null){
+            page = 1;
+        }
         int itemsPerPage = 5;
 
         List<Post> dataList = postService.getPaginatedPosts(page, itemsPerPage);
@@ -116,7 +122,9 @@ public class PostMvcController {
 
     @GetMapping("/{id}")
     public String getPost(@PathVariable int id, Model model) {
+
         try {
+
             Post post = postService.get(id);
             model.addAttribute("post", post);
             return "SinglePostView";
@@ -232,4 +240,40 @@ public class PostMvcController {
         }
         return "redirect:/posts/{id}";
     }
+    @GetMapping("{id}/like")
+    public String likePost(HttpSession session, Model model, @PathVariable int id) {
+        try {
+
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            Post postToLike = postService.get(id);
+            postService.likePost(loggedUser,postToLike);
+            return "redirect:/posts";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        }
+    }
+    @GetMapping("{id}/dislike")
+    public String dislikePost(HttpSession session, Model model, @PathVariable int id) {
+        try {
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            Post postToLike = postService.get(id);
+            postService.dislikePost(loggedUser,postToLike);
+            return "redirect:/posts";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        }
+    }
+
 }

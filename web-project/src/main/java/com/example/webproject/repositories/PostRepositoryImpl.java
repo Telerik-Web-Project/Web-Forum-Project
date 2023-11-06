@@ -16,7 +16,6 @@ import java.util.Map;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
-
     private static final String MASTER_USER_ID = "1";
     private final SessionFactory sessionFactory;
 

@@ -91,12 +91,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public void likePost(User user, Post post) {
         ValidationHelper.checkIfBanned(user);
-        if(!post.getLikes().contains(user)){
+        if(!post.getLikes().contains(user)) {
             post.likePost(user);
-        }else {
-            post.dislikePost(user);
+
+            postRepository.updatePost(post);
         }
-        postRepository.updatePost(post);
     }
 
     @Override
@@ -121,6 +120,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getPaginatedPosts(int page, int postsPerPage) {
         return postRepository.getPaginatedPosts(page,postsPerPage);
+    }
+
+    @Override
+    public void dislikePost(User user, Post post) {
+        ValidationHelper.checkIfBanned(user);
+        if(post.getLikes().contains(user)) {
+            post.dislikePost(user);
+            postRepository.updatePost(post);
+        }
     }
 
 

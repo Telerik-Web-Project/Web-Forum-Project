@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <meta charset="UTF-8">
     <title>Single Post</title>
   <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}">
@@ -41,9 +42,11 @@
 </div>
 <p class="post-creator" th:text="'Posted by : ' + ${post.getPostCreator().getUsername()}" th:align="center">test</p>
 <div class="button-container" th:if="${isAuthenticated}">
-  <button class="like-button">Like</button>
-  <button class="comment-button">Comment</button>
+  <a th:unless="${post.getLikes().contains(user)}" th:href="@{'/posts/' + ${post.id} + '/like'}" class="like-button">Like</a>
+  <a th:if="${post.getLikes().contains(user)}" th:href="@{'/posts/' + ${post.id} + '/dislike'}" class="dislike-button">Dislike</a>
+  <a href="/" class="comment-button">Comment</a>
 </div>
+
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#ff5500" fill-opacity="1"
                                                                      d="M0,288L48,272C96,256,192,224,288,197.3C384,171
                                                                      ,480,149,576,165.3C672,181,768,235,864,250.7C960,
