@@ -51,9 +51,7 @@ public class PostRepositoryImpl implements PostRepository {
             return query.list();
         }
     }
-
-    //TODO check if constant  MASTER_USER_ID works properly !!!
-    public List<Post> getPostsAsAnonymousUser() {
+    public List<Post> getMostRecentPosts() {
         try (Session session = sessionFactory.openSession()) {
             Query<Post> query = session.createQuery("from Post where postCreator.id!=" + MASTER_USER_ID + " order by id desc limit 10", Post.class);
             return query.list();
@@ -118,13 +116,12 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public Post deletePost(Post post) {
+    public void deletePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
             deletePostComments(post.getId());
             session.beginTransaction();
             session.remove(post);
             session.getTransaction().commit();
-            return post;
         }
     }
 

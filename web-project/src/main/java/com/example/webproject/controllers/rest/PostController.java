@@ -165,6 +165,10 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
+    @GetMapping("/mostRecent")
+    public List<Post> getMostRecent(){
+        return postService.getMostRecentPosts();
+    }
     @PutMapping("{id}/dislike")
     public void dislikePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {

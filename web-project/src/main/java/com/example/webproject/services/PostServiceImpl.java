@@ -118,6 +118,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> getMostRecentPosts() {
+        return postRepository.getMostRecentPosts();
+    }
+
+    @Override
     public List<Post> getPaginatedPosts(int page, int postsPerPage) {
         return postRepository.getPaginatedPosts(page,postsPerPage);
     }

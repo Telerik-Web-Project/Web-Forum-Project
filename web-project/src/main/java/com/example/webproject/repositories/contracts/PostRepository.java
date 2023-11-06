@@ -14,9 +14,9 @@ public interface PostRepository {
     Post get(int id);
     Post createPost (Post post);
     Post updatePost (Post post);
-    Post deletePost (Post post);
+    void deletePost (Post post);
     /*int getLikesCount(Post post);*/
-    List<Post> getPostsAsAnonymousUser();
+    List<Post> getMostRecentPosts();
     List<Comment> getPostComments(Post post);
     List<Post> getTenMostCommentedPosts();
     List<Post> getPostsWithTags(Tag tag);
