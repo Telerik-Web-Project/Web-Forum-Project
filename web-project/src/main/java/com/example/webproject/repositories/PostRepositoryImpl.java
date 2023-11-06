@@ -16,9 +16,7 @@ import java.util.Map;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
-
     private static final String MASTER_USER_ID = "1";
-    private static final int POST_PER_PAGE = 5;
     private final SessionFactory sessionFactory;
 
     @Autowired
@@ -53,9 +51,7 @@ public class PostRepositoryImpl implements PostRepository {
             return query.list();
         }
     }
-
-    //TODO check if constant  MASTER_USER_ID works properly !!!
-    public List<Post> getTenMostRecentPosts() {
+    public List<Post> getMostRecentPosts() {
         try (Session session = sessionFactory.openSession()) {
             Query<Post> query = session.createQuery("from Post where postCreator.id!=" + MASTER_USER_ID + " order by id desc limit 10", Post.class);
             return query.list();
@@ -70,14 +66,14 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    @Override
+   /* @Override
     public int getLikesCount(Post post) {
         try (Session session = sessionFactory.openSession()) {
             Query<Integer> query = session.createQuery(
                     "select count(l) from Post p join p.likes l where p.id = :postId", Integer.class);
             return query.list().size();
         }
-    }
+    }*/
 
     @Override
     public List<Comment> getPostComments(Post post) {
@@ -120,13 +116,12 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public Post deletePost(Post post) {
+    public void deletePost(Post post) {
         try (Session session = sessionFactory.openSession()) {
             deletePostComments(post.getId());
             session.beginTransaction();
             session.remove(post);
             session.getTransaction().commit();
-            return post;
         }
     }
 
@@ -180,22 +175,20 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<Post> getPostsWithTags(Tag tag) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            String queryString = "select p.* from posts p " +
-                    "join forum.posts_tags p2 on p.post_id = p2.post_id " +
-                    "where p2.tag_id = :id";
-            Query<Post> query = session.createNativeQuery(queryString,Post.class);
-            query.setParameter("id", tag.getId());
-            session.getTransaction().commit();
+            Query<Post> query = session.createQuery("SELECT p " +
+                    "FROM Post p " +
+                    "JOIN p.tags t " +
+                    "WHERE t.id = :tagId", Post.class);
+            query.setParameter("tagId",tag.getId());
             return query.list();
         }
     }
-    public List<Post> getPaginatedPosts(int page){
+    public List<Post> getPaginatedPosts(int page, int postPerPage){
         try (Session session = sessionFactory.openSession()) {
-            int offset = (page - 1) * POST_PER_PAGE;
+            int offset = (page - 1) * postPerPage;
             Query<Post> query = session.createQuery("FROM Post", Post.class);
             query.setFirstResult(offset);
-            query.setMaxResults(POST_PER_PAGE);
+            query.setMaxResults(postPerPage);
             return query.list();
         }
     }

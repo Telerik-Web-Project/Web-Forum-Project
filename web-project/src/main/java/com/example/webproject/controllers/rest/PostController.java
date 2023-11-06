@@ -48,13 +48,14 @@ public class PostController {
         PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
         return postService.getAll(filter);
     }
-    @GetMapping("/")
-    public List<Post> getPaginatedPosts(
-            @RequestParam(name = "page",
-                    defaultValue = "1")
-                    int page) {
-        return postService.getPaginatedPosts(page);
-    }
+//    @GetMapping("/")
+//    public List<Post> getPaginatedPosts(
+//            @RequestParam(name = "page")
+//                    int page) {
+//        return postService.getPaginatedPosts(pageParameterAssignment(page));
+//    }
+
+
 
     @GetMapping("/mostCommented")
     public List<Post> getTenMostCommentedPosts () {
@@ -169,7 +170,24 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
-
+    @GetMapping("/mostRecent")
+    public List<Post> getMostRecent(){
+        return postService.getMostRecentPosts();
+    }
+    @PutMapping("{id}/dislike")
+    public void dislikePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        try {
+            User user = authenticationHelper.getUser(headers);
+            Post post = postService.get(id);
+            postService.dislikePost(user, post);
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (UserBannedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
     @DeleteMapping("/{id}")
     public void deletePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {
@@ -230,4 +248,5 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
+
 }

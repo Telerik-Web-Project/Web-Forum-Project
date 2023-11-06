@@ -47,7 +47,6 @@ public class UserController {
     @GetMapping("/{id}")
     public User get(@PathVariable int id) {
         try {
-            ValidationHelper.masterUserAccessDenied(id);
             return userService.getById(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -86,10 +85,9 @@ public class UserController {
     @PutMapping("/{id}")
     public User updateUser(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody UpdateUserDto updateUserDto) {
         try {
-//            ValidationHelper.masterUserAccessDenied(id);
             User user = authenticationHelper.getUser(headers);
-            ValidationHelper.validateUpdatePermission(id, user);
             User userToBeUpdated = userMapper.fromUpdateUserDto(updateUserDto);
+            userToBeUpdated.setId(id);
             return userService.updateUser(user, userToBeUpdated);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -103,7 +101,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {
-            ValidationHelper.masterUserAccessDenied(id);
             User userLoggedUser = authenticationHelper.getUser(headers);
             User userToBeDelete = userService.getById(id);
             userService.deleteUser(userLoggedUser, userToBeDelete);

@@ -22,6 +22,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Controller
 @RequestMapping("/posts")
@@ -48,20 +50,68 @@ public class PostMvcController {
 
         return session.getAttribute("currentUser") != null;
     }
+    @ModelAttribute("user")
+    public User populateUser(HttpSession session){
+       return authenticationHelper.tryPopulateUser(session);
+    }
+
+//    @GetMapping
+//    public String getAll(@Valid @ModelAttribute("postFilter") PostFilterDto filterDto, Model model) {
+//        PostFilter postFilter = new PostFilter(
+//                filterDto.getTitle(),
+//                filterDto.getContent(),
+//                filterDto.getSortBy(),
+//                filterDto.getSortOrder()
+//        );
+//        model.addAttribute("postService", postService);
+//        model.addAttribute("posts", postService.getAll(postFilter));
+//        model.addAttribute("postFilter", filterDto);
+//        return "PostsView";
+//    }
+
+//    @GetMapping
+//    public String getPaginatedPosts(
+//            @RequestParam(name = "page")
+//            int page, Model model) {
+//        model.addAttribute("postService", postService);
+//        model.addAttribute("posts",postService.getPaginatedPosts(pageParameterAssignment(page)));
+//        return "PostsView";
+//    }
+//    private static int pageParameterAssignment(int page) {
+//        if(page == 0){
+//            page = 1;
+//        }
+//        return page;
+//    }
 
     @GetMapping
-    public String getAll(@Valid @ModelAttribute("postFilter") PostFilterDto filterDto, Model model) {
+    public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
+                                    Model model,
+                                    @Valid @ModelAttribute("postFilter") PostFilterDto filterDto) {
         PostFilter postFilter = new PostFilter(
                 filterDto.getTitle(),
                 filterDto.getContent(),
                 filterDto.getSortBy(),
                 filterDto.getSortOrder()
         );
+        if(page == null){
+            page = 1;
+        }
+        int itemsPerPage = 5;
+
+        List<Post> dataList = postService.getPaginatedPosts(page, itemsPerPage);
+
+        int totalItems = postService.getAll(postFilter).size();
+        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+        model.addAttribute("posts", dataList);
         model.addAttribute("postService", postService);
-        model.addAttribute("posts", postService.getAll(postFilter));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("postFilter", filterDto);
         return "PostsView";
     }
+
 
 //    @GetMapping("/mostCommented")
 //    public String getTenMostCommentedPosts(Model model) {
@@ -72,7 +122,9 @@ public class PostMvcController {
 
     @GetMapping("/{id}")
     public String getPost(@PathVariable int id, Model model) {
+
         try {
+
             Post post = postService.get(id);
             model.addAttribute("post", post);
             return "SinglePostView";
@@ -188,4 +240,40 @@ public class PostMvcController {
         }
         return "redirect:/posts/{id}";
     }
+    @GetMapping("{id}/like")
+    public String likePost(HttpSession session, Model model, @PathVariable int id) {
+        try {
+
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            Post postToLike = postService.get(id);
+            postService.likePost(loggedUser,postToLike);
+            return "redirect:/posts";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        }
+    }
+    @GetMapping("{id}/dislike")
+    public String dislikePost(HttpSession session, Model model, @PathVariable int id) {
+        try {
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            Post postToLike = postService.get(id);
+            postService.dislikePost(loggedUser,postToLike);
+            return "redirect:/posts";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        }
+    }
+
 }

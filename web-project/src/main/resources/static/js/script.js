@@ -5,7 +5,6 @@ menu.onclick = () => {
     menu.classList.toggle('bx-x');
     navbar.classList.toggle('open');
 }
-
 document.getElementById("current-year").textContent = new Date().getFullYear().toString();
 
 function updateLocalTime() {
@@ -17,5 +16,7 @@ function updateLocalTime() {
 }
 setInterval(updateLocalTime, 1000);
 updateLocalTime();
+
+
 
 

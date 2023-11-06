@@ -43,6 +43,15 @@ public class AuthenticationHelper {
         }
         return input.charAt(0) + getUsername(input.substring(1));
     }
+    public User tryPopulateUser(HttpSession session) {
+        String currentUsername = (String) session.getAttribute("currentUser");
+        if(currentUsername == null){
+            return new User();
+        }
+        else {
+            return userService.getByUsername(currentUsername);
+        }
+    }
 
     public User tryGetCurrentUser(HttpSession session) {
         String currentUsername = (String) session.getAttribute("currentUser");

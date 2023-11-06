@@ -14,12 +14,12 @@ public interface PostRepository {
     Post get(int id);
     Post createPost (Post post);
     Post updatePost (Post post);
-    Post deletePost (Post post);
-    int getLikesCount(Post post);
-    List<Post> getTenMostRecentPosts();
+    void deletePost (Post post);
+    /*int getLikesCount(Post post);*/
+    List<Post> getMostRecentPosts();
     List<Comment> getPostComments(Post post);
     List<Post> getTenMostCommentedPosts();
     List<Post> getPostsWithTags(Tag tag);
-    List<Post> getPaginatedPosts(int page);
+    List<Post> getPaginatedPosts(int page, int postPerPage);
 
 }

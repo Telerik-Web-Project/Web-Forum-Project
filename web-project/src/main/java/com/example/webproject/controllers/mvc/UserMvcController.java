@@ -2,12 +2,15 @@ package com.example.webproject.controllers.mvc;
 import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.dtos.UserDto;
 import com.example.webproject.dtos.UserFilterDto;
+import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.services.contracts.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,11 +25,13 @@ public class UserMvcController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    private final AuthenticationHelper authenticationHelper;
 
     @Autowired
-    public UserMvcController(UserService userService, UserMapper userMapper) {
+    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper) {
         this.userService = userService;
         this.userMapper = userMapper;
+        this.authenticationHelper = authenticationHelper;
     }
 
     @GetMapping
@@ -80,12 +85,18 @@ public class UserMvcController {
       }
     }
 
-    @GetMapping("/update/{id}")
-    public String showEditView(@PathVariable int id,Model model) {
+    @GetMapping("/{id}/update")
+    public String showEditView(@PathVariable int id,Model model,HttpSession session) {
+        try{
+            authenticationHelper.tryGetCurrentUser(session);
+        }
+        catch (AuthorizationException e){
+            return "redirect:/auth/login";
+        }
+
         try {
             User user = userService.getById(id);
             UpdateUserDto updateUserDto = userMapper.fromUserToDto(user);
-
             model.addAttribute("userId", id);
             model.addAttribute("user", updateUserDto);
             return "UserEditView";
@@ -95,5 +106,49 @@ public class UserMvcController {
             return "ErrorView";
         }
     }
+    @GetMapping("/{id}/delete")
+    public String deleteUser(@PathVariable int id , Model model,HttpSession session) {
+       User loggedUser;
+        try {
+            loggedUser = authenticationHelper.tryGetCurrentUser(session);
+        }catch (AuthorizationException e){
+            return "redirect:/auth/login";
+        }
+        try{
+            User userToBeDeleted = userService.getById(id);
+            userService.deleteUser(loggedUser,userToBeDeleted);
+            return "redirect:/HomeView";
+        }
+        catch (EntityNotFoundException e){
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        }
+        catch (AuthorizationException e){
+            model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        }
 
-}
+        }
+        @GetMapping("/{id}/posts")
+        public String getUsersPosts(@PathVariable int id,HttpSession session,Model model) {
+            User loggedUser;
+            try {
+                loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            } catch (AuthorizationException e) {
+                return "redirect:/auth/login";
+            }
+            try {
+                User userToCheckPosts = userService.getById(id);
+                model.addAttribute("userPosts", userService.getUserPosts(loggedUser, userToCheckPosts));
+                return "UserPostsView";
+            } catch (EntityNotFoundException e) {
+                model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+                model.addAttribute("error", e.getMessage());
+                return "ErrorView";
+            }
+        }
+    }
+
+
