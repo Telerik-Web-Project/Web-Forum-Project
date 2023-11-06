@@ -10,6 +10,7 @@ import com.example.webproject.exceptions.UserBannedException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.CommentMapper;
 import com.example.webproject.helpers.PostMapper;
+import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
@@ -121,12 +122,14 @@ public class PostMvcController {
 //    }
 
     @GetMapping("/{id}")
-    public String getPost(@PathVariable int id, Model model) {
+    public String getPost(@ModelAttribute CommentDto commentDto,@PathVariable int id, Model model) {
 
         try {
 
             Post post = postService.get(id);
+            model.addAttribute("comment",commentDto);
             model.addAttribute("post", post);
+            model.addAttribute("postComments",postService.getPostComments(post));
             return "SinglePostView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -215,16 +218,18 @@ public class PostMvcController {
 
 
     @PostMapping("/{id}/comment")
-    public String addComment(@PathVariable int id, Model model, HttpSession session) {
+    public String addComment(@ModelAttribute("comment")CommentDto commentDto,@PathVariable int id, Model model, HttpSession session) {
         User user;
         try {
             user = authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }
-
         try {
-            postService.addComment(user, postService.get(id), commentMapper.fromDto(new CommentDto()));
+            Post post = postService.get(id);
+            Comment comment = commentMapper.fromDto(commentDto);
+            postService.addComment(user,post,comment);
+            return "redirect:/posts/{id}";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("statusCode", 404);
@@ -238,7 +243,7 @@ public class PostMvcController {
             model.addAttribute("statusCode", 401);
             return "ErrorView";
         }
-        return "redirect:/posts/{id}";
+
     }
     @GetMapping("{id}/like")
     public String likePost(HttpSession session, Model model, @PathVariable int id) {
@@ -275,5 +280,6 @@ public class PostMvcController {
             return "ErrorView";
         }
     }
+
 
 }

@@ -46,11 +46,12 @@
     </div>
 </section>
 
-<section class="most-commented" id="mostCommented">
-    <h1 class="title">Most Commented Posts</h1>
+<section class="most-recent" id="mostRecent">
+    <h1 class="title">Most Recent Posts</h1>
     <div class="main-container">
-        <div class="posts-container" th:each="post : ${topPosts}">
+        <div class="posts-container" th:each="post : ${mostRecent}">
             <div class="post-content">
+                <a th:href="@{/posts/{id}(id=${post.id})}">
                 <div>
                     <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
                          alt="Profile Picture">
@@ -64,7 +65,7 @@
                         <p th:text="${post.getContent()}">Post content shown here</p>
                     </div>
                 </div>
-            </div>
+                    </div>
             <div class="post-footer">
                 <div class="likes">
                     <i class="fa fa-thumbs-up"> Likes:</i>
@@ -81,16 +82,17 @@
 
 
 
-<section class="most-recent" id="mostRecent">
-    <h1 class="title">Most Recent Posts</h1>
+<section class="most-commented" id="mostCommented">
+    <h1 class="title">Most Commented Posts</h1>
     <div class="main-container">
         <div class="posts-container" th:each="post : ${topPosts}">
             <div class="post-content">
                 <div>
+                   <a th:href="@{/posts/{id}(id=${post.id})}">
                     <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
                          alt="Profile Picture">
                     <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
-                </div>
+                        </div>
                 <div>
                     <div class="post-title">
                         <h4 th:text="${post.getTitle()}">Post Title</h4>

@@ -43,6 +43,7 @@ public class HomeMvcController {
         model.addAttribute("postService",postService);
         model.addAttribute("usersCount",activeUsers);
         model.addAttribute("topPosts",topPosts);
+        model.addAttribute("mostRecent",postService.getMostRecentPosts());
         return "HomeView";
     }
 

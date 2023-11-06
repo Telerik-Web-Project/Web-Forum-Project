@@ -17,7 +17,6 @@ public interface PostService {
     void addComment(User user, Post post, Comment comment);
     List<Comment> getPostComments(Post post);
     List<Post> getTenMostCommentedPosts();
-    List<Post> getTenMostRecentPosts();
     void updateComment(User user, Comment comment);
     List<Post> getMostRecentPosts();
     List<Post> getPaginatedPosts(int page, int postsPerPage);
