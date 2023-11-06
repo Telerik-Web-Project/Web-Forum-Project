@@ -55,7 +55,7 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     //TODO check if constant  MASTER_USER_ID works properly !!!
-    public List<Post> getPostsAsAnonymousUser() {
+    public List<Post> getTenMostRecentPosts() {
         try (Session session = sessionFactory.openSession()) {
             Query<Post> query = session.createQuery("from Post where postCreator.id!=" + MASTER_USER_ID + " order by id desc limit 10", Post.class);
             return query.list();

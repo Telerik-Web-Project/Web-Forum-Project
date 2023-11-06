@@ -95,7 +95,7 @@ public class PostMvcController {
         );
         model.addAttribute("posts", postService.getPostsWithTag(tag));
         model.addAttribute("filterOptions", postService.getAll(postFilter));
-        return "AllPostsView";
+        return "PostsView";
     }
 
     @GetMapping("/create")

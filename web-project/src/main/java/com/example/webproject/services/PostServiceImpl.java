@@ -138,5 +138,9 @@ public class PostServiceImpl implements PostService {
         ValidationHelper.validatePostExists(postRepository,post);
         return postRepository.getLikesCount(post);
     }
+    @Override
+    public List<Post> getTenMostRecentPosts(){
+        return postRepository.getTenMostRecentPosts();
+    }
 
 }
