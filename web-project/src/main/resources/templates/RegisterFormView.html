@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" href="../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon">
     <title>Rocket Forum | Login</title>
-<!--<body class="login">-->
+    <!--<body class="login">-->
 <body id="home-body">
 <section class="sub-header">
     <nav>
@@ -30,7 +30,6 @@
                 <li><a href="About.html" th:href="@{/about}">About</a></li>
                 <li><a href="PostsView" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
                 <li><a href="contact.html" th:href="@{/users}">Users</a></li>
-                <li><a href="#" th:unless="${isAuthenticated}">Register</a></li>
                 <li><a href="" th:unless="${isAuthenticated}" th:href="@{/auth/login}">Sign In</a>
                 <li><a href="#" th:href="@{/auth/logout}" th:if="${isAuthenticated}">Log Out</a></li>
             </ul>
@@ -38,19 +37,17 @@
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
 </section>
+
 <div class="div-login">
-<div class="form">
-    <h4 th:text="#{login}">Login</h4>
-    <form class="login" action="#" th:action="@{/auth/login}" th:object="${login}" method="post">
-        <input type="text" th:field="*{username}" placeholder="Username">
-        <input type="password" th:field="*{password}" src="../static/images/password.png" th:src="@{/images/password.png}"  placeholder="Password">
-        <button  type="submit"  value="login" th:text="#{sign.in}">Sign In</button>
-        <div class="suggest">
-            <div class="remember">
-            <input type="checkbox" checked>
-            <span th:text="#{remember.me}">Remember Me</span>
-            </div>
-            </div>
+    <div class="form">
+        <h4 th:text="#{register}">Register</h4>
+        <form class="login" action="#" th:action="@{/users/new}" th:object="${user}" method="post">
+            <input type="text" th:field="*{firstName}" placeholder="First Name">
+            <input type="text" th:field="*{lastName}" placeholder="Last Name">
+            <input type="text" th:field="*{email}" placeholder="email">
+            <input type="text" th:field="*{username}" placeholder="Username">
+            <input type="password" th:field="*{password}" placeholder="Password">
+            <button  type="submit"  value="login" th:text="#{register.me}">Register</button>
         </form>
     </div>
 </div>

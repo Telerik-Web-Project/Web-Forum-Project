@@ -32,6 +32,7 @@ import java.util.List;
 @RequestMapping("/posts")
 public class PostMvcController {
 
+    private static final int DEFAULT_PAGE_SIZE = 5;
     private final AuthenticationHelper authenticationHelper;
     private final PostMapper postMapper;
     private final PostService postService;
@@ -57,41 +58,11 @@ public class PostMvcController {
 
         return session.getAttribute("currentUser") != null;
     }
-
     @ModelAttribute("user")
     public User populateUser(HttpSession session){
        return authenticationHelper.tryPopulateUser(session);
     }
-
-//    @GetMapping
-//    public String getAll(@Valid @ModelAttribute("postFilter") PostFilterDto filterDto, Model model) {
-//        PostFilter postFilter = new PostFilter(
-//                filterDto.getTitle(),
-//                filterDto.getContent(),
-//                filterDto.getSortBy(),
-//                filterDto.getSortOrder()
-//        );
-//        model.addAttribute("postService", postService);
-//        model.addAttribute("posts", postService.getAll(postFilter));
-//        model.addAttribute("postFilter", filterDto);
-//        return "PostsView";
-//    }
-
-//    @GetMapping
-//    public String getPaginatedPosts(
-//            @RequestParam(name = "page")
-//            int page, Model model) {
-//        model.addAttribute("postService", postService);
-//        model.addAttribute("posts",postService.getPaginatedPosts(pageParameterAssignment(page)));
-//        return "PostsView";
-//    }
-//    private static int pageParameterAssignment(int page) {
-//        if(page == 0){
-//            page = 1;
-//        }
-//        return page;
-//    }
-
+    
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
@@ -105,12 +76,10 @@ public class PostMvcController {
         if (page == null) {
             page = 1;
         }
-        int itemsPerPage = 5;
-
-        List<Post> dataList = postService.getPaginatedPosts(page, itemsPerPage);
+        List<Post> dataList = postService.getPaginatedPosts(page, DEFAULT_PAGE_SIZE);
 
         int totalItems = postService.getAll(postFilter).size();
-        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+        int totalPages = (int) Math.ceil((double) totalItems / DEFAULT_PAGE_SIZE);
 
         model.addAttribute("posts", dataList);
         model.addAttribute("postService", postService);
@@ -119,14 +88,6 @@ public class PostMvcController {
         model.addAttribute("postFilter", filterDto);
         return "PostsView";
     }
-
-
-//    @GetMapping("/mostCommented")
-//    public String getTenMostCommentedPosts(Model model) {
-//        List<Post> posts = postService.getTenMostCommentedPosts();
-//        model.addAttribute("posts", posts);
-//        return "TenMostCommentedPostsView";
-//    }
 
     @GetMapping("/{id}")
     public String getPost(@ModelAttribute SingletonCommentDto singletonCommentDto, @PathVariable int id, Model model) {
@@ -170,6 +131,42 @@ public class PostMvcController {
         }
         model.addAttribute("post", new PostDto());
         return "Post-New";
+    }
+    @GetMapping("{id}/like")
+    public String likePost(HttpSession session, Model model, @PathVariable int id) {
+        try {
+
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            Post postToLike = postService.get(id);
+            postService.likePost(loggedUser, postToLike);
+            return "redirect:/posts/{id}";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        }
+    }
+
+    @GetMapping("{id}/dislike")
+    public String dislikePost(HttpSession session, Model model, @PathVariable int id) {
+        try {
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            Post postToLike = postService.get(id);
+            postService.dislikePost(loggedUser, postToLike);
+            return "redirect:/posts/{id}";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        }
     }
 
     @PostMapping()
@@ -221,11 +218,12 @@ public class PostMvcController {
             return "ErrorView";
         }
     }
-
-
     @PostMapping("/{id}/comment")
-    public String addComment(@ModelAttribute("comment") @Valid CommentDto commentDto, @PathVariable int id, Model model, HttpSession session) {
+    public String addCommentToPost(@ModelAttribute("comment") @Valid CommentDto commentDto,BindingResult bindingResult, @PathVariable int id, Model model, HttpSession session) {
         User user;
+        if(bindingResult.hasErrors()){
+            return "ErrorView";
+        }
         try {
             user = authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
@@ -251,65 +249,11 @@ public class PostMvcController {
         }
 
     }
-
-    @GetMapping("{id}/like")
-    public String likePost(HttpSession session, Model model, @PathVariable int id) {
-        try {
-
-            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
-            Post postToLike = postService.get(id);
-            postService.likePost(loggedUser, postToLike);
-            return "redirect:/posts/{id}";
-        } catch (AuthorizationException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 401);
-            return "ErrorView";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 404);
-            return "ErrorView";
-        }
-    }
-
-    @GetMapping("{id}/dislike")
-    public String dislikePost(HttpSession session, Model model, @PathVariable int id) {
-        try {
-            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
-            Post postToLike = postService.get(id);
-            postService.dislikePost(loggedUser, postToLike);
-            return "redirect:/posts/{id}";
-        } catch (AuthorizationException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 401);
-            return "ErrorView";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 404);
-            return "ErrorView";
-        }
-    }
-    @GetMapping("{postId}/comment/{id}/delete")
-    public String deleteComment(@PathVariable int postId,@PathVariable int id, HttpSession session, Model model) {
-
-        try {
-            User user = authenticationHelper.tryGetCurrentUser(session);
-            commentService.deleteComment(user, id);
-            model.addAttribute("postId", postId);
-            return "redirect:/posts/{postId}";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 404);
-            return "ErrorView";
-        } catch (AuthorizationException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 401);
-            return "ErrorView";
-        } catch (UserBannedException e){
-            return "ErrorView";
-        }
-    }
     @GetMapping("{postId}/comment/{id}/update")
-    public String updateComment(@PathVariable int postId, CommentDto commentDto,@PathVariable int id, HttpSession session, Model model) {
+    public String updatePostComment(@PathVariable int postId, @ModelAttribute("comment") @Valid CommentDto commentDto, BindingResult bindingResult, @PathVariable int id, HttpSession session, Model model) {
+        if(bindingResult.hasErrors()){
+            return "ErrorView";
+        }
         try {
             User user = authenticationHelper.tryGetCurrentUser(session);
             Comment comment = commentMapper.fromDto(commentDto);
@@ -326,6 +270,26 @@ public class PostMvcController {
             model.addAttribute("statusCode", 401);
             return "ErrorView";
         } catch (UserBannedException e) {
+            return "ErrorView";
+        }
+    }
+    @GetMapping("{postId}/comment/{id}/delete")
+    public String deletePostComment(@PathVariable int postId,@PathVariable int id, HttpSession session, Model model) {
+
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            commentService.deleteComment(user, id);
+            model.addAttribute("postId", postId);
+            return "redirect:/posts/{postId}";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (UserBannedException e){
             return "ErrorView";
         }
     }

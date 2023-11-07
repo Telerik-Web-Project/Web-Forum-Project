@@ -218,7 +218,7 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> getPaginatedUsers(int page, int postPerPage){
         try (Session session = sessionFactory.openSession()) {
             int offset = (page - 1) * postPerPage;
-            Query<User> query = session.createQuery("FROM User", User.class);
+            Query<User> query = session.createQuery("FROM User where id!=1", User.class);
             query.setFirstResult(offset);
             query.setMaxResults(postPerPage);
             return query.list();

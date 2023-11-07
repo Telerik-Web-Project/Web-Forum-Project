@@ -81,13 +81,13 @@ public class UserMvcController {
     @GetMapping("/new")
     public String userCreateView(Model model) {
         model.addAttribute("user", new UserDto());
-        return "UserCreateView";
+        return "RegisterFormView";
     }
 
     @PostMapping("/new")
-    public String createUser(@Valid @ModelAttribute("user") UserDto userDto,BindingResult bindingResult) {
+    public String createUser(@Valid @ModelAttribute("userDto") UserDto userDto,BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
-            return "UserCreateView";
+            return "ErrorView";
         }
       try {
           User user = userMapper.fromDtoToUser(userDto);
