@@ -53,6 +53,17 @@
     <div class="comment">
       <p class="comment-content" th:text="${comment.getContent()}"></p>
       <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
+
+      <form th:if="${comment.getUser().equals(user) or user.isAdmin()}" th:object="${comment}"  th:action="@{'/posts/'+${post.getId()}+'/comment/' + ${comment.id} + '/update'}">
+        <input type="hidden" name="id" th:value="${comment.id}" />
+        <label for="editedComment">Edit Comment:</label>
+        <textarea id="editedComment" th:field="*{content}" rows="4" cols="50"></textarea>
+        <button type="submit" th:class="${comment.getUser().equals(user) or user.isAdmin()} ? 'custom-button' : 'hidden-button'">Save</button>
+      </form>
+
+      <p th:if="${comment.getUser().equals(user) or user.isAdmin()}">
+        <a th:href="@{'/posts/'+${post.getId()}+'/comment/' + ${comment.id} + '/delete'}"><button>Delete Button</button></a>
+      </p>
     </div>
   </div>
 </section>
