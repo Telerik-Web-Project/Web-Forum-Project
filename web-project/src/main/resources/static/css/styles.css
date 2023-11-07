@@ -394,3 +394,141 @@ nav .fa {
 .black-border:hover {
     color: white;
 }
+
+/*----- Error page -----*/
+
+.error {
+    width: 80%;
+    margin: auto;
+    padding-top: 50px;
+}
+
+.error p {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 2;
+    grid-column-end: 5;
+    text-align: center;
+}
+
+/*----- Contacts page -----*/
+
+.contacts {
+    width: 80%;
+    margin: auto;
+    padding-top: 50px;
+}
+.contacts-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 150px 1fr 180px;
+    align-content: center;
+}
+
+.contacts-container h1 {
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 1;
+    grid-column-end: 5;
+    text-align: center;
+    color: black;
+    font-size: 30px;
+    font-weight: 600;
+    padding-bottom: 20px;
+}
+
+.bobi-pic{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    width: 400px;
+    height: 400px;
+    border-radius: 15%;
+    align-content: center;
+    content: url("../images/borisprofile.png");
+}
+.bobi-pic:hover{
+    content: url("../images/error.png");
+}
+.niki-pic {
+    grid-column-start: 2;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    width: 400px;
+    height: 400px;
+    border-radius: 15%;
+    align-content: center;
+    content: url("../images/niki.jpg");
+}
+.niki-pic:hover{
+    content: url("../images/error.png");
+}
+.stoyan-pic{
+    grid-column-start: 3;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    width: 400px;
+    height: 400px;
+    border-radius: 15%;
+    align-content: center;
+    content: url("../images/borisprofile.png");
+}
+.stoyan-pic:hover{
+    content: url("../images/error.png");
+}
+
+.bobi-info{
+    grid-row-start: 3;
+    grid-row-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+.bobi-info ul{
+    text-align: left;
+    list-style-type: none;
+}
+.bobi-info h3{
+    text-align: center;
+    padding: 20px 50px 20px 0;
+}
+.bobi-info li{
+    padding-bottom: 10px;
+}
+
+.niki-info{
+    grid-row-start: 3;
+    grid-row-end: 3;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.niki-info ul{
+    text-align: left;
+    list-style-type: none;
+}
+.niki-info h3{
+    text-align: center;
+    padding: 20px 50px 20px 0;
+}
+.niki-info li{
+    padding-bottom: 10px;
+}
+.stoyan-info{
+    grid-row-start: 3;
+    grid-row-end: 3;
+    grid-column-start: 3;
+    grid-column-end: 4;
+}
+.stoyan-info ul{
+    text-align: match-parent;
+    list-style-type: none;
+}
+.stoyan-info h3{
+    text-align: center;
+    padding: 20px 50px 20px 0;
+}
+.stoyan-info li{
+   padding-bottom: 10px;
+}

@@ -84,7 +84,7 @@
 <section class="most-recent" id="mostRecent">
     <h1 class="title">Most Recent Posts</h1>
     <div class="main-container">
-        <div class="posts-container" th:each="post : ${topPosts}">
+        <div class="posts-container" th:each="post : ${recentPosts}">
             <div class="post-content">
                 <div>
                     <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"

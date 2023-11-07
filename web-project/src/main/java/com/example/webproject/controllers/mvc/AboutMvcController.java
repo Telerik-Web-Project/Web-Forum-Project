@@ -5,11 +5,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/about")
+@RequestMapping()
 public class AboutMvcController {
 
-    @GetMapping()
+    @GetMapping("/about")
     public String showAboutPage() {
         return "About";
+    }
+
+    @GetMapping("/contacts")
+    public String showContactsPage() {
+        return "Contacts";
     }
 }

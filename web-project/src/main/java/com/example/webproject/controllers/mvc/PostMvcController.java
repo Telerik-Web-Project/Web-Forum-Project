@@ -115,7 +115,7 @@ public class PostMvcController {
 
 //    @GetMapping("/mostCommented")
 //    public String getTenMostCommentedPosts(Model model) {
-//        List<Post> posts = postService.getTenMostCommentedPosts();
+//        List<Post> posts = postService.getMostRecentPosts();
 //        model.addAttribute("posts", posts);
 //        return "TenMostCommentedPostsView";
 //    }
