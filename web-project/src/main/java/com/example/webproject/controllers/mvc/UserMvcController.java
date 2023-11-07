@@ -98,7 +98,7 @@ public class UserMvcController {
       try {
           User user = userMapper.fromDtoToUser(userDto);
           userService.createUser(user);
-          return "HomeView";
+          return "redirect:/";
       }catch (EntityDuplicateException e){
           bindingResult.rejectValue("username", "duplicate_username", e.getMessage());
           bindingResult.rejectValue("email", "duplicate_email", e.getMessage());

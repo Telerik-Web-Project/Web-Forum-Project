@@ -37,19 +37,39 @@
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
 </section>
-
-<div class="div-login">
-    <div class="form">
-        <h4 th:text="#{register}">Register</h4>
-        <form class="login" action="#" th:action="@{/users/new}" th:object="${user}" method="post">
-            <input type="text" th:field="*{firstName}" placeholder="First Name">
-            <input type="text" th:field="*{lastName}" placeholder="Last Name">
-            <input type="text" th:field="*{email}" placeholder="email">
-            <input type="text" th:field="*{username}" placeholder="Username">
-            <input type="password" th:field="*{password}" placeholder="Password">
-            <button  type="submit"  value="login" th:text="#{register.me}">Register</button>
-        </form>
-    </div>
+<div class="registration-body">
+<div class="registration-container">
+    <div class="registration-container-title" th:align="center">Registration Form</div>
+    <form  th:action="@{/users/new}" th:object="${user}" method="post">
+        <div class="user-details">
+            <div class="input-box">
+                <span class="user-details"></span>
+                <input type="text" th:field="*{firstName}" placeholder="Enter your Fist Name" required>
+            </div>
+            <div class="input-box">
+                <span class="user-details"></span>
+                <input type="text" th:field="*{lastName}" placeholder="Enter your Last Name" required>
+            </div>
+            <div class="input-box">
+                <span class="user-details"></span>
+                <input type="text" th:field="*{email}" placeholder="Enter your Email" required>
+            </div>
+            <div class="input-box">
+                <span class="user-details"></span>
+                <input  type="text" th:field="*{username}" placeholder="Enter your Username" required>
+            </div>
+            <div class="input-box">
+                <span class="user-details"></span>
+                <input type="password" th:field="*{password}" placeholder="Enter your Password" required>
+            </div>
+        </div>
+        <div class="button-container">
+            <div class="button">
+                <button type="submit">Register</button>
+            </div>
+        </div>
+    </form>
+</div>
 </div>
 
 <section class="footer">
