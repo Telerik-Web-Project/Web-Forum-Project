@@ -85,7 +85,7 @@
 <section class="most-commented" id="mostCommented">
     <h1 class="title">Most Commented Posts</h1>
     <div class="main-container">
-        <div class="posts-container" th:each="post : ${recentPosts}">
+        <div class="posts-container" th:each="post : ${topPosts}">
             <div class="post-content">
                 <div>
                    <a th:href="@{/posts/{id}(id=${post.id})}">
