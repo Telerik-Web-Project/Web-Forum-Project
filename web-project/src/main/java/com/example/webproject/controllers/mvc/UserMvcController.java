@@ -37,6 +37,12 @@ public class UserMvcController {
         this.authenticationHelper = authenticationHelper;
     }
 
+    @ModelAttribute("isAuthenticated")
+    public boolean populateIsAuthenticated(HttpSession session) {
+
+        return session.getAttribute("currentUser") != null;
+    }
+
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
