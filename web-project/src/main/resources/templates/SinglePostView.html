@@ -1,35 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <meta charset="UTF-8">
+    <title>Single Post</title>
+  <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="../static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet"
+        href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap"
-        rel="stylesheet">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="icon" href="../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon">
-  <title>Rocket Forum | Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 </head>
+<body id="home-body">
 
-<body>
-<h2 class="single-post-title" th:text="${post.getTitle()}"></h2>
-<div class="post">
-  <div class="post-content">
-    <p th:utext="${post.content}">Post Content</p>
+<section class="sub-header">
+  <nav>
+    <div class="forum-name">
+      <h2>Rocket</h2>
+      <h2>Team</h2>
+      <h2>Forum</h2>
+    </div>
+    <a href=HomeView.html th:href="@{/}"><img src="../static/images/logo.png" th:src="@{/images/logo.png}"
+                                              alt="logo"></a>
+    <div class="nav-links" id="navLinks">
+      <i class="fa fa-times" onclick="hideMenu()"></i>
+      <ul>
+        <li><a href="HomeView.html" th:href="@{/}" th:text="#{navigation.home}">Home</a></li>
+        <li><a href="About.html" th:href="@{/about}">About</a></li>
+        <li><a href="PostsView" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
+        <li><a href="contact.html" th:href="@{/users}">Users</a></li>
+        <li><a href="#" th:unless="${isAuthenticated}">Register</a></li>
+        <li><a href="" th:unless="${isAuthenticated}" th:href="@{/auth/login}">Sign In</a>
+        <li><a href="#" th:href="@{/auth/logout}" th:if="${isAuthenticated}">Log Out</a></li>
+      </ul>
+    </div>
+    <i class="fa fa-bars" onclick="showMenu()"></i>
+  </nav>
+  <h1 th:text="${post.getTitle()}"></h1>
+</section>
+<section>
+  <div class="single-post-content">
+    <p th:text="${post.getContent()}" th:align="center">
+    </p>
   </div>
+</section>
+<section class="main-container">
+  <div class  th:each="comment: ${postComments}">
+    <div class="comment">
+      <p class="comment-content" th:text="${comment.getContent()}"></p>
+      <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
+    </div>
+  </div>
+</section>
+<div class="custom-container" th:if="${isAuthenticated}">
+  <a th:unless="${post.getLikes().contains(user)}" th:href="@{'/posts/' + ${post.id} + '/like'}" class="custom-button">Like</a>
+  <a th:if="${post.getLikes().contains(user)}" th:href="@{'/posts/' + ${post.id} + '/dislike'}" class="custom-button">Dislike</a>
 </div>
-<p class="post-creator" th:text="'Posted by : ' + ${post.getPostCreator().getUsername()}" th:align="center">test</p>
-<div class="button-container" th:if="${isAuthenticated}">
-  <a th:unless="${post.getLikes().contains(user)}" th:href="@{'/posts/' + ${post.id} + '/like'}" class="like-button">Like</a>
-  <a th:if="${post.getLikes().contains(user)}" th:href="@{'/posts/' + ${post.id} + '/dislike'}" class="dislike-button">Dislike</a>
-  <a href="/" class="comment-button">Comment</a>
+
+<div class="comment-form-container" th:if="${isAuthenticated}">
+  <form id="comment-form" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment'}" method="post">
+    <label th:align="center" for="comment">Leave a comment:</label>
+    <textarea id="comment" th:field="*{content}" rows="4" cols="50"></textarea>
+    <button  type="submit">Submit Comment</button>
+  </form>
 </div>
 
 <section class="footer">
-  <h4>About Us</h4>
+  <h4></h4>
   <p>Copyright &copy 2023 Team Rocket</p>
   <div class="icons">
     <i class="fa fa-facebook"></i>
@@ -38,18 +79,5 @@
     <i class="fa fa-linkedin"></i>
   </div>
 </section>
-
-<!--JavaScript for toggle menu-->
-<script>
-  var navLinks = document.getElementById("navLinks");
-
-  function showMenu() {
-    navLinks.style.right = "0";
-  }
-
-  function hideMenu() {
-    navLinks.style.right = "-200px";
-  }
-</script>
 </body>
 </html>

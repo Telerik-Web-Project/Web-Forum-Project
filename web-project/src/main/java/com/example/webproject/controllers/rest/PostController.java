@@ -62,6 +62,7 @@ public class PostController {
         return postService.getTenMostCommentedPosts();
     }
 
+
     @GetMapping("/{id}")
     public Post getPost(@PathVariable int id){
         try {
