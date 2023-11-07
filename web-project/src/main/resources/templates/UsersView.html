@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
@@ -11,8 +11,7 @@
           href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" href="../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon">
-    <title>Rocket Forum | Login</title>
-<!--<body class="login">-->
+    <title>Rocket Forum | All Posts</title>
 <body id="home-body">
 <section class="sub-header">
     <nav>
@@ -37,24 +36,33 @@
         </div>
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
+    <h1>All Users</h1>
 </section>
-<div class="div-login">
-<div class="form">
-    <h4 th:text="#{login}">Login</h4>
-    <form class="login" action="#" th:action="@{/auth/login}" th:object="${login}" method="post">
-        <input type="text" th:field="*{username}" placeholder="Username">
-        <input type="password" th:field="*{password}" src="../static/images/password.png" th:src="@{/images/password.png}"  placeholder="Password">
-        <button  type="submit"  value="login" th:text="#{sign.in}">Sign In</button>
-        <div class="suggest">
-            <div class="remember">
-            <input type="checkbox" checked>
-            <span th:text="#{remember.me}">Remember Me</span>
-            </div>
-            </div>
-        </form>
+<div class="user-container">
+    <div class="user-card" th:each="user : ${users}">
+        <a th:href="@{/users/{id}(id=${user.id})}" class="id-redirecting">
+        <img class="user-avatar" src="../static/images/user.png" th:src="@{/images/user.png}" alt="User 1">
+        <h2 th:text="${user.username}">User 1</h2>
+            <br>
+        <h3 th:text="${'POSTS: ' + userService.getUserPosts(user,user).size()}">Posts: 10</h3>
+        </a>
     </div>
 </div>
-</div>
+
+
+<section>
+    <div class="pagination-container">
+        <span th:text="'Page ' + ${currentPage} + ' of ' + ${totalPages}"></span>
+        <ul class="pagination">
+            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${currentPage == i} ? 'active' : ''">
+                <a th:href="@{'/users?page=' + ${i}}" th:text="${i}"></a>
+            </li>
+        </ul>
+    </div>
+</section>
+
+
 <section class="footer">
     <p>Copyright &copy 2023 Team Rocket</p>
     <div class="icons">

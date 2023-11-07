@@ -98,7 +98,7 @@ public class PostMvcController {
         if(page == null){
             page = 1;
         }
-        int itemsPerPage = 5;
+        int itemsPerPage = 6;
 
         List<Post> dataList = postService.getPaginatedPosts(page, itemsPerPage);
 
@@ -252,7 +252,7 @@ public class PostMvcController {
             User loggedUser = authenticationHelper.tryGetCurrentUser(session);
             Post postToLike = postService.get(id);
             postService.likePost(loggedUser,postToLike);
-            return "redirect:/posts";
+            return "redirect:/posts/{id}";
         } catch (AuthorizationException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("statusCode", 401);
@@ -269,7 +269,7 @@ public class PostMvcController {
             User loggedUser = authenticationHelper.tryGetCurrentUser(session);
             Post postToLike = postService.get(id);
             postService.dislikePost(loggedUser,postToLike);
-            return "redirect:/posts";
+            return "redirect:/posts/{id}";
         } catch (AuthorizationException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("statusCode", 401);

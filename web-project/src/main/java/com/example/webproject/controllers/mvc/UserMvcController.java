@@ -1,4 +1,5 @@
 package com.example.webproject.controllers.mvc;
+import com.example.webproject.dtos.PostFilterDto;
 import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.dtos.UserDto;
 import com.example.webproject.dtos.UserFilterDto;
@@ -7,6 +8,8 @@ import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
+import com.example.webproject.models.Post;
+import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.services.contracts.UserService;
@@ -35,17 +38,29 @@ public class UserMvcController {
     }
 
     @GetMapping
-    public String showAllUser(@ModelAttribute("userFilterOptions") UserFilterDto userFilterDto, Model model) {
-        UserFilter userFilter = new UserFilter(
-                userFilterDto.getFirstName(),
-                userFilterDto.getUsername(),
-                userFilterDto.getEmail(),
-                userFilterDto.getSortBy(),
-                userFilterDto.getSortOrder()
-        );
-        List<User> users = userService.getAll(userFilter);
-        model.addAttribute("userFilterOptions", userFilter);
-        model.addAttribute("users", users);
+    public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
+                                    Model model,
+                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto) {
+        UserFilter userFilter = new UserFilter(filterDto.getFirstName(),
+                filterDto.getUsername(),
+                filterDto.getEmail(),
+                filterDto.getSortBy(),
+                filterDto.getSortOrder());
+        if(page == null){
+            page = 1;
+        }
+        int itemsPerPage = 5;
+
+        List<User> dataList = userService.getPaginatedPosts(page, itemsPerPage);
+
+        int totalItems = userService.getAll(userFilter).size();
+        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+        model.addAttribute("users", dataList);
+        model.addAttribute("userService", userService);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("userFilter", filterDto);
         return "UsersView";
     }
 

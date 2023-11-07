@@ -16,6 +16,6 @@ public interface UserRepository {
     User createUser (User user);
     User updateUser (User user);
     User deleteUser (User user);
-
     int getUsersCount();
+    List<User> getPaginatedUsers(int page, int postPerPage);
 }

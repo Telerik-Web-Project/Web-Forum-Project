@@ -25,4 +25,6 @@ public interface UserService {
     void deletePhoneNumber(User user);
 
     int getUsersCount();
+
+    List<User> getPaginatedPosts(int page, int postsPerPage);
 }

@@ -115,6 +115,11 @@ public class UserServiceImpl implements UserService {
         loggedUser.setPassword(userToBeUpdated.getPassword());
     }
 
+    @Override
+    public List<User> getPaginatedPosts(int page, int postsPerPage) {
+        return userRepository.getPaginatedUsers(page,postsPerPage);
+    }
+
     /*    private void saveDeletedUserDataInDataBase(User userToBeDeleted) {
      *//*  List<Comment> userComments = commentRepository.getUserComments(userToBeDeleted);
         User defaultUser = userRepository.getById(DATA_BASE_USER_ID);

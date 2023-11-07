@@ -1,7 +1,7 @@
 let page = 1;
 const paginationFunction = async () => {
 
-    const paginatedPostsUrl = `http://localhost:8080/api/posts/?page=${page}`;
+    const paginatedPostsUrl = `http://localhost:8080/posts/?page=${page}`;
     try {
         const response = await fetch(paginatedPostsUrl);
 
@@ -31,10 +31,9 @@ const paginationFunction = async () => {
     } catch (error) {
         console.error('Error:', error);
     }
-    page++
 };
 
 const loadMoreButton = document.getElementById('load-more-btn');
 loadMoreButton.addEventListener('click', async () => {
-    await paginationFunction();
+    page++;
 });

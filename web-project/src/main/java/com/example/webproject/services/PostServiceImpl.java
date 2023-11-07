@@ -142,6 +142,7 @@ public class PostServiceImpl implements PostService {
         return postRepository.getTenMostCommentedPosts();
     }
 
+
     @Override
     public List<Comment> getPostComments(Post post) {
         return postRepository.getPostComments(post);
