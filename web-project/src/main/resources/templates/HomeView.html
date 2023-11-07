@@ -28,7 +28,7 @@
             <ul>
                 <li><a href="HomeView.html" th:href="@{/}" th:text="#{navigation.home}">Home</a></li>
                 <li><a href="About.html" th:href="@{/about}">About</a></li>
-                <li><a href="PostsView" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
+                <li><a href="PostsView.html" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
                 <li><a href="contact.html" th:href="@{/users}">Users</a></li>
                 <li><a href="#" th:unless="${isAuthenticated}">Register</a></li>
                 <li><a href="" th:unless="${isAuthenticated}" th:href="@{/auth/login}">Sign In</a>
@@ -92,7 +92,7 @@
                     <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
                          alt="Profile Picture">
                     <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
-                        </div>
+                    </div>
                 <div>
                     <div class="post-title">
                         <h4 th:text="${post.getTitle()}">Post Title</h4>

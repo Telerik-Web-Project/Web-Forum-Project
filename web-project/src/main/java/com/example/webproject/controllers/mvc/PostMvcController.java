@@ -3,6 +3,7 @@ package com.example.webproject.controllers.mvc;
 import com.example.webproject.dtos.CommentDto;
 import com.example.webproject.dtos.PostDto;
 import com.example.webproject.dtos.PostFilterDto;
+import com.example.webproject.dtos.mvcDtos.SingletonCommentDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
@@ -14,6 +15,7 @@ import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
+import com.example.webproject.services.contracts.CommentService;
 import com.example.webproject.services.contracts.PostService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -34,16 +36,20 @@ public class PostMvcController {
     private final PostMapper postMapper;
     private final PostService postService;
     private final CommentMapper commentMapper;
+    private final CommentService commentService;
+    private final SingletonCommentDto singletonCommentDto;
 
     @Autowired
     public PostMvcController(AuthenticationHelper authenticationHelper,
                              PostMapper postMapper,
                              PostService postService,
-                             CommentMapper commentMapper) {
+                             CommentMapper commentMapper, CommentService commentService, SingletonCommentDto singletonCommentDto) {
         this.authenticationHelper = authenticationHelper;
         this.postMapper = postMapper;
         this.postService = postService;
         this.commentMapper = commentMapper;
+        this.commentService = commentService;
+        this.singletonCommentDto = singletonCommentDto;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -51,6 +57,7 @@ public class PostMvcController {
 
         return session.getAttribute("currentUser") != null;
     }
+
     @ModelAttribute("user")
     public User populateUser(HttpSession session){
        return authenticationHelper.tryPopulateUser(session);
@@ -95,10 +102,10 @@ public class PostMvcController {
                 filterDto.getSortBy(),
                 filterDto.getSortOrder()
         );
-        if(page == null){
+        if (page == null) {
             page = 1;
         }
-        int itemsPerPage = 6;
+        int itemsPerPage = 5;
 
         List<Post> dataList = postService.getPaginatedPosts(page, itemsPerPage);
 
@@ -116,20 +123,19 @@ public class PostMvcController {
 
 //    @GetMapping("/mostCommented")
 //    public String getTenMostCommentedPosts(Model model) {
-//        List<Post> posts = postService.getMostRecentPosts();
+//        List<Post> posts = postService.getTenMostCommentedPosts();
 //        model.addAttribute("posts", posts);
 //        return "TenMostCommentedPostsView";
 //    }
 
     @GetMapping("/{id}")
-    public String getPost(@ModelAttribute CommentDto commentDto,@PathVariable int id, Model model) {
+    public String getPost(@ModelAttribute SingletonCommentDto singletonCommentDto, @PathVariable int id, Model model) {
 
         try {
-
             Post post = postService.get(id);
-            model.addAttribute("comment",commentDto);
+            model.addAttribute("comment", singletonCommentDto);
             model.addAttribute("post", post);
-            model.addAttribute("postComments",postService.getPostComments(post));
+            model.addAttribute("postComments", postService.getPostComments(post));
             return "SinglePostView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -140,7 +146,7 @@ public class PostMvcController {
 
     @GetMapping("/tags")
     public String getPostsWithTag(@Valid @ModelAttribute("filterOptions") PostFilterDto filterDto,
-                                 @ModelAttribute("tag") String tag,
+                                  @ModelAttribute("tag") String tag,
                                   Model model) {
         PostFilter postFilter = new PostFilter(
                 filterDto.getTitle(),
@@ -218,7 +224,7 @@ public class PostMvcController {
 
 
     @PostMapping("/{id}/comment")
-    public String addComment(@ModelAttribute("comment")CommentDto commentDto,@PathVariable int id, Model model, HttpSession session) {
+    public String addComment(@ModelAttribute("comment") @Valid CommentDto commentDto, @PathVariable int id, Model model, HttpSession session) {
         User user;
         try {
             user = authenticationHelper.tryGetCurrentUser(session);
@@ -228,7 +234,7 @@ public class PostMvcController {
         try {
             Post post = postService.get(id);
             Comment comment = commentMapper.fromDto(commentDto);
-            postService.addComment(user,post,comment);
+            postService.addComment(user, post, comment);
             return "redirect:/posts/{id}";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -245,13 +251,14 @@ public class PostMvcController {
         }
 
     }
+
     @GetMapping("{id}/like")
     public String likePost(HttpSession session, Model model, @PathVariable int id) {
         try {
 
             User loggedUser = authenticationHelper.tryGetCurrentUser(session);
             Post postToLike = postService.get(id);
-            postService.likePost(loggedUser,postToLike);
+            postService.likePost(loggedUser, postToLike);
             return "redirect:/posts/{id}";
         } catch (AuthorizationException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -263,12 +270,13 @@ public class PostMvcController {
             return "ErrorView";
         }
     }
+
     @GetMapping("{id}/dislike")
     public String dislikePost(HttpSession session, Model model, @PathVariable int id) {
         try {
             User loggedUser = authenticationHelper.tryGetCurrentUser(session);
             Post postToLike = postService.get(id);
-            postService.dislikePost(loggedUser,postToLike);
+            postService.dislikePost(loggedUser, postToLike);
             return "redirect:/posts/{id}";
         } catch (AuthorizationException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -280,6 +288,45 @@ public class PostMvcController {
             return "ErrorView";
         }
     }
+    @GetMapping("{postId}/comment/{id}/delete")
+    public String deleteComment(@PathVariable int postId,@PathVariable int id, HttpSession session, Model model) {
 
-
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            commentService.deleteComment(user, id);
+            model.addAttribute("postId", postId);
+            return "redirect:/posts/{postId}";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (UserBannedException e){
+            return "ErrorView";
+        }
+    }
+    @GetMapping("{postId}/comment/{id}/update")
+    public String updateComment(@PathVariable int postId, CommentDto commentDto,@PathVariable int id, HttpSession session, Model model) {
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            Comment comment = commentMapper.fromDto(commentDto);
+            comment.setId(id);
+            commentService.updateComment(comment, user, id);
+            model.addAttribute("postId",postId);
+            return "redirect:/posts/{postId}";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 404);
+            return "ErrorView";
+        } catch (AuthorizationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("statusCode", 401);
+            return "ErrorView";
+        } catch (UserBannedException e) {
+            return "ErrorView";
+        }
+    }
 }

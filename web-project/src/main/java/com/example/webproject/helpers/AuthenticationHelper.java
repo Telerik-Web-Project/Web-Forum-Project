@@ -1,6 +1,7 @@
 package com.example.webproject.helpers;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.models.mvcModels.SingletonUser;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -12,9 +13,11 @@ import java.util.Objects;
 @Component
 public class AuthenticationHelper {
     private final UserService userService;
+    private final SingletonUser singletonUser;
     @Autowired
-    public AuthenticationHelper(UserService userService) {
+    public AuthenticationHelper(UserService userService, SingletonUser singletonUser) {
         this.userService = userService;
+        this.singletonUser = singletonUser;
     }
     public static final String INVALID_AUTHENTICATION_MESSAGE = "Invalid authentication";
     public static final String VALID_HEADER_NAME = "Authorization";
@@ -46,7 +49,7 @@ public class AuthenticationHelper {
     public User tryPopulateUser(HttpSession session) {
         String currentUsername = (String) session.getAttribute("currentUser");
         if(currentUsername == null){
-            return new User();
+            return singletonUser;
         }
         else {
             return userService.getByUsername(currentUsername);
