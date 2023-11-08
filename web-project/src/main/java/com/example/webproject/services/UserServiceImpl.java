@@ -26,45 +26,87 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.phoneRepository = phoneRepository;
     }
+
     @Override
     public List<User> getAll(UserFilter userFilter) {
         List<User> usersList = userRepository.getAll(userFilter);
         usersList.remove(userRepository.getById(UserServiceImpl.DATA_BASE_USER_ID));
         return usersList;
     }
+
     @Override
     public User getById(int id) {
         return userRepository.getById(id);
     }
+
     @Override
     public User getByUsername(String username) {
         return userRepository.getByUsername(username);
     }
+
     @Override
     public List<Post> getUserPosts(User loggedUser, User user) {
         checkIfBanned(loggedUser);
         return userRepository.getUserPosts(user);
     }
+
+    @Override
+    public List<User> getPaginatedUsers(int page, int postsPerPage) {
+        return userRepository.getPaginatedUsers(page, postsPerPage);
+    }
+
+    @Override
+    public int getUsersCount() {
+        return userRepository.getUsersCount();
+    }
+
     @Override
     public void createUser(User user) {
-        ValidationHelper.validateUserDetails(userRepository,user);
+        ValidationHelper.validateUserDetails(userRepository, user);
         userRepository.createUser(user);
     }
+
     @Override
     public User updateUser(User loggedUser, User userToBeUpdated) {
         ValidationHelper.validateUpdatePermission(userToBeUpdated.getId(), loggedUser);
         ValidationHelper.checkIfBanned(loggedUser);
-        ValidationHelper.validateEmail(userRepository,userToBeUpdated);
+        ValidationHelper.validateEmail(userRepository, userToBeUpdated);
         updateUserDetails(loggedUser, userToBeUpdated);
         userRepository.updateUser(loggedUser);
         return loggedUser;
     }
+
     @Override
     public void deleteUser(User loggedUser, User userToBeDeleted) {
         ValidationHelper.masterUserAccessDenied(userToBeDeleted.getId());
-        ValidationHelper.checkPermission(loggedUser, userToBeDeleted, ADMIN_USER_ERR_MESSAGE);
+        ValidationHelper. validateDeletePermission(loggedUser, userToBeDeleted, ADMIN_USER_ERR_MESSAGE);
         userRepository.deleteUser(userToBeDeleted);
     }
+
+    @Override
+    public void addPhoneNumber(Phone phone) {
+        checkIfBanned(phone.getAdminUser());
+        ValidationHelper.validatePhoneIsUnique(phoneRepository,phone);
+        ValidationHelper.validateUserHasNoExistingPhone(phoneRepository, phone);
+        phoneRepository.createPhone(phone);
+
+    }
+
+    @Override
+    public void updatePhoneNumber(User user, Phone phone) {
+        checkIfBanned(user);
+        validatePhoneIsUnique(phoneRepository, phone);
+        Phone oldPhone = phoneRepository.findPhone(user);
+        oldPhone.setPhoneNumber(phone.getPhoneNumber());
+        phoneRepository.updatePhone(oldPhone);
+    }
+
+    @Override
+    public void deletePhoneNumber(User user) {
+        Phone phone = phoneRepository.findPhone(user);
+        phoneRepository.deletePhone(phone);
+    }
+
     @Override
     public void changeBanStatus(User user) {
         user.setBlocked(!user.isBlocked());
@@ -77,37 +119,6 @@ public class UserServiceImpl implements UserService {
         userRepository.updateUser(user);
     }
 
-    @Override
-    public void addPhoneNumber(Phone phone) {
-        checkIfBanned(phone.getAdminUser());
-        validateUserIsAdmin(phoneRepository,phone);
-        validateNoOtherPhoneInRepository(phoneRepository,phone);
-        validatePhone(phoneRepository,phone);
-        phoneRepository.createPhone(phone);
-
-
-    }
-    @Override
-    public void deletePhoneNumber(User user) {
-        checkIfBanned(user);
-        Phone phone = phoneRepository.findPhone(user);
-        phoneRepository.deletePhone(phone);
-    }
-
-    @Override
-    public int getUsersCount() {
-        return userRepository.getUsersCount();
-    }
-
-    @Override
-    public void updatePhoneNumber(User user, Phone phone) {
-        checkIfBanned(user);
-        validatePhone(phoneRepository,phone);
-        Phone oldPhone = phoneRepository.findPhone(user);
-        oldPhone.setPhoneNumber(phone.getPhoneNumber());
-        phoneRepository.updatePhone(oldPhone);
-    }
-
     private void updateUserDetails(User loggedUser, User userToBeUpdated) {
         loggedUser.setFirstName(userToBeUpdated.getFirstName());
         loggedUser.setLastName(userToBeUpdated.getLastName());
@@ -115,90 +126,4 @@ public class UserServiceImpl implements UserService {
         loggedUser.setPassword(userToBeUpdated.getPassword());
     }
 
-    @Override
-    public List<User> getPaginatedPosts(int page, int postsPerPage) {
-        return userRepository.getPaginatedUsers(page,postsPerPage);
-    }
-
-    /*    private void saveDeletedUserDataInDataBase(User userToBeDeleted) {
-     *//*  List<Comment> userComments = commentRepository.getUserComments(userToBeDeleted);
-        User defaultUser = userRepository.getById(DATA_BASE_USER_ID);
-        for (Comment comment : userComments) {
-            comment.setUser(defaultUser);
-        }
-        commentRepository.updateComment(userComments);*//*
-        User defaultUser = userRepository.getById(DATA_BASE_USER_ID);
-        List<Post> userPosts = userRepository.getUserPosts(userToBeDeleted);
-        for (Post post : userPosts) {
-            post.setPostCreator(defaultUser);
-            postRepository.updatePost(post);
-        }
-    }*/
-    /*private void validateEmail(User userToBeUpdated) {
-        boolean emailExists = true;
-        try {
-            userRepository.getByEmail(userToBeUpdated.getEmail());
-        } catch (EntityNotFoundException e) {
-            emailExists = false;
-        }
-        if (emailExists) {
-            throw new EntityDuplicateException("User", "email", userToBeUpdated.getEmail());
-        }
-    }*/
- /*   private static void checkPermission(User user, User userToBeDeleted, String message) {
-        if (!user.isAdmin() && !user.getUsername().equals(userToBeDeleted.getUsername())) {
-            throw new AuthorizationException(message);
-        }
-    }*/
-
-
-  /*  private void validatePhone(Phone phone) {
-        boolean phoneExists = true;
-        try {
-            userRepository.findPhone(phone.getPhoneNumber());
-        } catch (EntityNotFoundException e) {
-            phoneExists = false;
-        }
-
-        if (phoneExists) {
-            throw new EntityDuplicateException("User", "phone number", phone.getPhoneNumber());
-        }
-    }*/
-   /* private void validateUserDetails(User user) {
-        boolean usernameExists = true;
-        boolean emailExists = true;
-        try {
-            userRepository.getByUsername(user.getUsername());
-        } catch (EntityNotFoundException e) {
-            usernameExists = false;
-        }
-        try {
-            userRepository.getByEmail(user.getEmail());
-        } catch (EntityNotFoundException e) {
-            emailExists = false;
-        }
-        if (emailExists) {
-            throw new EntityDuplicateException("User", "email", user.getEmail());
-        } else if (usernameExists) {
-            throw new EntityDuplicateException("User", "username", user.getUsername());
-        }
-    }*/
-
-    /* if (phone.getAdminUser().isAdmin()) {
-            phoneRepository.createPhone(phone);
-        } else {
-            throw new AuthorizationException("Only admins can add phone numbers");
-        }*/
-    
-    /* private void validateNoOtherPhoneInRepository(Phone phone) {
-        boolean userHasPhone = true;
-        try {
-            phoneRepository.findPhone(phone.getAdminUser());
-        } catch (EntityNotFoundException e) {
-            userHasPhone = false;
-        }
-        if (userHasPhone) {
-            throw new AuthorizationException("You are only allowed to add one phone");
-        }
-    }*/
 }

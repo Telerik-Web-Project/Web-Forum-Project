@@ -7,7 +7,6 @@ import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
-import com.example.webproject.helpers.ValidationHelper;
 import com.example.webproject.models.*;
 import com.example.webproject.services.contracts.UserService;
 import jakarta.validation.Valid;
@@ -43,7 +42,6 @@ public class UserController {
         UserFilter userFilter = new UserFilter(firstName, username, email, sortBy, sortOrder);
         return userService.getAll(userFilter);
     }
-
     @GetMapping("/{id}")
     public User get(@PathVariable int id) {
         try {
@@ -53,7 +51,6 @@ public class UserController {
         } catch (AuthorizationException e) {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());}
     }
-
     @GetMapping("/count")
     public int getUsersCount(){
         return userService.getUsersCount();
@@ -97,7 +94,6 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
-
     @DeleteMapping("/{id}")
     public void deleteUser(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {

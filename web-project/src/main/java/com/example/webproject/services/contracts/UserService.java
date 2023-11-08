@@ -15,16 +15,11 @@ public interface UserService {
     User updateUser (User loggedUser, User userToBeUpdated);
     void deleteUser (User loggedUser,User userToBeDeleted);
     void changeBanStatus(User user);
-
     void changeAdminStatus(User user);
-
     void addPhoneNumber(Phone phone);
-
     void updatePhoneNumber(User user, Phone phone);
-
     void deletePhoneNumber(User user);
-
     int getUsersCount();
 
-    List<User> getPaginatedPosts(int page, int postsPerPage);
+    List<User> getPaginatedUsers(int page, int postsPerPage);
 }

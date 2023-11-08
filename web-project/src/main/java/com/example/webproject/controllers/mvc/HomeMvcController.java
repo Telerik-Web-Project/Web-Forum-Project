@@ -31,10 +31,10 @@ public class HomeMvcController {
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated(HttpSession session) {
-        return session.getAttribute("currentUser") != null;
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
     }
-
 
     @GetMapping()
     public String showHomePage(Model model) {

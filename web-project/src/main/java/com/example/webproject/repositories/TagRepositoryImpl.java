@@ -36,7 +36,6 @@ public class TagRepositoryImpl implements TagRepository {
             return result.get(0);
         }
     }
-
     @Override
     public Tag createTag(Tag tag) {
         try (Session session = sessionFactory.openSession()) {

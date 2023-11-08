@@ -31,7 +31,7 @@ public class ValidationHelper {
             throw new EntityDuplicateException("User", "email", userToBeUpdated.getEmail());
         }
     }
-    public static void checkPermission(User user, User userToBeDeleted, String message) {
+    public static void validateDeletePermission(User user, User userToBeDeleted, String message) {
         if (!user.isAdmin() && !user.getUsername().equals(userToBeDeleted.getUsername())) {
             throw new AuthorizationException(message);
         }
@@ -41,7 +41,7 @@ public class ValidationHelper {
             throw new UserBannedException();
         }
     }
-    public static void validatePhone(PhoneRepository phoneRepository, Phone phone) {
+    public static void validatePhoneIsUnique(PhoneRepository phoneRepository, Phone phone) {
         boolean phoneExists = true;
         try {
             phoneRepository.findPhone(phone.getPhoneNumber());
@@ -51,6 +51,17 @@ public class ValidationHelper {
 
         if (phoneExists) {
             throw new EntityDuplicateException("User", "phone number", phone.getPhoneNumber());
+        }
+    }
+    public static void validateUserHasNoExistingPhone(PhoneRepository phoneRepository, Phone phone) {
+        boolean userHasPhone = true;
+        try {
+            phoneRepository.findPhone(phone.getAdminUser());
+        } catch (EntityNotFoundException e) {
+            userHasPhone = false;
+        }
+        if (userHasPhone) {
+            throw new AuthorizationException("You are only allowed to add one phone");
         }
     }
     public static void validateUserDetails(UserRepository userRepository,User user) {
@@ -72,12 +83,7 @@ public class ValidationHelper {
             throw new EntityDuplicateException("User", "username", user.getUsername());
         }
     }
-    public static void validatePostExists(PostRepository postRepository, Post post) {
-        Post existingPost = postRepository.get(post.getId());
-        if(existingPost.getId() != post.getId()) {
-            throw new EntityNotFoundException("Post", "id", String.valueOf(post.getId()));
-        }
-    }
+
 
     public static void validateCommentExists(CommentRepository commentRepository, Comment comment) {
         Comment existingComment = commentRepository.get(comment.getId());
@@ -99,22 +105,12 @@ public class ValidationHelper {
             throw new AuthorizationException(PostServiceImpl.AUTHENTICATION_ERROR);
         }
     }
-    public static void validateUserIsAdmin(PhoneRepository phoneRepository,Phone phone) {
-        if (!phone.getAdminUser().isAdmin()) {
-            throw new AuthorizationException("Only admins can add phone numbers");
+    public static void validateUserIsAdmin(User user) {
+        if (!user.isAdmin()) {
+            throw new AuthorizationException("Admins access only !");
         }
     }
-    public static void validateNoOtherPhoneInRepository(PhoneRepository phoneRepository,Phone phone) {
-        boolean userHasPhone = true;
-        try {
-            phoneRepository.findPhone(phone.getAdminUser());
-        } catch (EntityNotFoundException e) {
-            userHasPhone = false;
-        }
-        if (userHasPhone) {
-            throw new AuthorizationException("You are only allowed to add one phone");
-        }
-    }
+
 
     public static void masterUserAccessDenied(int id) {
         if(id == UserServiceImpl.DATA_BASE_USER_ID){

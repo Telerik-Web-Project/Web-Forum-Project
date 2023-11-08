@@ -51,6 +51,19 @@ public class PostRepositoryImpl implements PostRepository {
             return query.list();
         }
     }
+
+    @Override
+    public List<Post> getPaginatedPosts(int page, int postPerPage){
+        try (Session session = sessionFactory.openSession()) {
+            int offset = (page - 1) * postPerPage;
+            Query<Post> query = session.createQuery("FROM Post", Post.class);
+            query.setFirstResult(offset);
+            query.setMaxResults(postPerPage);
+            return query.list();
+        }
+    }
+
+    @Override
     public List<Post> getMostRecentPosts() {
         try (Session session = sessionFactory.openSession()) {
             Query<Post> query = session.createQuery("from Post where postCreator.id!=" + MASTER_USER_ID + " order by id desc limit 10", Post.class);
@@ -59,21 +72,28 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getAll() {
+    public List<Post> getTenMostCommentedPosts() {
         try (Session session = sessionFactory.openSession()) {
-            Query<Post> query = session.createQuery("from Post", Post.class);
+            Query<Post> query = session.createQuery("SELECT c.post " +
+                    "FROM Comment c " +
+                    "GROUP BY c.post " +
+                    "ORDER BY COUNT(c.id) DESC", Post.class);
+            query.setMaxResults(10);
+            return query.list();
+
+        }
+    }
+    @Override
+    public List<Post> getPostsWithTags(Tag tag) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Post> query = session.createQuery("SELECT p " +
+                    "FROM Post p " +
+                    "JOIN p.tags t " +
+                    "WHERE t.id = :tagId", Post.class);
+            query.setParameter("tagId",tag.getId());
             return query.list();
         }
     }
-
-   /* @Override
-    public int getLikesCount(Post post) {
-        try (Session session = sessionFactory.openSession()) {
-            Query<Integer> query = session.createQuery(
-                    "select count(l) from Post p join p.likes l where p.id = :postId", Integer.class);
-            return query.list().size();
-        }
-    }*/
 
     @Override
     public List<Comment> getPostComments(Post post) {
@@ -136,6 +156,7 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
+
     private String generateOrderBy(PostFilter filter) {
         if (filter.getSortBy().isEmpty()) {
             return "";
@@ -157,40 +178,6 @@ public class PostRepositoryImpl implements PostRepository {
             orderBy = String.format("%s desc", orderBy);
         }
         return orderBy;
-    }
-
-    @Override
-    public List<Post> getTenMostCommentedPosts() {
-        try (Session session = sessionFactory.openSession()) {
-            Query<Post> query = session.createQuery("SELECT c.post " +
-                    "FROM Comment c " +
-                    "GROUP BY c.post " +
-                    "ORDER BY COUNT(c.id) DESC", Post.class);
-            query.setMaxResults(10);
-            return query.list();
-
-        }
-    }
-
-    @Override
-    public List<Post> getPostsWithTags(Tag tag) {
-        try (Session session = sessionFactory.openSession()) {
-            Query<Post> query = session.createQuery("SELECT p " +
-                    "FROM Post p " +
-                    "JOIN p.tags t " +
-                    "WHERE t.id = :tagId", Post.class);
-            query.setParameter("tagId",tag.getId());
-            return query.list();
-        }
-    }
-    public List<Post> getPaginatedPosts(int page, int postPerPage){
-        try (Session session = sessionFactory.openSession()) {
-            int offset = (page - 1) * postPerPage;
-            Query<Post> query = session.createQuery("FROM Post", Post.class);
-            query.setFirstResult(offset);
-            query.setMaxResults(postPerPage);
-            return query.list();
-        }
     }
 }
 

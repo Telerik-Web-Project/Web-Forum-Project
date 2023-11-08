@@ -2,6 +2,7 @@ package com.example.webproject.helpers;
 
 import com.example.webproject.dtos.RegisterDto;
 import com.example.webproject.dtos.UpdateUserDto;
+import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.models.User;
 import com.example.webproject.dtos.UserDto;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,18 @@ public class UserMapper {
     public User fromDtoToUser(UserDto userDto){
         User user = fromUpdateUserDto(userDto);
         user.setUsername(userDto.getUsername());
+        return user;
+    }
+    public User fromRegisterDtoToUser(RegisterDto registerDto){
+        if(!registerDto.getPassword().equals(registerDto.getConfirmPassword())){
+            throw new AuthorizationException("Passwords does not match please try again");
+        }
+        User user = new User();
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setUsername(registerDto.getUsername());
+        user.setPassword(registerDto.getPassword());
+        user.setEmail(registerDto.getEmail());
         return user;
     }
 

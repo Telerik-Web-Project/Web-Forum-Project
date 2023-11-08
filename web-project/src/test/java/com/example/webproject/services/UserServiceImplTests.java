@@ -19,8 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.example.webproject.Helpers.createMockPhone;
 import static com.example.webproject.Helpers.createMockUser;
-import static com.example.webproject.helpers.ValidationHelper.*;
-import static com.example.webproject.helpers.ValidationHelper.validatePhone;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)

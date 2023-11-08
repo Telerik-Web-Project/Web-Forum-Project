@@ -1,19 +1,33 @@
- create table users
+create table tags
 (
-    user_id      int auto_increment
+    tag_id   int auto_increment
         primary key,
-    username     varchar(20)                   not null,
-    password     varchar(20)                   not null,
-    first_name   varchar(20)                   not null,
-    last_name    varchar(20)                   not null,
-    email        varchar(50)                   not null,
-    is_admin     tinyint(1)                    not null,
-    phone_number varchar(20) default 'Unknown' not null,
-    is_Blocked   tinyint(1)                    not null,
-    constraint users_pk2
-        unique (username),
-    constraint users_pk3
-        unique (email)
+    tag_name varchar(20) not null,
+    constraint tags_pk2
+        unique (tag_name)
+);
+
+create table users
+(
+    user_id    int auto_increment
+        primary key,
+    username   varchar(20) not null,
+    password   varchar(20) not null,
+    first_name varchar(20) not null,
+    last_name  varchar(20) not null,
+    email      varchar(50) not null,
+    is_admin   tinyint(1)  not null,
+    is_Blocked tinyint(1)  not null
+);
+
+create table admin_phones
+(
+    phone_number varchar(20) not null,
+    user_id      int         null,
+    phone_id     int auto_increment
+        primary key,
+    constraint phone_number_users_user_id_fk
+        foreign key (user_id) references users (user_id)
 );
 
 create table posts
@@ -49,29 +63,14 @@ create table liked_posts
     constraint liked_posts_users_user_id_fk
         foreign key (user_id) references users (user_id)
 );
-    create table admin_phones
- (
-     phone_number varchar(12) not null
-         primary key,
-     user_id      int         null,
-     constraint phone_number_users_user_id_fk
-         foreign key (user_id) references users (user_id)
- );
- create table tags
- (
-     tag_id   int auto_increment
-         primary key,
-     tag_name varchar(20) not null,
-     constraint tags_pk2
-         unique (tag_name)
- );
 
- create table posts_tags
- (
-     post_id int not null,
-     tag_id  int not null,
-     constraint posts_tags_posts_post_id_fk
-         foreign key (post_id) references posts (post_id),
-     constraint posts_tags_tags_tag_id_fk
-         foreign key (tag_id) references tags (tag_id)
- );
+create table posts_tags
+(
+    post_id int not null,
+    tag_id  int not null,
+    constraint posts_tags_posts_post_id_fk
+        foreign key (post_id) references posts (post_id),
+    constraint posts_tags_tags_tag_id_fk
+        foreign key (tag_id) references tags (tag_id)
+);
+

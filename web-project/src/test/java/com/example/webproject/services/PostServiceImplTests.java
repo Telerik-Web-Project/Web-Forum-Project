@@ -432,7 +432,7 @@ public class PostServiceImplTests {
                 .getPostComments(mockPost);
     }
 
-    @Test
+   /* @Test
     public void addComment_Should_callRepository(){
         Post mockPost = createMockPost();
         User mockUser = createMockUser();
@@ -453,9 +453,9 @@ public class PostServiceImplTests {
 
         Assertions.assertThrows(UserBannedException.class,
                 () -> postService.addComment(mockUser,mockPost,mockComment));
-    }
+    }*/
 
-    @Test
+  /*  @Test
     public void updateComment_Should_callRepository(){
         User mockUser = createMockUser();
         Comment mockComment = createMockComment();
@@ -503,7 +503,7 @@ public class PostServiceImplTests {
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> postService.updateComment(mockUser,mockComment));
     }
-
+*/
     @Test
     public void getTenMostCommentedPosts_should_CallRepository_When_Prompted() {
         postService.getTenMostCommentedPosts();

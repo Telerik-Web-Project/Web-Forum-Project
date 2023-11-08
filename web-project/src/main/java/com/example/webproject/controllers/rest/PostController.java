@@ -2,6 +2,7 @@ package com.example.webproject.controllers.rest;
 
 import com.example.webproject.dtos.CommentDto;
 import com.example.webproject.dtos.PostDto;
+import com.example.webproject.dtos.UpdatePostDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
@@ -38,7 +39,6 @@ public class PostController {
         this.commentMapper = commentMapper;
     }
 
-    //TODO implement get10mostLikedPosts
     @GetMapping()
     public List<Post> getAll(
                              @RequestParam(required = false) String title,
@@ -48,20 +48,34 @@ public class PostController {
         PostFilter filter = new PostFilter(title,content,sortBy,sortOrder);
         return postService.getAll(filter);
     }
-//    @GetMapping("/")
-//    public List<Post> getPaginatedPosts(
-//            @RequestParam(name = "page")
-//                    int page) {
-//        return postService.getPaginatedPosts(pageParameterAssignment(page));
-//    }
-
-
+    @GetMapping("/mostRecent")
+    public List<Post> getMostRecent(){
+        return postService.getMostRecentPosts();
+    }
 
     @GetMapping("/mostCommented")
     public List<Post> getTenMostCommentedPosts () {
         return postService.getTenMostCommentedPosts();
     }
 
+    @GetMapping("/{id}/comments")
+    public List<Comment> getPostComments(@PathVariable int id) {
+        try {
+            Post post = postService.get(id);
+            postService.getPostComments(post);
+            return postService.getPostComments(post);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+    @GetMapping("/tags")
+    public List<Post> getPostsWithTag(@RequestParam String tag){
+        try {
+            return postService.getPostsWithTag(tag);
+        }catch (EntityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
 
     @GetMapping("/{id}")
     public Post getPost(@PathVariable int id){
@@ -71,15 +85,91 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
-    @GetMapping("/tags")
-    public List<Post> getPostsWithTag(@RequestParam String tag){
-      try {
-          return postService.getPostsWithTag(tag);
-      }catch (EntityNotFoundException e){
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
-      }
+    @PostMapping()
+    public Post createPost(@Valid @RequestBody PostDto postDto, @RequestHeader HttpHeaders httpHeader) {
+        try {
+            Post postToCreate = postMapper.fromDto(postDto);
+            User loggedUser = authenticationHelper.getUser(httpHeader);
+            postService.createPost(postToCreate, loggedUser);
+            return postToCreate;
+        } catch (EntityDuplicateException | UserBannedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
     }
+    @PutMapping("/{id}")
+    public Post updatePost(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody UpdatePostDto updatePostDto) {
+        try {
+            User user = authenticationHelper.getUser(headers);
+            Post post = postMapper.fromUpdatePostDto(updatePostDto,id,user);
+            postService.updatePost(post, user);
+            return post;
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (EntityDuplicateException | UserBannedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+    @DeleteMapping("/{id}")
+    public void deletePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        try {
+            User loggedUser = authenticationHelper.getUser(headers);
+            Post postToDelete = postService.get(id);
+            postService.deletePost(postToDelete, loggedUser);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (UserBannedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+    @PostMapping("/{id}/comments")
+    public void addCommentToPost(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto) {
+        try {
+            Comment comment = commentMapper.fromDto(commentDto);
+            User user = authenticationHelper.getUser(headers);
+            Post post = postService.get(id);
+            commentService.createComment(user, post, comment);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (UserBannedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+    @PutMapping("/comments/{id}")
+    public void updatePostComment(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto) {
+        try {
+            Comment comment = commentMapper.fromDto(commentDto,id);
+            User user = authenticationHelper.getUser(headers);
+            commentService.updateComment(comment, user, id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (UserBannedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+    @DeleteMapping("/comments/{id}")
+    public void deletePostComment(@PathVariable int id, @RequestHeader HttpHeaders headers) {
+        try {
+            User user = authenticationHelper.getUser(headers);
+            commentService.deleteComment(user, id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (UserBannedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
     @PostMapping("/{id}/tags")
     public void addTagToPost(@PathVariable int id, @RequestBody Tag tag, @RequestHeader HttpHeaders headers){
         try {
@@ -108,50 +198,6 @@ public class PostController {
         }
     }
 
-    @GetMapping("/{id}/comments")
-    public List<Comment> getPostComments(@PathVariable int id) {
-        try {
-            Post post = postService.get(id);
-            postService.getPostComments(post);
-            return postService.getPostComments(post);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
-    @PostMapping()
-    public Post createPost(@Valid @RequestBody PostDto postDto, @RequestHeader HttpHeaders httpHeader) {
-        try {
-            Post postToCreate = postMapper.fromDto(postDto);
-            User loggedUser = authenticationHelper.getUser(httpHeader);
-            postService.createPost(postToCreate, loggedUser);
-            return postToCreate;
-        } catch (EntityDuplicateException | UserBannedException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
-    }
-
-    @PutMapping("/{id}")
-    public Post updatePost(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody PostDto postDto) {
-        try {
-            User user = authenticationHelper.getUser(headers);
-            Post post = postMapper.fromDto(postDto);
-            post.setId(id);
-            post.setPostCreator(user);
-            postService.updatePost(post, user);
-            return post;
-
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (EntityDuplicateException | UserBannedException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-    }
-
     @PutMapping("{id}/like")
     public void likePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {
@@ -166,83 +212,6 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
-    @GetMapping("/mostRecent")
-    public List<Post> getMostRecent(){
-        return postService.getMostRecentPosts();
-    }
-    @PutMapping("{id}/dislike")
-    public void dislikePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
-        try {
-            User user = authenticationHelper.getUser(headers);
-            Post post = postService.get(id);
-            postService.dislikePost(user, post);
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (UserBannedException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-    }
-    @DeleteMapping("/{id}")
-    public void deletePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
-        try {
-            User loggedUser = authenticationHelper.getUser(headers);
-            Post postToDelete = postService.get(id);
-            postService.deletePost(postToDelete, loggedUser);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (UserBannedException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-    }
 
-    @PostMapping("/{id}/comments")
-    public void addComment(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto) {
-        try {
-            Comment comment = commentMapper.fromDto(commentDto);
-            User user = authenticationHelper.getUser(headers);
-            Post post = postService.get(id);
-            postService.addComment(user, post, comment);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (UserBannedException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-    }
-
-    @PutMapping("/comments/{id}")
-    public void updateComment(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto) {
-        try {
-            Comment comment = commentMapper.fromDto(commentDto);
-            comment.setId(id);
-            User user = authenticationHelper.getUser(headers);
-            commentService.updateComment(comment, user, comment.getId());
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (UserBannedException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/comments/{id}")
-    public void deleteComment(@PathVariable int id, @RequestHeader HttpHeaders headers) {
-        try {
-            User user = authenticationHelper.getUser(headers);
-            commentService.deleteComment(user, id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (AuthorizationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (UserBannedException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-    }
 
 }

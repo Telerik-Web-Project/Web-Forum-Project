@@ -35,18 +35,6 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             return phones.get(0);
         }
     }
-
-
-    @Override
-    public void updatePhone(Phone oldPhone) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.merge(oldPhone);
-            session.getTransaction().commit();
-        }
-    }
-
-
     @Override
     public Phone findPhone(User user) {
         try (Session session = sessionFactory.openSession()) {
@@ -60,18 +48,6 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             return phones.get(0);
         }
     }
-
-
-    @Override
-    public void deletePhone(Phone phone) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.remove(phone);
-            session.getTransaction().commit();
-        }
-    }
-
-
     @Override
     public Phone createPhone(Phone phone) {
         try (Session session = sessionFactory.openSession()) {
@@ -81,4 +57,21 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             return phone;
         }
     }
+    @Override
+    public void updatePhone(Phone oldPhone) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.merge(oldPhone);
+            session.getTransaction().commit();
+        }
+    }
+    @Override
+    public void deletePhone(Phone phone) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.remove(phone);
+            session.getTransaction().commit();
+        }
+    }
+
 }

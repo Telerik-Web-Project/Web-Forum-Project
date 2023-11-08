@@ -17,17 +17,20 @@ public class CommentServiceImpl implements CommentService {
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
-
     @Override
     public Comment getComment(int id) {
         return commentRepository.get(id);
     }
-
+    public List<Comment> getUserComments(User user) {
+        return commentRepository.getUserComments(user);
+    }
     @Override
-    public void createComment(User user, Comment comment) {
+    public void createComment(User user, Post post, Comment comment) {
+        ValidationHelper.checkIfBanned(user);
+        comment.setPost(post);
+        comment.setUser(user);
         commentRepository.createComment(comment);
     }
-
     @Override
     public void updateComment(Comment comment, User user, int id) {
         ValidationHelper.validateCommentExists(commentRepository, comment);
@@ -38,11 +41,6 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user);
         commentRepository.updateComment(comment);
     }
-
-    public List<Comment> getUserComments(User user) {
-        return commentRepository.getUserComments(user);
-    }
-
     @Override
     public void deleteComment(User user, int id) {
         Comment repositoryComment = commentRepository.get(id);

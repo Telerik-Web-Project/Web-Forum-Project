@@ -54,7 +54,16 @@ public class UserRepositoryImpl implements UserRepository {
             return query.list();
         }
     }
-
+    @Override
+    public List<User> getPaginatedUsers(int page, int postPerPage){
+        try (Session session = sessionFactory.openSession()) {
+            int offset = (page - 1) * postPerPage;
+            Query<User> query = session.createQuery("FROM User where id!=1", User.class);
+            query.setFirstResult(offset);
+            query.setMaxResults(postPerPage);
+            return query.list();
+        }
+    }
     @Override
     public User getById(int id) {
         try (Session session = sessionFactory.openSession()) {
@@ -214,15 +223,4 @@ public class UserRepositoryImpl implements UserRepository {
         }
         return orderBy;
     }
-
-    public List<User> getPaginatedUsers(int page, int postPerPage){
-        try (Session session = sessionFactory.openSession()) {
-            int offset = (page - 1) * postPerPage;
-            Query<User> query = session.createQuery("FROM User where id!=1", User.class);
-            query.setFirstResult(offset);
-            query.setMaxResults(postPerPage);
-            return query.list();
-        }
-    }
-
 }

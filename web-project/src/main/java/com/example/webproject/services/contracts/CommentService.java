@@ -9,7 +9,7 @@ import java.util.List;
 public interface CommentService {
     Comment getComment(int id);
 
-    void createComment(User user, Comment comment);
+    void createComment(User user, Post post, Comment comment);
 
     public List<Comment> getUserComments(User user);
 

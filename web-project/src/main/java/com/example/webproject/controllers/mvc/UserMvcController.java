@@ -27,14 +27,12 @@ public class UserMvcController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final AuthenticationHelper authenticationHelper;
-    private final PostService postService;
 
     @Autowired
     public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.authenticationHelper = authenticationHelper;
-        this.postService = postService;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -94,23 +92,27 @@ public class UserMvcController {
     }
     @GetMapping("/new")
     public String userCreateView(Model model) {
-        model.addAttribute("user", new UserDto());
+        model.addAttribute("user", new RegisterDto());
         return "RegisterFormView";
     }
 
     @PostMapping("/new")
-    public String createUser(@Valid @ModelAttribute("userDto") UserDto userDto,BindingResult bindingResult) {
+    public String createUser(@Valid @ModelAttribute("userDto") RegisterDto registerDto,BindingResult bindingResult,
+                             Model model) {
         if(bindingResult.hasErrors()){
-            return "ErrorView";
+            return "redirect:/new";
         }
       try {
-          User user = userMapper.fromDtoToUser(userDto);
+          User user = userMapper.fromRegisterDtoToUser(registerDto);
           userService.createUser(user);
           return "redirect:/";
       }catch (EntityDuplicateException e){
           bindingResult.rejectValue("username", "duplicate_username", e.getMessage());
           bindingResult.rejectValue("email", "duplicate_email", e.getMessage());
-      return "UserCreateView";
+      return "redirect:/users/new";
+      }catch (AuthorizationException e){
+            model.addAttribute("error",e.getMessage());
+          return "ErrorView";
       }
     }
 

@@ -39,8 +39,7 @@ public class AuthenticationHelper {
             throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
         }
 
-    }
-    private String getUsername(String input){
+    }private String getUsername(String input){
         if(input.charAt(0) == ASCII_VALUE_OF_SPACE){
             return "";
         }

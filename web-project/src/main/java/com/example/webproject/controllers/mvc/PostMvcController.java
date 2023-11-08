@@ -73,7 +73,7 @@ public class PostMvcController {
                 filterDto.getSortBy(),
                 filterDto.getSortOrder()
         );
-        if (page == null) {
+        if (page == 0) {
             page = 1;
         }
         List<Post> dataList = postService.getPaginatedPosts(page, DEFAULT_PAGE_SIZE);
@@ -151,23 +151,7 @@ public class PostMvcController {
         }
     }
 
-    @GetMapping("{id}/dislike")
-    public String dislikePost(HttpSession session, Model model, @PathVariable int id) {
-        try {
-            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
-            Post postToLike = postService.get(id);
-            postService.dislikePost(loggedUser, postToLike);
-            return "redirect:/posts/{id}";
-        } catch (AuthorizationException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 401);
-            return "ErrorView";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("statusCode", 404);
-            return "ErrorView";
-        }
-    }
+
 
     @PostMapping()
     public String createPost(@Valid @ModelAttribute("post") PostDto postDto,
@@ -234,7 +218,7 @@ public class PostMvcController {
         try {
             Post post = postService.get(id);
             Comment comment = commentMapper.fromDto(commentDto);
-            postService.addComment(user, post, comment);
+            commentService.createComment(user, post, comment);
             return "redirect:/posts/{id}";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());

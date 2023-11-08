@@ -15,31 +15,63 @@ import java.util.List;
 @Service
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
     private final TagRepository tagRepository;
     public static final String AUTHENTICATION_ERROR = "Only admins or the creator of the post can modify it.";
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, TagRepository tagRepository) {
+    public PostServiceImpl(PostRepository postRepository,TagRepository tagRepository) {
         this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
+
         this.tagRepository = tagRepository;
     }
-
     @Override
     public List<Post> getAll(PostFilter filter) {
         return postRepository.getAll(filter);
     }
-
+    @Override
+    public List<Post> getTenMostCommentedPosts() {
+        return postRepository.getTenMostCommentedPosts();
+    }
+    @Override
+    public List<Post> getPaginatedPosts(int page, int postsPerPage) {
+        return postRepository.getPaginatedPosts(page,postsPerPage);
+    }
+    @Override
+    public List<Post> getMostRecentPosts() {
+        return postRepository.getMostRecentPosts();
+    }
     @Override
     public Post get(int id) {
         return postRepository.get(id);
     }
-
     @Override
     public List<Post> getPostsWithTag(String tag){
         Tag repoTag = tagRepository.get(tag);
         return postRepository.getPostsWithTags(repoTag);
+    }
+    @Override
+    public List<Comment> getPostComments(Post post) {
+        return postRepository.getPostComments(post);
+    }
+    @Override
+    public void createPost(Post post, User user) {
+        ValidationHelper.checkIfBanned(user);
+        post.setPostCreator(user);
+        postRepository.createPost(post);
+    }
+    @Override
+    public void updatePost(Post post, User user) {
+        ValidationHelper.validateModifyPermissions(postRepository,post, user);
+        ValidationHelper.checkIfBanned(user);
+        Post existingPost = postRepository.get(post.getId());
+        verifyPostFields(post, existingPost);
+        postRepository.updatePost(post);
+    }
+    @Override
+    public void deletePost(Post post, User user) {
+        ValidationHelper.validateModifyPermissions(postRepository,post, user);
+        ValidationHelper.checkIfBanned(user);
+        postRepository.deletePost(post);
     }
 
     @Override
@@ -56,7 +88,6 @@ public class PostServiceImpl implements PostService {
             postRepository.updatePost(post);
         }
     }
-
     @Override
     public void deleteTagFromPost(Post post, User loggedUser, Tag tag) {
         ValidationHelper.checkIfBanned(loggedUser);
@@ -66,91 +97,22 @@ public class PostServiceImpl implements PostService {
         postRepository.updatePost(post);
     }
 
-
-    @Override
-    public void createPost(Post post, User user) {
-        ValidationHelper.checkIfBanned(user);
-        post.setPostCreator(user);
-        postRepository.createPost(post);
-    }
-
-    @Override
-    public void updatePost(Post post, User user) {
-        ValidationHelper.validatePostExists(postRepository,post);
-        ValidationHelper.validateModifyPermissions(postRepository,post, user);
-        ValidationHelper.checkIfBanned(user);
-        postRepository.updatePost(post);
-    }
-
-    @Override
-    public void deletePost(Post post, User user) {
-        ValidationHelper.validateModifyPermissions(postRepository,post, user);
-        ValidationHelper.checkIfBanned(user);
-        postRepository.deletePost(post);
-    }
     @Override
     public void likePost(User user, Post post) {
         ValidationHelper.checkIfBanned(user);
         if(!post.getLikes().contains(user)) {
             post.likePost(user);
-
-            postRepository.updatePost(post);
-        }
-    }
-
-    @Override
-    public void addComment(User user, Post post, Comment comment) {
-        ValidationHelper.checkIfBanned(user);
-        comment.setPost(post);
-        comment.setUser(user);
-        commentRepository.createComment(comment);
-    }
-
-    @Override
-    public void updateComment(User user, Comment comment) {
-        ValidationHelper.checkIfBanned(user);
-        ValidationHelper.validateCommentExists(commentRepository, comment);
-        ValidationHelper.validateModifyPermissions(commentRepository, comment, user);
-        Comment commentToModify = commentRepository.get(comment.getId());
-        comment.setPost(commentToModify.getPost());
-        comment.setUser(user);
-        commentRepository.updateComment(comment);
-    }
-
-    @Override
-    public List<Post> getMostRecentPosts() {
-        return postRepository.getMostRecentPosts();
-    }
-
-    @Override
-    public List<Post> getPaginatedPosts(int page, int postsPerPage) {
-        return postRepository.getPaginatedPosts(page,postsPerPage);
-    }
-
-    @Override
-    public void dislikePost(User user, Post post) {
-        ValidationHelper.checkIfBanned(user);
-        if(post.getLikes().contains(user)) {
+        } else {
             post.dislikePost(user);
-            postRepository.updatePost(post);
+        }
+        postRepository.updatePost(post);
+    }
+    private static void verifyPostFields(Post post, Post existingPost) {
+        if(post.getTitle() == null || post.getTitle().isBlank()){
+            post.setTitle(existingPost.getTitle());
+        }
+        if(post.getContent() == null || post.getContent().isBlank()){
+            post.setContent(existingPost.getContent());
         }
     }
-
-
-    @Override
-    public List<Post> getTenMostCommentedPosts() {
-        return postRepository.getTenMostCommentedPosts();
-    }
-
-
-    @Override
-    public List<Comment> getPostComments(Post post) {
-        return postRepository.getPostComments(post);
-    }
-
-    /*public int getLikesCount(Post post) {
-        ValidationHelper.validatePostExists(postRepository,post);
-        return postRepository.getLikesCount(post);
-    }*/
-
 }

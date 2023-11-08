@@ -10,12 +10,10 @@ import java.util.List;
 public interface PostRepository {
 
     List <Post> getAll(PostFilter filter);
-    List <Post> getAll();
     Post get(int id);
     Post createPost (Post post);
     Post updatePost (Post post);
     void deletePost (Post post);
-    /*int getLikesCount(Post post);*/
     List<Post> getMostRecentPosts();
     List<Comment> getPostComments(Post post);
     List<Post> getTenMostCommentedPosts();

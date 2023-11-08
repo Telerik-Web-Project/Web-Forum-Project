@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" href="../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon">
     <title>Rocket Forum | Login</title>
-    <!--<body class="login">-->
+
 <body id="home-body">
 <section class="sub-header">
     <nav>
@@ -61,6 +61,10 @@
             <div class="input-box">
                 <span class="user-details"></span>
                 <input type="password" th:field="*{password}" placeholder="Enter your Password" required>
+            </div>
+            <div class="input-box">
+                <span class="user-details"></span>
+                <input type="password" th:field="*{confirmPassword}" placeholder="Confirm your password" required>
             </div>
         </div>
         <div class="button-container">
