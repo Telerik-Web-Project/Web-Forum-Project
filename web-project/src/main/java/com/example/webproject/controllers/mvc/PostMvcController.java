@@ -199,14 +199,16 @@ public class PostMvcController {
     public String deletePost(@PathVariable int id, Model model, HttpSession session) {
 
         User user;
+        Post post;
         try {
+            post = postService.get(id);
             user = authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }
 
         try {
-            postService.deletePost(postService.get(id), user);
+            postService.deletePost(post, user);
             return "redirect:/posts";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());

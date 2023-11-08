@@ -809,6 +809,108 @@ a {
 .stoyan-info li{
    padding-bottom: 10px;
 }
+
+/*SINGLE USER VIEW*/
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 0 5px 0 silver;
+    backdrop-filter: blur(6px)
+}
+
+.user-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin-right: 20px;
+}
+
+.profile-info {
+    font-family: Arial, sans-serif;
+}
+
+.full-name {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.email {
+    font-size: 1em;
+    margin: 0;
+}
+
+.settings-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 25px;
+    width: 25px;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: none;
+    padding: 5px 0;
+}
+
+.dropdown-menu a {
+    font-size: 12px;
+    display: block;
+    line-break: auto;
+    padding: 10px 40px;
+    text-decoration: none;
+    color: #333;
+}
+.dashboard-container {
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 200px auto;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+}
+.dashboard-info {
+    margin-bottom: 20px;
+}
+
+.dashboard-info p {
+    margin: 0;
+}
+
+.post {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.like-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+#trash-bin{
+    color: red;
+    padding-left: 400px;
+    cursor: pointer;
+}
+#trash-bin:hover{
+    transform: translateY(2px);
+}
+/*SINGLE USER VIEW*/
 /* ----- REGISTRATION FORM STARTS HERE ------- */
 
 

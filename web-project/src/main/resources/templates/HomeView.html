@@ -50,8 +50,8 @@
     <h1 class="title">Most Recent Posts</h1>
     <div class="main-container">
         <div class="posts-container" th:each="post : ${mostRecent}">
+            <a th:href="@{/posts/{id}(id=${post.id})}">
             <div class="post-content">
-                <a th:href="@{/posts/{id}(id=${post.id})}">
                 <div>
                     <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
                          alt="Profile Picture">
@@ -76,6 +76,7 @@
                     <span th:text="${postService.getPostComments(post).size()}">Comments</span>
                 </div>
             </div>
+            </a>
         </div>
     </div>
 </section>
@@ -86,9 +87,9 @@
     <h1 class="title">Most Commented Posts</h1>
     <div class="main-container">
         <div class="posts-container" th:each="post : ${topPosts}">
+            <a th:href="@{/posts/{id}(id=${post.id})}">
             <div class="post-content">
                 <div>
-                   <a th:href="@{/posts/{id}(id=${post.id})}">
                     <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
                          alt="Profile Picture">
                     <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
@@ -113,6 +114,7 @@
                 </div>
             </div>
         </div>
+        </a>
     </div>
 </section>
 

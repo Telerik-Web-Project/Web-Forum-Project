@@ -1,18 +1,15 @@
 package com.example.webproject.controllers.mvc;
-import com.example.webproject.dtos.PostFilterDto;
 import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.dtos.UserDto;
 import com.example.webproject.dtos.UserFilterDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
-import com.example.webproject.exceptions.UserBannedException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
-import com.example.webproject.models.Post;
-import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
+import com.example.webproject.services.contracts.PostService;
 import com.example.webproject.services.contracts.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -30,12 +27,14 @@ public class UserMvcController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final AuthenticationHelper authenticationHelper;
+    private final PostService postService;
 
     @Autowired
-    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper) {
+    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.authenticationHelper = authenticationHelper;
+        this.postService = postService;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -82,6 +81,8 @@ public class UserMvcController {
             model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("user", user);
             model.addAttribute("userService", userService);
+            model.addAttribute("userPosts", userService.getUserPosts(loggedUser,user));
+            model.addAttribute("postService", postService);
             return "SingleUserView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("statusCode",
@@ -136,29 +137,48 @@ public class UserMvcController {
     }
     @GetMapping("/{id}/delete")
     public String deleteUser(@PathVariable int id , Model model,HttpSession session) {
-       User loggedUser;
+        User loggedUser;
         try {
             loggedUser = authenticationHelper.tryGetCurrentUser(session);
-        }catch (AuthorizationException e){
+        } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }
-        try{
+        try {
             User userToBeDeleted = userService.getById(id);
-            userService.deleteUser(loggedUser,userToBeDeleted);
-            return "redirect:/HomeView";
-        }
-        catch (EntityNotFoundException e){
+            userService.deleteUser(loggedUser, userToBeDeleted);
+            return "redirect:/users";
+        } catch (EntityNotFoundException e) {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (AuthorizationException e){
+        } catch (AuthorizationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
         }
-
+    }
+    @GetMapping("/{id}/makeAdmin")
+    public String makeUserAdmin(@PathVariable int id){
+        try{
+            User user = userService.getById(id);
+            userService.changeAdminStatus(user);
+        }catch (EntityNotFoundException e){
+            return "ErrorView";
         }
+        return "redirect:/users/{id}";
+    }
+
+    @GetMapping("/{id}/blockUser")
+    public String blockUser(@PathVariable int id){
+        try{
+            User user = userService.getById(id);
+            userService.changeBanStatus(user);
+        }catch (EntityNotFoundException e){
+            return "ErrorView";
+        }
+        return "redirect:/users/{id}";
+    }
+
         @GetMapping("/{id}/posts")
         public String getUsersPosts(@PathVariable int id,HttpSession session,Model model) {
             User loggedUser;
