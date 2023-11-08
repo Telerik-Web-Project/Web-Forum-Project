@@ -44,7 +44,7 @@
         <img class="user-avatar" src="../static/images/user.png" th:src="@{/images/user.png}" alt="User 1">
         <h2 th:text="${user.username}">User 1</h2>
             <br>
-        <h3 th:text="${'POSTS: ' + userService.getUserPosts(user,user).size()}">Posts: 10</h3>
+        <h3 th:text="${'POSTS: ' + userService.getUserPosts(loggedUser,user).size()}">Posts: 10</h3>
         </a>
     </div>
 </div>

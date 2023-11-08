@@ -6,6 +6,7 @@ import com.example.webproject.dtos.UserFilterDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.exceptions.UserBannedException;
 import com.example.webproject.helpers.AuthenticationHelper;
 import com.example.webproject.helpers.UserMapper;
 import com.example.webproject.models.Post;
@@ -44,7 +45,7 @@ public class UserMvcController {
     }
 
     @GetMapping
-    public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
+    public String getPaginationPage(HttpSession session, @RequestParam(value = "page", required = false) Integer page,
                                     Model model,
                                     @Valid @ModelAttribute("postFilter") UserFilterDto filterDto) {
         UserFilter userFilter = new UserFilter(filterDto.getFirstName(),
@@ -58,24 +59,30 @@ public class UserMvcController {
         int itemsPerPage = 5;
 
         List<User> dataList = userService.getPaginatedPosts(page, itemsPerPage);
+        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+
 
         int totalItems = userService.getAll(userFilter).size();
         int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
 
-        model.addAttribute("users", dataList);
-        model.addAttribute("userService", userService);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("userFilter", filterDto);
+            model.addAttribute("users", dataList);
+            model.addAttribute("loggedUser", loggedUser);
+            model.addAttribute("userService", userService);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("userFilter", filterDto);
         return "UsersView";
     }
 
-    @GetMapping("{id}")
-    public String getUserById(@PathVariable int id, Model model) {
+    @GetMapping("/{id}")
+    public String getUserById(HttpSession session, @PathVariable int id, Model model) {
         try {
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
             User user = userService.getById(id);
+            model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("user", user);
-            return "UserView";
+            model.addAttribute("userService", userService);
+            return "SingleUserView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("statusCode",
                     HttpStatus.NOT_FOUND.getReasonPhrase());
