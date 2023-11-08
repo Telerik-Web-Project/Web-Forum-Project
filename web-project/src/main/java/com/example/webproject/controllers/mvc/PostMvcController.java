@@ -62,7 +62,7 @@ public class PostMvcController {
     public User populateUser(HttpSession session){
        return authenticationHelper.tryPopulateUser(session);
     }
-    
+
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
@@ -204,6 +204,8 @@ public class PostMvcController {
             return "ErrorView";
         }
     }
+
+
     @PostMapping("/{id}/comment")
     public String addCommentToPost(@ModelAttribute("comment") @Valid CommentDto commentDto,BindingResult bindingResult, @PathVariable int id, Model model, HttpSession session) {
         User user;

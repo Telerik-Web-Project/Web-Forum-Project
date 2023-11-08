@@ -6,9 +6,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap"
-    rel="stylesheet">
+          rel="stylesheet">
     <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
+          href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" href="../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon">
     <title>Rocket Forum | Home</title>
@@ -45,27 +45,27 @@
         <a href="#mostCommented" class="hero-btn">Sky is the Limit</a>
     </div>
 </section>
-
 <section class="most-recent" id="mostRecent">
     <h1 class="title">Most Recent Posts</h1>
     <div class="main-container">
         <div class="posts-container" th:each="post : ${mostRecent}">
             <a th:href="@{/posts/{id}(id=${post.id})}">
-            <div class="post-content">
-                <div>
-                    <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
-                         alt="Profile Picture">
-                    <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
+                <div class="post-content">
+                    <div>
+                        <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
+                             alt="Profile Picture">
+                        <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
+                    </div>
+                    <div>
+                        <div class="post-title">
+                            <h4 th:text="${post.getTitle()}">Post Title</h4>
+                        </div>
+                        <div class="post-content">
+                            <p th:text="${post.getContent()}">Post content shown here</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <div class="post-title">
-                        <h4 th:text="${post.getTitle()}">Post Title</h4>
-                    </div>
-                    <div class="post-content">
-                        <p th:text="${post.getContent()}">Post content shown here</p>
-                    </div>
-                </div>
-                    </div>
+            </a>
             <div class="post-footer">
                 <div class="likes">
                     <i class="fa fa-thumbs-up"> Likes:</i>
@@ -76,11 +76,9 @@
                     <span th:text="${postService.getPostComments(post).size()}">Comments</span>
                 </div>
             </div>
-            </a>
         </div>
     </div>
 </section>
-
 
 
 <section class="most-commented" id="mostCommented">
@@ -88,21 +86,22 @@
     <div class="main-container">
         <div class="posts-container" th:each="post : ${topPosts}">
             <a th:href="@{/posts/{id}(id=${post.id})}">
-            <div class="post-content">
-                <div>
-                    <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
-                         alt="Profile Picture">
-                    <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
+                <div class="post-content">
+                    <div>
+                        <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
+                             alt="Profile Picture">
+                        <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
                     </div>
-                <div>
-                    <div class="post-title">
-                        <h4 th:text="${post.getTitle()}">Post Title</h4>
-                    </div>
-                    <div class="post-content">
-                        <p th:text="${post.getContent()}">Post content shown here</p>
+                    <div>
+                        <div class="post-title">
+                            <h4 th:text="${post.getTitle()}">Post Title</h4>
+                        </div>
+                        <div class="post-content">
+                            <p th:text="${post.getContent()}">Post content shown here</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
             <div class="post-footer">
                 <div class="likes">
                     <i class="fa fa-thumbs-up"> Likes:</i>
@@ -114,7 +113,6 @@
                 </div>
             </div>
         </div>
-        </a>
     </div>
 </section>
 
