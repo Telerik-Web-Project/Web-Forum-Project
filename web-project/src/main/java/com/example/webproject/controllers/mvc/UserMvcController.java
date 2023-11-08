@@ -1,6 +1,6 @@
 package com.example.webproject.controllers.mvc;
+import com.example.webproject.dtos.RegisterDto;
 import com.example.webproject.dtos.UpdateUserDto;
-import com.example.webproject.dtos.UserDto;
 import com.example.webproject.dtos.UserFilterDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
@@ -27,12 +27,14 @@ public class UserMvcController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final AuthenticationHelper authenticationHelper;
+    private final PostService postService;
 
     @Autowired
-    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService) {
+    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService, PostService postService1) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.authenticationHelper = authenticationHelper;
+        this.postService = postService1;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -55,15 +57,15 @@ public class UserMvcController {
         }
         int itemsPerPage = 5;
 
-        List<User> dataList = userService.getPaginatedPosts(page, itemsPerPage);
-        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+        List<User> dataList = userService.getPaginatedUsers(page, itemsPerPage);
+//        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
 
 
         int totalItems = userService.getAll(userFilter).size();
         int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
 
             model.addAttribute("users", dataList);
-            model.addAttribute("loggedUser", loggedUser);
+//            model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("userService", userService);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", totalPages);
@@ -97,7 +99,7 @@ public class UserMvcController {
     }
 
     @PostMapping("/new")
-    public String createUser(@Valid @ModelAttribute("userDto") RegisterDto registerDto,BindingResult bindingResult,
+    public String createUser(@Valid @ModelAttribute("userDto") RegisterDto registerDto, BindingResult bindingResult,
                              Model model) {
         if(bindingResult.hasErrors()){
             return "redirect:/new";

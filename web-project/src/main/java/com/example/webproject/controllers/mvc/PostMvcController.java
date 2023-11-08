@@ -73,7 +73,7 @@ public class PostMvcController {
                 filterDto.getSortBy(),
                 filterDto.getSortOrder()
         );
-        if (page == 0) {
+        if (page == null || page==0) {
             page = 1;
         }
         List<Post> dataList = postService.getPaginatedPosts(page, DEFAULT_PAGE_SIZE);

@@ -6,6 +6,7 @@ import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.PostService;
 import com.example.webproject.services.contracts.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
