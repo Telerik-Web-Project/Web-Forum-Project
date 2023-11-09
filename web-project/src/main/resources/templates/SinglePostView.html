@@ -83,7 +83,7 @@
             </span>
         </h5>
 
-        <button class="post-btn" id="add-comment">Add Comment</button>
+        <button class="post-btn" id="add-comment" th:if="${isAuthenticated}">Add Comment</button>
         <button th:if="${post.getPostCreator().equals(user) or user.isAdmin()}" class="post-btn" id="edit-post">Edit
         </button>
     </div>
@@ -130,7 +130,7 @@
     </form>
 </dialog>
 
-<script>
+<script id="balloon">
     const modals = document.querySelectorAll('.add-comment-balloon');
     const openButtons = document.querySelectorAll('#add-comment');
     const closeButtons = document.querySelectorAll('#cancel');
@@ -165,7 +165,7 @@
     });
 </script>
 
-<script>
+<script id="index-counter">
     const textarea = document.getElementById('comment');
     const counter = document.getElementById('counter');
 
