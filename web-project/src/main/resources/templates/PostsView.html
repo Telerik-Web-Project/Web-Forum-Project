@@ -37,23 +37,26 @@
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
 
+<!--    <h1>All Posts</h1>-->
 </section>
-
 <section class="Search" id="search" style="margin-top: 50px">
-    <div class="search-container"  th:object="${postFilter}">
+    <form class="search-container"  action="#" th:action="@{/posts}" method="get" th:object="${postFilter}">
         <input type="text" name="search" placeholder="Search..." class="search-input" th:field="*{content}">
-        <a th:href="@{/posts}" class="search-btn">
-            <i class="fa fa-search" th:action="@{/posts}"></i>
+        <a class="search-btn" type="submit">
+            <i class="fa fa-search" ></i>
         </a>
-    </div>
+    </form>
 </section>
-
-<section class="all-posts">
+<section class="most-commented" id="mostCommented">
+<!--    <h1 class="title">All Posts</h1>-->
     <div class="main-container">
         <div class="posts-container" th:each="post : ${posts}">
-
             <div class="post-content">
                 <a th:href="@{/posts/{id}(id=${post.id})}" class="id-redirecting">
+                    <a class="fa fa-trash" id="trash-bin-all-posts"
+                       th:if="${isAuthenticated && loggedUser.equals(post.getPostCreator()) || loggedUser.isAdmin()}"
+                       aria-hidden="true" th:href="@{'/posts/' + ${post.getId()} + '/delete'}"></a>
+                    <a th:href="@{/posts/{id}(id=${post.id})}" class="id-redirecting">
                 <div>
                     <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
                          alt="Profile Picture">
@@ -66,7 +69,7 @@
                     <div class="post-content">
                         <p th:text="${post.getContent()}">Post content shown here</p>
                     </div>
-                </div></a>
+                </div>
             </div>
             <div class="post-footer">
                 <div class="likes">
@@ -86,9 +89,13 @@
     <div class="pagination-container">
     <span th:text="'Page ' + ${currentPage} + ' of ' + ${totalPages}"></span>
     <ul class="pagination">
-        <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+        <li th:if="${postFilter.getContent()==null}" th:each="i : ${#numbers.sequence(1, totalPages)}"
             th:classappend="${currentPage == i} ? 'active' : ''">
             <a th:href="@{'/posts?page=' + ${i}}" th:text="${i}"></a>
+        </li>
+        <li th:unless="${postFilter.getContent()==null}" th:each="i : ${#numbers.sequence(1, totalPages)}"
+            th:classappend="${currentPage == i} ? 'active' : ''">
+            <a th:href="@{'/posts?page=' + ${i}+'&&content='+${postFilter.getContent()}}" th:text="${i}"></a>
         </li>
     </ul>
     </div>

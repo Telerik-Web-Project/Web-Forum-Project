@@ -53,10 +53,30 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getPaginatedPosts(int page, int postPerPage){
+    public List<Post> getPaginatedPosts(int page, int postPerPage, PostFilter postFilter){
         try (Session session = sessionFactory.openSession()) {
             int offset = (page - 1) * postPerPage;
-            Query<Post> query = session.createQuery("FROM Post", Post.class);
+            List<String> paginatedFilters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+            postFilter.getTitle().ifPresent(value -> {
+                paginatedFilters.add("title like :title");
+                params.put("title", String.format("%%%s%%", value));
+            });
+
+            postFilter.getContent().ifPresent(value -> {
+                paginatedFilters.add("content like :content");
+                params.put("content", String.format("%%%s%%", value));
+            });
+
+            StringBuilder queryString = new StringBuilder("from Post");
+            if (!paginatedFilters.isEmpty()) {
+                queryString
+                        .append(" where ")
+                        .append(String.join(" and ", paginatedFilters));
+            }
+            queryString.append(generateOrderBy(postFilter));
+            Query<Post> query = session.createQuery(queryString.toString(), Post.class);
+            query.setProperties(params);
             query.setFirstResult(offset);
             query.setMaxResults(postPerPage);
             return query.list();

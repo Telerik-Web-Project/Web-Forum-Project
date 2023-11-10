@@ -19,79 +19,90 @@ public class PostServiceImpl implements PostService {
     public static final String AUTHENTICATION_ERROR = "Only admins or the creator of the post can modify it.";
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository,TagRepository tagRepository) {
+    public PostServiceImpl(PostRepository postRepository, TagRepository tagRepository) {
         this.postRepository = postRepository;
 
         this.tagRepository = tagRepository;
     }
+
     @Override
     public List<Post> getAll(PostFilter filter) {
         return postRepository.getAll(filter);
     }
+
     @Override
     public List<Post> getTenMostCommentedPosts() {
         return postRepository.getTenMostCommentedPosts();
     }
+
     @Override
-    public List<Post> getPaginatedPosts(int page, int postsPerPage) {
-        return postRepository.getPaginatedPosts(page,postsPerPage);
+    public List<Post> getPaginatedPosts(int page, int postsPerPage, PostFilter postFilter) {
+        return postRepository.getPaginatedPosts(page, postsPerPage, postFilter);
     }
+
     @Override
     public List<Post> getMostRecentPosts() {
         return postRepository.getMostRecentPosts();
     }
+
     @Override
     public Post get(int id) {
         return postRepository.get(id);
     }
+
     @Override
-    public List<Post> getPostsWithTag(String tag){
+    public List<Post> getPostsWithTag(String tag) {
         Tag repoTag = tagRepository.get(tag);
         return postRepository.getPostsWithTags(repoTag);
     }
+
     @Override
     public List<Comment> getPostComments(Post post) {
         return postRepository.getPostComments(post);
     }
+
     @Override
     public void createPost(Post post, User user) {
         ValidationHelper.checkIfBanned(user);
         post.setPostCreator(user);
         postRepository.createPost(post);
     }
+
     @Override
     public void updatePost(Post post, User user) {
-        ValidationHelper.validateModifyPermissions(postRepository,post, user);
+        ValidationHelper.validateModifyPermissions(postRepository, post, user);
         ValidationHelper.checkIfBanned(user);
         Post existingPost = postRepository.get(post.getId());
         verifyPostFields(post, existingPost);
         postRepository.updatePost(post);
     }
+
     @Override
     public void deletePost(Post post, User user) {
-        ValidationHelper.validateModifyPermissions(postRepository,post, user);
+        ValidationHelper.validateModifyPermissions(postRepository, post, user);
         ValidationHelper.checkIfBanned(user);
         postRepository.deletePost(post);
     }
 
     @Override
-    public void addTagToPost(Post post, Tag tag, User loggedUser){
+    public void addTagToPost(Post post, Tag tag, User loggedUser) {
         ValidationHelper.checkIfBanned(loggedUser);
-        ValidationHelper.validateModifyPermissions(postRepository,post,loggedUser);
+        ValidationHelper.validateModifyPermissions(postRepository, post, loggedUser);
         try {
             Tag repoTag = tagRepository.get(tag.getName().toLowerCase());
             post.getTags().add(repoTag);
             postRepository.updatePost(post);
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             tagRepository.createTag(tag);
             post.getTags().add(tag);
             postRepository.updatePost(post);
         }
     }
+
     @Override
     public void deleteTagFromPost(Post post, User loggedUser, Tag tag) {
         ValidationHelper.checkIfBanned(loggedUser);
-        ValidationHelper.validateModifyPermissions(postRepository,post,loggedUser);
+        ValidationHelper.validateModifyPermissions(postRepository, post, loggedUser);
         Tag repoTag = tagRepository.get(tag.getName());
         post.getTags().remove(repoTag);
         postRepository.updatePost(post);
@@ -100,18 +111,19 @@ public class PostServiceImpl implements PostService {
     @Override
     public void likePost(User user, Post post) {
         ValidationHelper.checkIfBanned(user);
-        if(!post.getLikes().contains(user)) {
+        if (!post.getLikes().contains(user)) {
             post.likePost(user);
         } else {
             post.dislikePost(user);
         }
         postRepository.updatePost(post);
     }
+
     private static void verifyPostFields(Post post, Post existingPost) {
-        if(post.getTitle() == null || post.getTitle().isBlank()){
+        if (post.getTitle() == null || post.getTitle().isBlank()) {
             post.setTitle(existingPost.getTitle());
         }
-        if(post.getContent() == null || post.getContent().isBlank()){
+        if (post.getContent() == null || post.getContent().isBlank()) {
             post.setContent(existingPost.getContent());
         }
     }

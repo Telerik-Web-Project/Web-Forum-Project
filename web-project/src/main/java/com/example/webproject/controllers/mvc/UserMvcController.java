@@ -6,11 +6,12 @@ import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
-import com.example.webproject.helpers.UserMapper;
+import com.example.webproject.mappers.UserMapper;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.services.contracts.PostService;
 import com.example.webproject.services.contracts.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +39,15 @@ public class UserMvcController {
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated(HttpSession session) {
-
-        return session.getAttribute("currentUser") != null;
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
     }
 
     @GetMapping
-    public String getPaginationPage(HttpSession session, @RequestParam(value = "page", required = false) Integer page,
+    public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
-                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto) {
+                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto, HttpSession session) {
         UserFilter userFilter = new UserFilter(filterDto.getFirstName(),
                 filterDto.getUsername(),
                 filterDto.getEmail(),
@@ -135,10 +136,43 @@ public class UserMvcController {
             return "UserEditView";
         }
         catch (EntityNotFoundException e){
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error",e.getMessage());
             return "ErrorView";
         }
     }
+
+    @PostMapping("/{id}/update")
+    public String updateUser(@ModelAttribute @PathVariable int id,
+                             @Valid @ModelAttribute("user") UpdateUserDto updateUserDto,
+                             BindingResult bindingResult,
+                             Model model,
+                             HttpSession session) {
+        if (bindingResult.hasErrors()) {
+            return "UserEditView";
+        }
+
+        try {
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            User updatedUser = userMapper.fromUpdateUserDto(updateUserDto);
+            updatedUser.setId(loggedUser.getId());
+            userService.updateUser(loggedUser, updatedUser);
+            return "redirect:/users/{id}";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        } catch (AuthorizationException e) {
+            model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        } catch (EntityDuplicateException e) {
+            model.addAttribute("statusCode", HttpStatus.CONFLICT.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        }
+    }
+
     @GetMapping("/{id}/delete")
     public String deleteUser(@PathVariable int id , Model model,HttpSession session) {
         User loggedUser;

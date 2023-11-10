@@ -31,6 +31,7 @@
                 <li><a href="PostsView.html" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
                 <li><a href="contact.html" th:href="@{/users}">Users</a></li>
                 <li><a href="RegisterFormView.html" th:href="@{/users/new}" th:unless="${isAuthenticated}">Register</a></li>
+                <li><a href="CreatePostView.html" th:href="@{/posts/new}" th:if="${isAuthenticated}">Create Post</a></li>
                 <li><a href="" th:unless="${isAuthenticated}" th:href="@{/auth/login}">Sign In</a>
                 <li><a href="#" th:href="@{/auth/logout}" th:if="${isAuthenticated}">Log Out</a></li>
             </ul>

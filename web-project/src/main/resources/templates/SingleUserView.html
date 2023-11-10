@@ -36,7 +36,6 @@
         </div>
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
-<!--    <h1 th:text="${user.username}">Username</h1>-->
     <div class="profile-container">
         <img class="user-picture" src="../static/images/user.png" th:src="@{/images/user.png}" alt="">
         <div class="profile-info">
@@ -46,7 +45,7 @@
         <div class="settings-icon" onclick="toggleDropdown()" th:if="${isAuthenticated && loggedUser.equals(user) || loggedUser.isAdmin()}">
             <img class="settings-icon" src="../static/images/settings.png" th:src="@{/images/settings.png}" alt="">
             <div class="dropdown-menu" id="dropdownMenu">
-                <a href="#" th:if="${isAuthenticated && loggedUser.equals(user)}">Edit Profile</a>
+                <a href="#" th:if="${isAuthenticated && loggedUser.equals(user)}" th:href="@{'/users/' + ${user.getId()} + '/update'}">Edit Profile</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) || loggedUser.isAdmin()}"
                    th:href="@{'/users/' + ${user.getId()} + '/delete'}">Delete Profile</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) && loggedUser.isAdmin()}">Add Phone number</a>

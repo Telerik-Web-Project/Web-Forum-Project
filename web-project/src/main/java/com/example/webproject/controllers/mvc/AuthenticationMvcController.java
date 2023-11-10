@@ -5,9 +5,10 @@ import com.example.webproject.dtos.RegisterDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.helpers.AuthenticationHelper;
-import com.example.webproject.helpers.UserMapper;
+import com.example.webproject.mappers.UserMapper;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,6 @@ public class AuthenticationMvcController {
     public boolean populateIsAuthenticated(HttpSession session) {
         return session.getAttribute("currentUser") != null;
     }
-
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         model.addAttribute("login", new LoginDto());
