@@ -1197,13 +1197,13 @@ a {
     text-align: center;
     /*position: relative;*/
     margin: 0px 40px 40px 0px;
-    /*background: red;*/
+    background: red;
 }
 .edit-comment{
     /*padding-top: 70px;*/
     border-radius: 0;
     border: none;
-    /*background: #0099ff;*/
+    background: #0099ff;
     margin: 80px 40px 0px 0px;
 }
 
