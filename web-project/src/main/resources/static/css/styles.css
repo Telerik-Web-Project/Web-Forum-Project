@@ -1073,6 +1073,10 @@ a {
     text-align: right;
     padding-right: 30px;
 }
+.single-post-container #fa-trash:hover {
+    color: red;
+}
+
 .single-post-container .sp-likes, .sp-comments, .tags {
     grid-row-start: -2;
     grid-column: 1/2;
@@ -1229,7 +1233,6 @@ a {
     border-radius: 0;
     font-size: 20px;
 }
-
 .add-comment-balloon, .edit-comment-balloon {
     padding: 1em;
     max-width: 60%;
