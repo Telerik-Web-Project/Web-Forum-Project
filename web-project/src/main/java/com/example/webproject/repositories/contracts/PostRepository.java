@@ -18,6 +18,6 @@ public interface PostRepository {
     List<Comment> getPostComments(Post post);
     List<Post> getTenMostCommentedPosts();
     List<Post> getPostsWithTags(Tag tag);
-    List<Post> getPaginatedPosts(int page, int postPerPage);
+    List<Post> getPaginatedPosts(int page, int postPerPage, PostFilter postFilter);
 
 }

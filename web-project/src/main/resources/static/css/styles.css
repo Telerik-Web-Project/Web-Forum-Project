@@ -779,7 +779,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 10px;
+    padding: 5px;
     border-radius: 10px;
     max-width: 600px;
     margin: 0 auto;
@@ -838,6 +838,10 @@ a {
     text-decoration: none;
     color: #333;
 }
+.dropdown-menu a:hover,
+.dropdown-menu a:hover{
+    background: url(../images/background.jpg) ;
+}
 .dashboard-container {
     padding: 20px;
     border-radius: 10px;
@@ -866,12 +870,22 @@ a {
     margin-right: 5px;
 }
 #trash-bin{
-    color: red;
     padding-left: 400px;
     cursor: pointer;
 }
 #trash-bin:hover{
     transform: translateY(2px);
+    color: red;
+}
+
+.post-content #trash-bin-all-posts{
+    font-size: 30px;
+    padding-left: 500px;
+    cursor: pointer;
+}
+#trash-bin-all-posts:hover{
+    transform: translateY(2px);
+    color: red;
 }
 /*SINGLE USER VIEW*/
 /* ----- REGISTRATION FORM STARTS HERE ------- */
@@ -962,6 +976,52 @@ a {
 .button-container .button button:hover {
     background: #1f405b;
 }
+
+/*SEARCH START*/
+.search-container{
+    background: #fff;
+    height: 30px;
+    border-radius: 30px;
+    padding: 10px 20px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    width: 20%;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.8s;
+    box-shadow:  4px 4px 6px 0 rgba(255,255,255,.3),
+    -4px -4px 6px 0 rgba(116, 125, 136, .2),
+    inset -4px -4px 6px 0 rgba(255,255,255,.2),
+    inset 4px 4px 6px 0 rgba(0, 0, 0, .2);
+}
+
+.search-container:hover > .search-input{
+    width: 300px;
+}
+
+.search-container .search-input{
+    background: transparent;
+    border: none;
+    outline:none;
+    width: 1px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: 0.8s;
+
+}
+
+.search-container .search-btn .fas{
+    color: rgba(27, 44, 161, 0.7);
+}
+
+@keyframes hoverShake {
+    0% {transform: skew(0deg,0deg);}
+    25% {transform: skew(5deg, 5deg);}
+    75% {transform: skew(-5deg, -5deg);}
+    100% {transform: skew(0deg,0deg);}
+}
+/*SEARCH END*/
 
 /*----- SINGLE POST PAGE -----*/
 

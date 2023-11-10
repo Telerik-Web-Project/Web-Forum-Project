@@ -17,6 +17,6 @@ public interface PostService {
     List<Comment> getPostComments(Post post);
     List<Post> getTenMostCommentedPosts();
     List<Post> getMostRecentPosts();
-    List<Post> getPaginatedPosts(int page, int postsPerPage);
+    List<Post> getPaginatedPosts(int page, int postsPerPage, PostFilter postFilter);
 
 }

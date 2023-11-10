@@ -63,7 +63,7 @@ public class PostMvcController {
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
-                                    @Valid @ModelAttribute("postFilter") PostFilterDto filterDto) {
+                                    @Valid @ModelAttribute("postFilter") PostFilterDto filterDto,HttpSession session) {
         PostFilter postFilter = new PostFilter(
                 filterDto.getTitle(),
                 filterDto.getContent(),
@@ -73,7 +73,7 @@ public class PostMvcController {
         if (page == null || page==0) {
             page = 1;
         }
-        List<Post> dataList = postService.getPaginatedPosts(page, DEFAULT_PAGE_SIZE);
+        List<Post> dataList = postService.getPaginatedPosts(page, DEFAULT_PAGE_SIZE, postFilter);
 
         int totalItems = postService.getAll(postFilter).size();
         int totalPages = (int) Math.ceil((double) totalItems / DEFAULT_PAGE_SIZE);
@@ -83,6 +83,7 @@ public class PostMvcController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("postFilter", filterDto);
+        model.addAttribute("loggedUser", authenticationHelper.tryPopulateUser(session));
         return "PostsView";
     }
 

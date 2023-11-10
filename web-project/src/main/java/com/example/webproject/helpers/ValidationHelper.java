@@ -23,7 +23,10 @@ public class ValidationHelper {
     public static void validateEmail(UserRepository userRepository, User userToBeUpdated) {
         boolean emailExists = true;
         try {
-            userRepository.getByEmail(userToBeUpdated.getEmail());
+            User user = userRepository.getByEmail(userToBeUpdated.getEmail());
+            if(userToBeUpdated.equals(user)){
+                emailExists = false;
+            }
         } catch (EntityNotFoundException e) {
             emailExists = false;
         }

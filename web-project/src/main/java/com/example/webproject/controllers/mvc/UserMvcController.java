@@ -47,7 +47,7 @@ public class UserMvcController {
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
-                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto) {
+                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto, HttpSession session) {
         UserFilter userFilter = new UserFilter(filterDto.getFirstName(),
                 filterDto.getUsername(),
                 filterDto.getEmail(),
@@ -59,11 +59,14 @@ public class UserMvcController {
         int itemsPerPage = 5;
 
         List<User> dataList = userService.getPaginatedUsers(page, itemsPerPage);
+//        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
 
 
         int totalItems = userService.getAll(userFilter).size();
         int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
             model.addAttribute("users", dataList);
+//            model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("userService", userService);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", totalPages);
@@ -133,10 +136,43 @@ public class UserMvcController {
             return "UserEditView";
         }
         catch (EntityNotFoundException e){
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error",e.getMessage());
             return "ErrorView";
         }
     }
+
+    @PostMapping("/{id}/update")
+    public String updateUser(@ModelAttribute @PathVariable int id,
+                             @Valid @ModelAttribute("user") UpdateUserDto updateUserDto,
+                             BindingResult bindingResult,
+                             Model model,
+                             HttpSession session) {
+        if (bindingResult.hasErrors()) {
+            return "UserEditView";
+        }
+
+        try {
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            User updatedUser = userMapper.fromUpdateUserDto(updateUserDto);
+            updatedUser.setId(loggedUser.getId());
+            userService.updateUser(loggedUser, updatedUser);
+            return "redirect:/users/{id}";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        } catch (AuthorizationException e) {
+            model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        } catch (EntityDuplicateException e) {
+            model.addAttribute("statusCode", HttpStatus.CONFLICT.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        }
+    }
+
     @GetMapping("/{id}/delete")
     public String deleteUser(@PathVariable int id , Model model,HttpSession session) {
         User loggedUser;
