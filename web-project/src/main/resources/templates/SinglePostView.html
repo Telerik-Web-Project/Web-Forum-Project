@@ -47,117 +47,143 @@
 <!--single post view-->
 
 <section class="single-post">
-    <div class="main-container">
-        <div class="single-post-container" th:object="${post}">
-            <div class="single-post-content">
-                <div class="single-post-head">
-                    <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
-                         alt="Profile Picture">
-                    <h4 th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
-                    <a class="fa fa-trash" id="fa-trash" aria-hidden="true"
-                       th:if="${post.getPostCreator().equals(user) or user.isAdmin()}"
-                       th:href="@{'/posts/'+${post.getId()}+'/delete'}">
-                    </a>
-                </div>
-                <h1 th:text="${post.getTitle()}">Post title</h1>
-                <div class="single-post-content">
-                    <p th:text="${post.getContent()}">Post content shown here</p>
-                </div>
-            </div>
-            <div class="single-post-footer">
-                <a class="likes" th:href="@{'/posts/' + ${post.id} + '/like'}">
-                    <i class="fa fa-rocket" th:if="${post.getLikes().contains(user)}"> Likes:</i>
-                    <i class="fa fa-thumbs-up" th:unless="${post.getLikes().contains(user)}"> Likes:</i>
-                    <span th:text="${post.likeCounts}">Likes</span>
-                </a>
-                <div class="comments">
-                    <i class="fa fa-comment"> Comments:</i>
-                    <span th:text="${postComments.size()}">Comments</span>
-                </div>
-                <div class="add-edit-comment-container">
-                    <a href="#" class="add-update-btn custom-btn"
-                       th:if="${post.getPostCreator().equals(user) or user.isAdmin()}">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>Edit Post<i class="fa fa-pencil"
-                                                                                   aria-hidden="true"></i></a>
-                    <a href="#" class="add-update-btn" id="hidden-area">Add Comment</a>
-                </div>
-            </div>
-            <div class="show-tags">
-                <div>
-                    <h4 th:unless="${post.getTags().isEmpty()}">Tags:
-                        <span th:each="tag: ${post.getTags()}">
+    <div class="single-post-container" th:object="${post}">
+        <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
+             alt="Profile Picture">
+
+        <h4 class="post-title" th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
+
+        <a class="fa fa-trash" id="fa-trash" aria-hidden="true"
+           th:if="${post.getPostCreator().equals(user) or user.isAdmin()}"
+           th:href="@{'/posts/'+${post.getId()}+'/delete'}">
+        </a>
+
+        <h1 th:text="${post.getTitle()}">Post title</h1>
+        <p th:text="${post.getContent()}">Post content shown here</p>
+
+        <div class="button sp-likes">
+            <a class="likes" th:href="@{'/posts/' + ${post.id} + '/like'}">
+                <i class="fa fa-rocket" th:if="${post.getLikes().contains(user)}"> Likes:</i>
+                <i class="fa fa-thumbs-up" th:unless="${post.getLikes().contains(user)}"> Likes:</i>
+                <span th:text="${post.likeCounts}">Likes</span>
+            </a>
+        </div>
+        <div class="sp-comments">
+            <i class="fa fa-comment"> Comments:</i>
+            <span th:text="${postComments.size()}">Comments</span>
+        </div>
+        <h5 class="tags" th:unless="${post.getTags().isEmpty()}">Tags:
+            <span th:each="tag: ${post.getTags()}">
                             <span class="tag" th:text="${tag.name}"></span>
                         </span>
-                    </h4>
-                </div>
-            </div>
-        </div>
+        </h5>
+        <h5 class="tags" th:unless="${post.getTags().isEmpty()}">Tags:
+            <span th:each="tag: ${post.getTags()}">
+                            <span class="tag" th:text="${tag.name}"></span>
+            </span>
+        </h5>
+
+        <button class="post-btn" id="add-comment" th:if="${isAuthenticated}">Add Comment</button>
+        <button th:if="${post.getPostCreator().equals(user) or user.isAdmin()}" class="post-btn" id="edit-post">Edit
+        </button>
     </div>
 </section>
 
 
 <!--display comments-->
 
-<section class="comment-container">
-    <div class th:each="comment: ${postComments}">
-        <div class="comment">
-            <a class="fa fa-trash" aria-hidden="true"
-               th:if="${comment.getUser().equals(user) or user.isAdmin()}"
-               th:href="@{'/posts/'+${post.getId()}+'/delete'}">
-            </a>
-            <a href="#" class="add-update-btn" th:if="${post.getPostCreator().equals(user) or user.isAdmin()}">
-                <i class="fa fa-pencil" aria-hidden="true">
+<section class="comments">
+    <div class="comment-container">
+        <div class="single-comment" th:each="comment: ${postComments}">
+            <div class="delete-comment">
+                <a class="fa fa-trash" aria-hidden="true"
+                   th:if="${comment.getUser().equals(user) or user.isAdmin()}"
+                   th:href="@{'/posts/'+${post.getId()}+'/comment/'+${comment.getId()}+'/delete'}">
+                </a>
+            </div>
 
-                </i></a>
+            <div class="edit-comment">
+                <button class="button open-button" id="open">
+                    <a class="add-update-btn"
+                       th:if="${post.getPostCreator().equals(user) or user.isAdmin()}">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>
+                </button>
+            </div>
+
             <p class="comment-content" th:text="${comment.getContent()}"></p>
+
             <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
         </div>
     </div>
 </section>
 
-
-<div class = "modal" id="modal">
+<dialog class="add-comment-balloon" th:if="${isAuthenticated}">
     <h2>Leave a comment</h2>
-    <form id="form" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment'}" method="post">
-        <label>
-            <textarea id="content" required style="resize: none"></textarea>
-        </label>
-        <a href="#" class="add-update-btn" id="submit">Add Comment</a>
+    <form id="comment-form" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment'}" method="post">
+        <textarea id="comment" th:field="*{content}" maxlength="250" required></textarea>
+        <p class="symbol-counter"><span id="counter">0</span> / 250 characters</p>
+        <button class="post-btn" id="submit" th:action="@{'/posts/' + ${id} + '/comment'}" style="position: relative">
+            Submit
+        </button>
+        <a class="post-btn" id="cancel">Cancel</a>
     </form>
-</div>
+</dialog>
 
+<script id="balloon">
+    const modals = document.querySelectorAll('.add-comment-balloon');
+    const openButtons = document.querySelectorAll('#add-comment');
+    const closeButtons = document.querySelectorAll('#cancel');
+    const commentContainer = document.querySelector('.comment-container');
 
-<!--edit comment-->
-<!--<form th:if="${comment.getUser().equals(user) or user.isAdmin()}" th:object="${comment}"-->
-<!--      th:action="@{'/posts/'+${post.getId()}+'/comment/' + ${comment.id} + '/update'}">-->
-<!--    <input type="hidden" name="id" th:value="${comment.id}"/>-->
-<!--    <label for="editedComment">Edit Comment:</label>-->
-<!--    <textarea id="editedComment" th:field="*{content}" rows="4" cols="50"></textarea>-->
-<!--    <button type="submit"-->
-<!--            th:class="${comment.getUser().equals(user) or user.isAdmin()} ? 'custom-button' : 'hidden-button'">-->
-<!--        Save-->
-<!--    </button>-->
-<!--</form>-->
+    commentContainer.addEventListener('click', (event) => {
+        if (event.target.classList.contains('open-button-{{index}}')) {
+            const modal = event.target.closest('.add-comment-balloon');
+            if (modal) {
+                modal.showModal();
+            }
+        }
 
-<!--<p th:if="${comment.getUser().equals(user) or user.isAdmin()}">-->
-<!--    <a th:href="@{'/posts/'+${post.getId()}+'/comment/' + ${comment.id} + '/delete'}">-->
-<!--        <button>Delete Button</button>-->
-<!--    </a>-->
-<!--</p>-->
+        if (event.target.classList.contains('close-button-{{index}}')) {
+            const modal = event.target.closest('.add-comment-balloon');
+            if (modal) {
+                modal.close();
+            }
+        }
+    });
 
-<!--add maxlength="250" for comments ad 8192for posts-->
-<!--add placeholder-->
+    openButtons.forEach((openButton, index) => {
+        openButton.addEventListener('click', () => {
+            modals[index].showModal();
+        });
+    });
 
+    closeButtons.forEach((closeButton, index) => {
+        closeButton.addEventListener('click', () => {
+            modals[index].close();
+        });
+    });
+</script>
 
+<script id="index-counter">
+    const textarea = document.getElementById('comment');
+    const counter = document.getElementById('counter');
 
-<!--submit comment-->
-<!--<div class="comment-form-container" th:if="${isAuthenticated}">-->
-<!--    <form id="comment-form" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment'}" method="post">-->
-<!--        <label th:align="center" for="comment">Leave a comment:</label>-->
-<!--        <textarea id="comment" th:field="*{content}" rows="4" cols="50"></textarea>-->
-<!--        <button type="submit">Submit Comment</button>-->
-<!--    </form>-->
-<!--</div>-->
+    textarea.addEventListener('input', updateCounter);
+
+    function updateCounter() {
+        const currentLength = textarea.value.length;
+        const maxLength = parseInt(textarea.getAttribute('maxlength'));
+
+        counter.textContent = currentLength;
+
+        if (currentLength > maxLength) {
+            counter.style.color = 'red';
+        } else {
+            counter.style.color = 'black';
+        }
+    }
+</script>
 
 <section class="footer">
     <h4></h4>

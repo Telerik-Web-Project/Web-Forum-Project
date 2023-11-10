@@ -37,10 +37,18 @@
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
 
-<!--    <h1>All Posts</h1>-->
 </section>
-<section class="most-commented" id="mostCommented">
-<!--    <h1 class="title">All Posts</h1>-->
+
+<section class="Search" id="search" style="margin-top: 50px">
+    <div class="search-container"  th:object="${postFilter}">
+        <input type="text" name="search" placeholder="Search..." class="search-input" th:field="*{content}">
+        <a th:href="@{/posts}" class="search-btn">
+            <i class="fa fa-search" th:action="@{/posts}"></i>
+        </a>
+    </div>
+</section>
+
+<section class="all-posts">
     <div class="main-container">
         <div class="posts-container" th:each="post : ${posts}">
 
@@ -58,7 +66,7 @@
                     <div class="post-content">
                         <p th:text="${post.getContent()}">Post content shown here</p>
                     </div>
-                </div>
+                </div></a>
             </div>
             <div class="post-footer">
                 <div class="likes">
