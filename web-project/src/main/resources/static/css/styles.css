@@ -1074,6 +1074,7 @@ a {
     grid-column: 1/5;
     width: 95%;
     margin: 40px 40px;
+    overflow-wrap: break-word;
 }
 .single-post-container #fa-trash {
     grid-column-start: 4;
@@ -1122,16 +1123,17 @@ a {
 }
 #add-comment{
     grid-column: 4;
+    margin-right: 50px;
 }
 #edit-post{
     grid-column: 3;
 }
-.add-comment-balloon{
-    width: 70%;
-    left: 50%;
-    top: 30%;
-    transform: translate(-50%, -50%);
-}
+/*.add-comment-balloon{*/
+/*    width: 70%;*/
+/*    left: 50%;*/
+/*    top: 30%;*/
+/*    transform: translate(-50%, -50%);*/
+/*}*/
 .add-comment-balloon textarea{
     width:100%;
     min-height: 110px;
@@ -1197,13 +1199,13 @@ a {
     text-align: center;
     /*position: relative;*/
     margin: 0px 40px 40px 0px;
-    background: red;
+    /*background: red;*/
 }
 .edit-comment{
     /*padding-top: 70px;*/
     border-radius: 0;
     border: none;
-    background: #0099ff;
+    /*background: #0099ff;*/
     margin: 80px 40px 0px 0px;
 }
 
@@ -1241,15 +1243,19 @@ a {
     border-radius: 0;
     font-size: 20px;
 }
-.add-comment-balloon{
-    padding: 1em;
-    max-width: 60%;
-    margin: 0 auto;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
-}
+/*.add-comment-balloon{*/
+/*    width: auto;*/
+/*    left: 50%;*/
+/*    top: 30%;*/
+/*    transform: translate(-50%, -50%);*/
+/*    padding: 1em;*/
+/*    max-width: 60%;*/
+/*    margin: 0 auto;*/
+/*    background-color: #fff;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 5px;*/
+/*    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);*/
+/*}*/
 /*POST COMMENT END*/
 
 /* ---SEARCH BOX STARTS HERE---*/
@@ -1559,7 +1565,7 @@ select::-ms-expand {
 /* ---CREATE POST STARTS HERE--- */
 
 /*EDIT COMMENT BALLOON*/
-.edit-comment-balloon{
+.edit-comment-balloon, .add-comment-balloon{
     width: 70%;
     left: 50%;
     top: 30%;
@@ -1573,7 +1579,7 @@ select::-ms-expand {
     box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
 }
 
-.edit-comment-balloon textarea{
+.edit-comment-balloon textarea, .add-comment-balloon textarea{
     width:100%;
     min-height: 110px;
     height: auto;
@@ -1582,7 +1588,7 @@ select::-ms-expand {
     cursor: default;
 }
 
-.edit-comment-balloon h2 {
+.edit-comment-balloon h2{
     text-align: left;
 }
 
@@ -1594,20 +1600,20 @@ select::-ms-expand {
 
 
 /*EDIT POST BALLOON*/
-.edit-post-balloon{
-    width: 70%;
-    left: 50%;
-    top: 30%;
-    transform: translate(-50%, -50%);
-    padding: 1em;
-    max-width: 60%;
-    margin: 0 auto;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
-}
-.edit-post-balloon textarea{
+/*.edit-post-balloon{*/
+/*    width: 70%;*/
+/*    left: 50%;*/
+/*    top: 30%;*/
+/*    transform: translate(-50%, -50%);*/
+/*    padding: 1em;*/
+/*    max-width: 60%;*/
+/*    margin: 0 auto;*/
+/*    background-color: #fff;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 5px;*/
+/*    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);*/
+/*}*/
+.edit-post-balloon textarea, .edit-comment-balloon textarea, .add-comment-balloon textarea{
     width:100%;
     min-height: 110px;
     height: auto;
@@ -1616,11 +1622,71 @@ select::-ms-expand {
     cursor: default;
 }
 
-.edit-post-balloon #post-title {
+.edit-post-balloon #post-title, .edit-comment-balloon #comment-title, .add-comment-balloon #comment-title{
     text-align: left;
     min-height: 5px;
 }
-.edit-post-balloon button{
+.edit-post-balloon button, .edit-comment-balloon button, .add-comment-balloon button{
     border-radius: 0;
     align-items: start;
+}
+
+/*======================================================================================*/
+
+/*TEST CSS FOLLOWS*/
+
+.test-section h1{
+    background-color: deeppink;
+    text-align: center;
+    font-family: Poppins, sans-serif;
+    color: black;
+    margin: 80px 0;
+}
+.test-box{
+    width: 40%;
+    margin: 0 auto;
+    background: #0099ff;
+    padding: 35px;
+    border: 2px solid #0099ff;
+    border-radius: 20px/50px;
+    background-clip: padding-box;
+    text-align: center;
+}
+
+.test-section .test-button{
+    font-size: 1em;
+    padding: 10px;
+    border: 2px solid #0099ff;
+    border-radius: 20px/50px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+}
+.test-button:hover{
+    background: #0099ff;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /*background: rgba(0, 0, 0, 0.7);*/
+    transition: opacity 500ms;
+    visibility: hidden;
+    opacity: 0;
+}
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+    transition: all 5s ease-in-out;
 }

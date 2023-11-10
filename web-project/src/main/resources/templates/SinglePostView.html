@@ -104,31 +104,28 @@
             </div>
 
             <div class="edit-comment">
-                <button class="button open-button" id="open">
-                    <a class="add-update-btn" th:if="${comment.getUser().equals(user) or user.isAdmin()}">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                    </a>
-                </button>
+                <a class="add-update-btn" th:if="${comment.getUser().equals(user) or user.isAdmin()}" href="#popup-edit-comment">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </a>
             </div>
-
             <p class="comment-content" th:text="${comment.getContent()}"></p>
-
             <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
-
-<!--            DO NOT TOUCH-->
-            <dialog class="edit-comment-balloon" th:if="${user.isAdmin() || comment.getUser().equals(user)}">
-                <h2>Leave a comment</h2>
-                <form id="comment-form-l" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}" >
-                    <textarea id="comment-l" th:field="*{content}" maxlength="250" required></textarea>
-                    <p class="symbol-counter"><span id="counter-l">0</span> / 250 characters</p>
-                    <button class="post-btn" id="submit-l" th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}" style="position: relative">
-                        Submit
-                    </button>
-                    <a class="post-btn" id="cancel-l">Cancel</a>
-                </form>
-            </dialog>
-<!--            DO NOT TOUCH-->
-
+            <div id="popup-edit-comment" class="overlay">
+                <div class="popup">
+                    <h2>Leave a comment</h2>
+                    <form id="comment-form-l" th:object="${comment}"
+                          th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}">
+                        <textarea id="comment-l" th:field="*{content}" maxlength="250" required></textarea>
+                        <p class="symbol-counter"><span id="counter-l">0</span> / 250 characters</p>
+                        <button class="post-btn" id="submit-l"
+                                th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}"
+                                style="position: relative">
+                            Submit
+                        </button>
+                        <a class="post-btn" id="cancel-l" href="#">Cancel</a>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -204,10 +201,6 @@
         });
     });
 </script>
-
-
-
-
 
 <dialog class="edit-post-balloon" th:if="${post.getPostCreator().equals(user) || user.isAdmin()}">
     <h2>Leave a comment</h2>
