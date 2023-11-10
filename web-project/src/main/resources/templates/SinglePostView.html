@@ -114,11 +114,23 @@
 
             <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
 
+<!--            DO NOT TOUCH-->
+            <dialog class="edit-comment-balloon" th:if="${user.isAdmin() || comment.getUser().equals(user)}">
+                <h2>Leave a comment</h2>
+                <form id="comment-form-l" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}" >
+                    <textarea id="comment-l" th:field="*{content}" maxlength="250" required></textarea>
+                    <p class="symbol-counter"><span id="counter-l">0</span> / 250 characters</p>
+                    <button class="post-btn" id="submit-l" th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}" style="position: relative">
+                        Submit
+                    </button>
+                    <a class="post-btn" id="cancel-l">Cancel</a>
+                </form>
+            </dialog>
+<!--            DO NOT TOUCH-->
 
         </div>
     </div>
 </section>
-
 
 <!------------------------------------------------------------------------------------------------------------------>
 <dialog class="add-comment-balloon" th:if="${isAuthenticated}">
@@ -133,59 +145,63 @@
     </form>
 </dialog>
 
-<script id="balloon">
-    const modals = document.querySelectorAll('.add-comment-balloon');
-    const openButtons = document.querySelectorAll('#add-comment');
-    const closeButtons = document.querySelectorAll('#cancel');
-    const commentContainer = document.querySelector('.comment-container');
+<!-- Add Comment Balloon Script -->
+<script>
+    const addCommentModals = document.querySelectorAll('.add-comment-balloon');
+    const addCommentOpenButtons = document.querySelectorAll('#add-comment');
+    const addCommentCloseButtons = document.querySelectorAll('#cancel');
 
-    commentContainer.addEventListener('click', (event) => {
-        if (event.target.classList.contains('open-button-{{index}}')) {
-            const modal = event.target.closest('.add-comment-balloon');
-            if (modal) {
-                modal.showModal();
-            }
-        }
-
-        if (event.target.classList.contains('close-button-{{index}}')) {
-            const modal = event.target.closest('.add-comment-balloon');
-            if (modal) {
-                modal.close();
-            }
-        }
-    });
-
-    openButtons.forEach((openButton, index) => {
+    addCommentOpenButtons.forEach((openButton, index) => {
         openButton.addEventListener('click', () => {
-            modals[index].showModal();
+            addCommentModals[index].showModal();
         });
     });
 
-    closeButtons.forEach((closeButton, index) => {
+    addCommentCloseButtons.forEach((closeButton, index) => {
         closeButton.addEventListener('click', () => {
-            modals[index].close();
+            addCommentModals[index].close();
         });
     });
 </script>
 
-<script id="index-counter">
-    const textarea = document.getElementById('comment');
-    const counter = document.getElementById('counter');
+<!-- Add Comment Character Counter Script -->
+<script>
+    const addCommentTextarea = document.getElementById('comment');
+    const addCommentCounter = document.getElementById('counter');
 
-    textarea.addEventListener('input', updateCounter);
+    addCommentTextarea.addEventListener('input', updateAddCommentCounter);
 
-    function updateCounter() {
-        const currentLength = textarea.value.length;
-        const maxLength = parseInt(textarea.getAttribute('maxlength'));
+    function updateAddCommentCounter() {
+        const currentLength = addCommentTextarea.value.length;
+        const maxLength = parseInt(addCommentTextarea.getAttribute('maxlength'));
 
-        counter.textContent = currentLength;
+        addCommentCounter.textContent = currentLength;
 
         if (currentLength > maxLength) {
-            counter.style.color = 'red';
+            addCommentCounter.style.color = 'red';
         } else {
-            counter.style.color = 'black';
+            addCommentCounter.style.color = 'black';
         }
     }
+</script>
+
+<!-- Update Comment Balloon Script -->
+<script>
+    const editCommentModals = document.querySelectorAll('.edit-comment-balloon');
+    const editCommentOpenButtons = document.querySelectorAll('#open');
+    const editCommentCloseButtons = document.querySelectorAll('#cancel-l');
+
+    editCommentOpenButtons.forEach((openButton, index) => {
+        openButton.addEventListener('click', () => {
+            editCommentModals[index].showModal();
+        });
+    });
+
+    editCommentCloseButtons.forEach((closeButton, index) => {
+        closeButton.addEventListener('click', () => {
+            editCommentModals[index].close();
+        });
+    });
 </script>
 
 <section class="footer">
