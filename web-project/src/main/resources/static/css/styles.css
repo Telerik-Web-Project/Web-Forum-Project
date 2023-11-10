@@ -1233,7 +1233,7 @@ a {
     border-radius: 0;
     font-size: 20px;
 }
-.add-comment-balloon, .edit-comment-balloon {
+.add-comment-balloon{
     padding: 1em;
     max-width: 60%;
     margin: 0 auto;
@@ -1549,3 +1549,70 @@ select::-ms-expand {
     border-color: #b1b7ba;
 }
 /* ---CREATE POST STARTS HERE--- */
+
+/*EDIT COMMENT BALLOON*/
+.edit-comment-balloon{
+    width: 70%;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    padding: 1em;
+    max-width: 60%;
+    margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+}
+
+.edit-comment-balloon textarea{
+    width:100%;
+    min-height: 110px;
+    height: auto;
+    font-size: 17px;
+    resize: inherit;
+    cursor: default;
+}
+
+.edit-comment-balloon h2 {
+    text-align: left;
+}
+
+.edit-comment-balloon button{
+    border-radius: 0;
+    align-items: start;
+}
+/*EDIT COMMENT BALLOON END*/
+
+
+/*EDIT POST BALLOON*/
+.edit-post-balloon{
+    width: 70%;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    padding: 1em;
+    max-width: 60%;
+    margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+}
+.edit-post-balloon textarea{
+    width:100%;
+    min-height: 110px;
+    height: auto;
+    font-size: 17px;
+    resize: inherit;
+    cursor: default;
+}
+
+.edit-post-balloon #post-title {
+    text-align: left;
+    min-height: 5px;
+}
+.edit-post-balloon button{
+    border-radius: 0;
+    align-items: start;
+}
