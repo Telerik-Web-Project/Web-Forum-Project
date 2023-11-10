@@ -34,7 +34,8 @@
                 <li><a href="About.html" th:href="@{/about}">About</a></li>
                 <li><a href="PostsView" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
                 <li><a href="contact.html" th:href="@{/users}">Users</a></li>
-                <li><a href="#" th:unless="${isAuthenticated}">Register</a></li>
+                <li><a href="RegisterFormView.html" th:href="@{/users/new}" th:unless="${isAuthenticated}">Register</a></li>
+                <li><a href="CreatePostView.html" th:href="@{/posts/new}" th:if="${isAuthenticated}">Create Post</a></li>
                 <li><a href="" th:unless="${isAuthenticated}" th:href="@{/auth/login}">Sign In</a>
                 <li><a href="#" th:href="@{/auth/logout}" th:if="${isAuthenticated}">Log Out</a></li>
             </ul>
@@ -116,7 +117,7 @@
 
 <!--            DO NOT TOUCH-->
             <dialog class="edit-comment-balloon" th:if="${user.isAdmin() || comment.getUser().equals(user)}">
-                <h2>You wrote earlier:</h2>
+                <h2>Leave a comment</h2>
                 <form id="comment-form-l" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}" >
                     <textarea id="comment-l" th:field="*{content}" maxlength="250" required></textarea>
                     <p class="symbol-counter"><span id="counter-l">0</span> / 250 characters</p>
@@ -208,11 +209,11 @@
 
 
 
-<dialog class="edit-post-balloon" th:if="${isAuthenticated}">
+<dialog class="edit-post-balloon" th:if="${post.getPostCreator().equals(user) || user.isAdmin()}">
     <h2>Leave a comment</h2>
-    <form id="post-form" th:object="${updatePostDto}" th:action="@{'/posts/' + ${id} + '/update'}">
-        <textarea id="post-title" th:field="*{title}" minlength="16" maxlength="64"></textarea>
-        <textarea id="post-content" th:field="*{content}" minlength="32" maxlength="8192" ></textarea>
+    <form id="post-form" th:object="${post}" th:action="@{'/posts/' + ${id} + '/update'}" >
+        <textarea id="post-title" th:field="*{title}" maxlength="64"  th:text="${post.title}"></textarea>
+        <textarea id="post-content" th:field="*{content}"  maxlength="8192" ></textarea>
         <p class="symbol-counter"><span id="post-symbols-counter">0</span> / 8192 characters</p>
         <button class="post-btn" id="submit-edited-post" th:action="@{'/posts/' + ${id} + '/update'}" style="position: relative">
             Submit
