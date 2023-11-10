@@ -52,7 +52,7 @@ public class AuthenticationMvcController {
                               BindingResult bindingResult,
                               HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return "test";
+            return "LoginView";
         }
 
         try {
@@ -62,7 +62,7 @@ public class AuthenticationMvcController {
             return "redirect:/";
         } catch (AuthorizationException e) {
             bindingResult.rejectValue("username", "auth_error", e.getMessage());
-            return "test";
+            return "LoginView";
         }
     }
 
@@ -75,19 +75,19 @@ public class AuthenticationMvcController {
    @GetMapping("/register")
    public String showRegisterPage(Model model) {
        model.addAttribute("register", new RegisterDto());
-       return "RegisterView";
+       return "RegisterFormView";
    }
 
    @PostMapping("/register")
    public String handleRegister(@Valid @ModelAttribute("register") RegisterDto register,
                                 BindingResult bindingResult) {
        if (bindingResult.hasErrors()) {
-           return "RegisterView";
+           return "RegisterFormView";
        }
 
        if (!register.getPassword().equals(register.getConfirmPassword())) {
            bindingResult.rejectValue("passwordConfirm", "password_error", "Password confirmation should match password.");
-           return "RegisterView";
+           return "RegisterFormView";
        }
 
        try {
@@ -97,7 +97,7 @@ public class AuthenticationMvcController {
        } catch (EntityDuplicateException e) {
            bindingResult.rejectValue("username", "username_error", e.getMessage());
            bindingResult.rejectValue("email", "email_error", e.getMessage());
-           return "RegisterView";
+           return "RegisterFormView";
        }
    }
 
