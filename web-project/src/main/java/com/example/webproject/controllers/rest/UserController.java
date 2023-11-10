@@ -6,7 +6,7 @@ import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
-import com.example.webproject.helpers.UserMapper;
+import com.example.webproject.mappers.UserMapper;
 import com.example.webproject.models.*;
 import com.example.webproject.services.contracts.UserService;
 import jakarta.validation.Valid;

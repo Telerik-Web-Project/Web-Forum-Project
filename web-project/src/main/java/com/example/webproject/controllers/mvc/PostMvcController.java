@@ -9,14 +9,15 @@ import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.exceptions.UserBannedException;
 import com.example.webproject.helpers.AuthenticationHelper;
-import com.example.webproject.helpers.CommentMapper;
-import com.example.webproject.helpers.PostMapper;
+import com.example.webproject.mappers.CommentMapper;
+import com.example.webproject.mappers.PostMapper;
 import com.example.webproject.models.Comment;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.CommentService;
 import com.example.webproject.services.contracts.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +55,9 @@ public class PostMvcController {
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated(HttpSession session) {
-
-        return session.getAttribute("currentUser") != null;
-    }
-    @ModelAttribute("user")
-    public User populateUser(HttpSession session){
-       return authenticationHelper.tryPopulateUser(session);
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
     }
 
     @GetMapping
@@ -90,13 +87,15 @@ public class PostMvcController {
     }
 
     @GetMapping("/{id}")
-    public String getPost(@ModelAttribute SingletonCommentDto singletonCommentDto, @PathVariable int id, Model model) {
+    public String getPost(@ModelAttribute User loggedUser,@ModelAttribute SingletonCommentDto singletonCommentDto,
+                          @PathVariable int id, Model model,HttpSession session) {
 
         try {
             Post post = postService.get(id);
             model.addAttribute("comment", singletonCommentDto);
             model.addAttribute("post", post);
             model.addAttribute("postComments", postService.getPostComments(post));
+            model.addAttribute("user",authenticationHelper.tryPopulateUser(session));
             return "SinglePostView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -120,17 +119,17 @@ public class PostMvcController {
         return "PostsView";
     }
 
-    @GetMapping("/create")
+    @GetMapping("/new")
     public String showCreatePostView(Model model, HttpSession session) {
         try {
             authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("statusCode", 401);
-            return "Not-Found";
+            return "ErrorView";
         }
         model.addAttribute("post", new PostDto());
-        return "Post-New";
+        return "CreatePostView";
     }
     @GetMapping("{id}/like")
     public String likePost(HttpSession session, Model model, @PathVariable int id) {
@@ -153,7 +152,7 @@ public class PostMvcController {
 
 
 
-    @PostMapping()
+    @PostMapping("/new")
     public String createPost(@Valid @ModelAttribute("post") PostDto postDto,
                              BindingResult errors,
                              Model model,
@@ -165,7 +164,7 @@ public class PostMvcController {
             return "redirect:/auth/login";
         }
         if (errors.hasErrors()) {
-            return "Post-New";
+            return "CreatePostView";
         }
 
         try {

@@ -1,7 +1,7 @@
 package com.example.webproject.config;
 
 import com.example.webproject.dtos.mvcDtos.SingletonCommentDto;
-import com.example.webproject.models.mvcModels.SingletonUser;
+import com.example.webproject.models.mvcModels.guestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,8 +50,8 @@ public class ApplicationConfig {
     }
     @Bean
     @Scope("singleton")
-    public SingletonUser singletonUser() {
-        return new SingletonUser();
+    public guestUser singletonUser() {
+        return new guestUser();
     }
     @Bean
     @Scope("singleton")

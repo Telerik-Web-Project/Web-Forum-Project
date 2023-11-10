@@ -1,4 +1,4 @@
-package com.example.webproject.helpers;
+package com.example.webproject.mappers;
 
 import com.example.webproject.dtos.RegisterDto;
 import com.example.webproject.dtos.UpdateUserDto;

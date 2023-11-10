@@ -6,11 +6,12 @@ import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
 import com.example.webproject.helpers.AuthenticationHelper;
-import com.example.webproject.helpers.UserMapper;
+import com.example.webproject.mappers.UserMapper;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.services.contracts.PostService;
 import com.example.webproject.services.contracts.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,13 @@ public class UserMvcController {
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated(HttpSession session) {
-
-        return session.getAttribute("currentUser") != null;
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
     }
 
     @GetMapping
-    public String getPaginationPage(HttpSession session, @RequestParam(value = "page", required = false) Integer page,
+    public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
                                     @Valid @ModelAttribute("postFilter") UserFilterDto filterDto) {
         UserFilter userFilter = new UserFilter(filterDto.getFirstName(),
@@ -58,14 +59,11 @@ public class UserMvcController {
         int itemsPerPage = 5;
 
         List<User> dataList = userService.getPaginatedUsers(page, itemsPerPage);
-//        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
 
 
         int totalItems = userService.getAll(userFilter).size();
         int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
-
             model.addAttribute("users", dataList);
-//            model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("userService", userService);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", totalPages);

@@ -1,11 +1,12 @@
 package com.example.webproject.helpers;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
-import com.example.webproject.models.mvcModels.SingletonUser;
+import com.example.webproject.models.mvcModels.guestUser;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
@@ -13,11 +14,11 @@ import java.util.Objects;
 @Component
 public class AuthenticationHelper {
     private final UserService userService;
-    private final SingletonUser singletonUser;
+    private final guestUser guestUser;
     @Autowired
-    public AuthenticationHelper(UserService userService, SingletonUser singletonUser) {
+    public AuthenticationHelper(UserService userService, guestUser guestUser) {
         this.userService = userService;
-        this.singletonUser = singletonUser;
+        this.guestUser = guestUser;
     }
     public static final String INVALID_AUTHENTICATION_MESSAGE = "Invalid authentication";
     public static final String VALID_HEADER_NAME = "Authorization";
@@ -48,7 +49,7 @@ public class AuthenticationHelper {
     public User tryPopulateUser(HttpSession session) {
         String currentUsername = (String) session.getAttribute("currentUser");
         if(currentUsername == null){
-            return singletonUser;
+            return guestUser;
         }
         else {
             return userService.getByUsername(currentUsername);

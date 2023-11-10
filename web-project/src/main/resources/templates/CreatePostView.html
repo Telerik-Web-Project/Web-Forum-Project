@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap"
+        rel="stylesheet">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" href="../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <title>Rocket Forum | About</title>
+</head>
+<body>
+<section class="sub-header">
+  <nav>
+    <div class="forum-name">
+      <h2>Rocket</h2>
+      <h2>Team</h2>
+      <h2>Forum</h2>
+    </div>
+    <a href=HomeView.html th:href="@{/}"><img src="../static/images/logo.png" th:src="@{/images/logo.png}"
+                                              alt="logo"></a>
+    <div class="nav-links" id="navLinks">
+      <i class="fa fa-times" onclick="hideMenu()"></i>
+      <ul>
+        <li><a href="HomeView.html" th:href="@{/}" th:text="#{navigation.home}">Home</a></li>
+        <li><a href="About.html" th:href="@{/about}">About</a></li>
+        <li><a href="PostsView" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
+        <li><a href="contact.html" th:href="@{/users}">Users</a></li>
+        <li><a href="#" th:unless="${isAuthenticated}">Register</a></li>
+        <li><a href="" th:unless="${isAuthenticated}" th:href="@{/auth/login}">Sign In</a>
+        <li><a href="#" th:href="@{/auth/logout}" th:if="${isAuthenticated}">Log Out</a></li>
+      </ul>
+    </div>
+    <i class="fa fa-bars" onclick="showMenu()"></i>
+  </nav>
+
+  <!--    <h1>About Us</h1>-->
+</section>
+
+
+<div class="create-post-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <h1 th:align="center">Create post </h1>
+      <form th:action="@{/posts/new}" th:object="${post}" method="post" >
+        <div class="form-group">
+          <label >Title </label>
+          <input type="text" th:field="*{title}" class="form-control" name="title" />
+        </div>
+        <div class="form-group">
+          <label >Description</label>
+          <textarea rows="5" th:field="*{content}" class="form-control" name="description" ></textarea>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">
+            Create
+
+          </button>
+          <a th:href="@{/posts}" class="btn btn-default">
+            Cancel
+          </a>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<section class="footer" >
+  <h4 th:align="center">About Us</h4>
+  <p th:align="center">Copyright &copy 2023 Team Rocket</p>
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+
+</body>
+</html>

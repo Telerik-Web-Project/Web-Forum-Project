@@ -1,4 +1,4 @@
-package com.example.webproject.helpers;
+package com.example.webproject.mappers;
 
 import com.example.webproject.models.Comment;
 import com.example.webproject.dtos.CommentDto;
