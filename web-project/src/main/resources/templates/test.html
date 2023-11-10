@@ -39,18 +39,18 @@
     </nav>
 </section>
 </section>
-<div class="login-body">
-    <div class="login-container">
-        <div class="login-container-title" th:align="center">Login</div>
+<div class="registration-body">
+    <div class="registration-container">
+        <div class="registration-container-title" th:align="center">Login</div>
         <form  action="#" th:action="@{/auth/login}" th:object="${login}" method="post">
             <div class="user-details">
                 <div class="input-box">
                     <span class="user-details"></span>
-                    <input type="text" th:field="*{username}" placeholder="Username" required>
+                    <input type="text" th:field="*{username}" placeholder="Enter your Fist Name" required>
                 </div>
                 <div class="input-box">
                     <span class="user-details"></span>
-                    <input type="password" th:field="*{password}" placeholder="Password" required>
+                    <input type="text" th:field="*{password}" placeholder="Enter your Last Name" required>
                 </div>
             </div>
             <div class="button-container">

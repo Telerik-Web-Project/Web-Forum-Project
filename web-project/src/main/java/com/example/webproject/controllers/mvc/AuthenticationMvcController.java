@@ -52,7 +52,7 @@ public class AuthenticationMvcController {
                               BindingResult bindingResult,
                               HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return "LoginView";
+            return "test";
         }
 
         try {
@@ -62,7 +62,7 @@ public class AuthenticationMvcController {
             return "redirect:/";
         } catch (AuthorizationException e) {
             bindingResult.rejectValue("username", "auth_error", e.getMessage());
-            return "LoginView";
+            return "test";
         }
     }
 
