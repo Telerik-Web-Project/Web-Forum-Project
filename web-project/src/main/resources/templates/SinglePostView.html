@@ -114,95 +114,10 @@
 
             <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
 
-<!--            DO NOT TOUCH-->
-            <dialog class="edit-comment-balloon" th:if="${isAuthenticated}">
-                <h2>Leave a comment</h2>
-                <form id="comment-form-l" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}" >
-                    <textarea id="comment-l" th:field="*{content}" maxlength="250" required></textarea>
-                    <p class="symbol-counter"><span id="counter-l">0</span> / 250 characters</p>
-                    <button class="post-btn" id="submit-l" th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}" style="position: relative">
-                        Submit
-                    </button>
-                    <a class="post-btn" id="cancel-l">Cancel</a>
-                </form>
-            </dialog>
-<!--            DO NOT TOUCH-->
+
         </div>
     </div>
 </section>
-
-
-
-
-<script id="balloon-l">
-    const modals = document.querySelectorAll('.edit-comment-balloon');
-    const openButtons = document.querySelectorAll('#open');
-    const closeButtons = document.querySelectorAll('#cancel-l');
-
-    openButtons.forEach((openButton, index) => {
-        openButton.addEventListener('click', () => {
-            modals[index].showModal();
-        });
-    });
-
-    closeButtons.forEach((closeButton, index) => {
-        closeButton.addEventListener('click', () => {
-            modals[index].close();
-        });
-    });
-</script>
-
-
-
-<!-- edit button + balloon start here-->
-<!--<button class="post-btn" id="add-comment-btn" th:if="${isAuthenticated}">Add Comment</button>-->
-<!--<dialog class="edit-comment">-->
-<!--    <h2>Edit Comment</h2>-->
-<!--    <form id="edit-comment-form" th:object="${comment}" th:action="@{'/posts/' + ${id} + '/comment'}" method="post">-->
-<!--        <textarea id="edit-comment" th:field="*{content}" maxlength="250" required></textarea>-->
-<!--        <p class="symbol-counter"><span id="edit-counter">0</span> / 250 characters</p>-->
-<!--        <button class="post-btn" id="-edit-submit" th:action="@{'/posts/' + ${id} + '/comment'}" style="position: relative">-->
-<!--            Submit-->
-<!--        </button>-->
-<!--        <a class="post-btn" id="edit-cancel">Cancel</a>-->
-<!--    </form>-->
-<!--</dialog>-->
-<!--<script id="edit-balloon">-->
-<!--    const modals = document.querySelectorAll('dialog.edit-comment');-->
-<!--    const openButtons = document.querySelectorAll('#add-comment-btn');-->
-<!--    const closeButtons = document.querySelectorAll('#edit-cancel');-->
-<!--    const commentContainer = document.querySelector('.comment-container');-->
-<!--    const submitButtons = document.querySelectorAll('#-edit-submit');-->
-
-<!--    commentContainer.addEventListener('click', (event) => {-->
-<!--        if (event.target.id === 'add-comment-btn') {-->
-<!--            modals[0].showModal();  // Assuming there is only one modal-->
-<!--        }-->
-
-<!--        if (event.target.id === 'edit-cancel') {-->
-<!--            modals[0].close();-->
-<!--        }-->
-<!--    });-->
-<!--    submitButtons.forEach((submitButton, index) => {-->
-<!--        submitButton.addEventListener('click', () => {-->
-<!--            modals[index].close();-->
-<!--        });-->
-<!--    });-->
-
-
-<!--    openButtons.forEach((openButton, index) => {-->
-<!--        openButton.addEventListener('click', () => {-->
-<!--            modals[index].showModal();-->
-<!--        });-->
-<!--    });-->
-
-<!--    closeButtons.forEach((closeButton, index) => {-->
-<!--        closeButton.addEventListener('click', () => {-->
-<!--            modals[index].close();-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-<!-- edit button + balloon end here-->
 
 
 <!------------------------------------------------------------------------------------------------------------------>
