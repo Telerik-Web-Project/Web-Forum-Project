@@ -209,11 +209,11 @@
 
 
 
-<dialog class="edit-post-balloon" th:if="${isAuthenticated}">
+<dialog class="edit-post-balloon" th:if="${post.getPostCreator().equals(user) || user.isAdmin()}">
     <h2>Leave a comment</h2>
-    <form id="post-form" th:object="${updatePostDto}" th:action="@{'/posts/' + ${id} + '/update'}">
-        <textarea id="post-title" th:field="*{title}" minlength="16" maxlength="64"  th:text="${post.title}"></textarea>
-        <textarea id="post-content" th:field="*{content}" minlength="32" maxlength="8192" ></textarea>
+    <form id="post-form" th:object="${post}" th:action="@{'/posts/' + ${id} + '/update'}" >
+        <textarea id="post-title" th:field="*{title}" maxlength="64"  th:text="${post.title}"></textarea>
+        <textarea id="post-content" th:field="*{content}"  maxlength="8192" ></textarea>
         <p class="symbol-counter"><span id="post-symbols-counter">0</span> / 8192 characters</p>
         <button class="post-btn" id="submit-edited-post" th:action="@{'/posts/' + ${id} + '/update'}" style="position: relative">
             Submit

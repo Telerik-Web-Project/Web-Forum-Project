@@ -90,14 +90,12 @@ public class PostMvcController {
 
     @GetMapping("/{id}")
     public String getPost(@ModelAttribute User loggedUser, @ModelAttribute SingletonCommentDto singletonCommentDto,
-                          @ModelAttribute UpdatePostDto updatePostDto,
                           @PathVariable int id, Model model, HttpSession session) {
 
         try {
             Post post = postService.get(id);
             model.addAttribute("comment", singletonCommentDto);
             model.addAttribute("post", post);
-            model.addAttribute("updatePostDto",updatePostDto);
             model.addAttribute("postComments", postService.getPostComments(post));
             model.addAttribute("user", authenticationHelper.tryPopulateUser(session));
             return "SinglePostView";
