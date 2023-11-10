@@ -204,6 +204,51 @@
     });
 </script>
 
+
+
+
+
+<dialog class="edit-post-balloon" th:if="${isAuthenticated}">
+    <h2>Leave a comment</h2>
+    <form id="post-form" th:object="${updatePostDto}" th:action="@{'/posts/' + ${id} + '/update'}">
+        <textarea id="post-title" th:field="*{title}" minlength="16" maxlength="64"  th:text="${post.title}"></textarea>
+        <textarea id="post-content" th:field="*{content}" minlength="32" maxlength="8192" ></textarea>
+        <p class="symbol-counter"><span id="post-symbols-counter">0</span> / 8192 characters</p>
+        <button class="post-btn" id="submit-edited-post" th:action="@{'/posts/' + ${id} + '/update'}" style="position: relative">
+            Submit
+        </button>
+        <a class="post-btn" id="cancel-edited-post">Cancel</a>
+    </form>
+</dialog>
+
+<!-- Add Comment Balloon Script -->
+<script>
+    const updatePostModals = document.querySelectorAll('.edit-post-balloon');
+    const updatePostOpenButtons = document.querySelectorAll('#edit-post');
+    const updatePostCloseButtons = document.querySelectorAll('#cancel-edited-post');
+
+    updatePostOpenButtons.forEach((openButton, index) => {
+        openButton.addEventListener('click', () => {
+            updatePostModals[index].showModal();
+        });
+    });
+
+    updatePostCloseButtons.forEach((closeButton, index) => {
+        closeButton.addEventListener('click', () => {
+            updatePostModals[index].close();
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
 <section class="footer">
     <h4></h4>
     <p>Copyright &copy 2023 Team Rocket</p>
