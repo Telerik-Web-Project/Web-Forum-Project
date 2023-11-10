@@ -1173,7 +1173,7 @@ a {
 
 .delete-comment, .edit-comment, .comment-author {
     grid-column: 5;
-    grid-row: 1;
+    grid-row: -1;
     font-size: 25px;
     text-align: left;
     cursor: pointer;
@@ -1181,13 +1181,18 @@ a {
 
 .delete-comment{
     padding-top: 10px;
+    padding-bottom: 0;
     text-align: center;
-    position: relative;
+    /*position: relative;*/
+    margin: 0px 40px 40px 0px;
+    /*background: red;*/
 }
 .edit-comment{
-    padding-top: 70px;
+    /*padding-top: 70px;*/
     border-radius: 0;
     border: none;
+    /*background: #0099ff;*/
+    margin: 80px 40px 0px 0px;
 }
 
 .comment-author {
@@ -1225,7 +1230,7 @@ a {
     font-size: 20px;
 }
 
-.add-comment-balloon {
+.add-comment-balloon, .edit-comment-balloon {
     padding: 1em;
     max-width: 60%;
     margin: 0 auto;
