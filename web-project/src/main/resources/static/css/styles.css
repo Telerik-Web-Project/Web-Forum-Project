@@ -319,6 +319,13 @@ nav .fa {
     padding: 18px 0;
 }
 
+.icons .fa {
+    color: black;
+    margin: 0 13px;
+    cursor: pointer;
+    padding: 18px 0;
+}
+
 .fa-heart-o {
     color: black;
 }
@@ -620,10 +627,16 @@ a {
 
 /*----- Error page -----*/
 
-.error {
+.user-details .error {
     width: 80%;
-    margin: auto;
-    padding-top: 50px;
+    padding: 0 0 0 0px;
+    color: red;
+}
+
+.create-post-container .error{
+    width: 80%;
+    padding: 0 0 0 0px;
+    color: red;
 }
 
 .error p {
@@ -844,7 +857,7 @@ a {
 .dashboard-container {
     padding: 20px;
     border-radius: 10px;
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 200px auto;
     box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
 }
@@ -1042,8 +1055,9 @@ a {
     margin-top: 50px;
     margin-left: auto;
     margin-right: auto;
+    padding-right: 30px;
     padding-top: 50px;
-    padding-bottom: 50px;
+    padding-bottom: 30px;
     gap: 10px;
     border-radius: 10px;
     box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
@@ -1053,6 +1067,7 @@ a {
     grid-column: 1;
     grid-row: 1;
 }
+
 .single-post-container img {
     grid-column: 1;
     grid-row: 1;
@@ -1090,6 +1105,7 @@ a {
     grid-row-start: -2;
     grid-column: 1/2;
     font-size: 20px;
+    width: 180px;
     margin-top: 10px;
     background: transparent;
 }
@@ -1119,7 +1135,7 @@ a {
 #edit-post, #add-comment {
     grid-row: -2;
     background: none;
-    border-radius: 0;
+    border-radius: 5px;
 }
 #add-comment{
     grid-column: 4;
@@ -1175,7 +1191,7 @@ a {
     height: auto;
     padding-top: 10px;
     padding-bottom: 10px;
-    margin-top: 30px;
+    margin-top: 20px;
     margin-left: auto;
     margin-right: 150px;
     gap: 10px;
@@ -1185,7 +1201,7 @@ a {
     border-radius: 10px;
 }
 
-.delete-comment, .edit-comment, .comment-author {
+.delete-comment, .bx-edit-alt, .comment-author {
     grid-column: 5;
     grid-row: -1;
     font-size: 25px;
@@ -1201,7 +1217,7 @@ a {
     margin: 0px 40px 40px 0px;
     /*background: red;*/
 }
-.edit-comment{
+.bx-edit-alt{
     /*padding-top: 70px;*/
     border-radius: 0;
     border: none;

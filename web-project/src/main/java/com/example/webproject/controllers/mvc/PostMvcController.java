@@ -98,6 +98,7 @@ public class PostMvcController {
             model.addAttribute("post", post);
             model.addAttribute("postComments", postService.getPostComments(post));
             model.addAttribute("user", authenticationHelper.tryPopulateUser(session));
+            model.addAttribute("commentService", commentService);
             return "SinglePostView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());

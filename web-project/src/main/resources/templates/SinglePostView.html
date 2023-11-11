@@ -49,9 +49,8 @@
 
 <section class="single-post">
     <div class="single-post-container" th:object="${post}">
-        <img class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
+        <img  class="profile-picture" src="../static/images/user.png" th:src="@{/images/user.png}"
              alt="Profile Picture">
-
         <h4 class="post-title" th:text="${post.getPostCreator().getUsername()}">Post Creator</h4>
 
         <a class="fa fa-trash" id="fa-trash" aria-hidden="true"
@@ -103,29 +102,27 @@
                 </a>
             </div>
 
-            <div class="edit-comment">
-                <a class="add-update-btn" th:if="${comment.getUser().equals(user) or user.isAdmin()}" href="#popup-edit-comment">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                </a>
-            </div>
+           
+
             <p class="comment-content" th:text="${comment.getContent()}"></p>
+
             <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
-            <div id="popup-edit-comment" class="overlay">
-                <div class="popup">
-                    <h2>Leave a comment</h2>
-                    <form id="comment-form-l" th:object="${comment}"
-                          th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}">
-                        <textarea id="comment-l" th:field="*{content}" maxlength="250" required></textarea>
-                        <p class="symbol-counter"><span id="counter-l">0</span> / 250 characters</p>
-                        <button class="post-btn" id="submit-l"
-                                th:action="@{'/posts/' + ${id} + '/comment' + '/' + ${comment.getId() + '/update'}}"
-                                style="position: relative">
-                            Submit
-                        </button>
-                        <a class="post-btn" id="cancel-l" href="#">Cancel</a>
-                    </form>
-                </div>
-            </div>
+
+<!--            DO NOT TOUCH-->
+           <i class="bx bx-edit-alt" id="open" th:if="${comment.getUser().equals(user) or user.isAdmin()}"></i>
+            <dialog class="edit-comment-balloon" th:if="${comment.getUser().equals(user) or user.isAdmin()}">
+            <form th:object="${comment}"  th:action="@{'/posts/'+${post.getId()}+'/comment/' + ${comment.id} + '/update'}">
+                <input type="hidden" name="id" th:value="${comment.id}" />
+                <label for="editedComment">Edit Comment:</label>
+                <textarea id="editedComment" th:field="*{content}" rows="4" cols="50"></textarea>
+                <button class="post-btn" id="edit" th:action="@{'/posts/'+${post.getId()}+'/comment/' + ${comment.id} + '/update'}" style="position: relative">
+                    Submit
+                </button>
+                <a class="post-btn" id="cancel-l">Cancel</a>
+            </form>
+            </dialog>
+<!--            DO NOT TOUCH-->
+
         </div>
     </div>
 </section>
@@ -202,6 +199,10 @@
     });
 </script>
 
+
+
+
+
 <dialog class="edit-post-balloon" th:if="${post.getPostCreator().equals(user) || user.isAdmin()}">
     <h2>Leave a comment</h2>
     <form id="post-form" th:object="${post}" th:action="@{'/posts/' + ${id} + '/update'}" >
@@ -233,16 +234,6 @@
         });
     });
 </script>
-
-
-
-
-
-
-
-
-
-
 <section class="footer">
     <h4></h4>
     <p>Copyright &copy 2023 Team Rocket</p>

@@ -73,7 +73,10 @@ public class AuthenticationMvcController {
     }
 
    @GetMapping("/register")
-   public String showRegisterPage(Model model) {
+   public String showRegisterPage(Model model,BindingResult bindingResult) {
+       if (bindingResult.hasErrors()) {
+           return "RegisterFormView";
+       }
        model.addAttribute("register", new RegisterDto());
        return "RegisterFormView";
    }

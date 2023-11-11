@@ -20,7 +20,7 @@ public class AuthenticationHelper {
         this.userService = userService;
         this.guestUser = guestUser;
     }
-    public static final String INVALID_AUTHENTICATION_MESSAGE = "Invalid authentication";
+    public static final String INVALID_AUTHENTICATION_MESSAGE = "Wrong username or password.";
     public static final String VALID_HEADER_NAME = "Authorization";
     public static final int ASCII_VALUE_OF_SPACE = 32;
 

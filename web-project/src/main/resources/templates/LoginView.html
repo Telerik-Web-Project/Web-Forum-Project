@@ -45,6 +45,8 @@
         <div class="login-container-title" th:align="center">Login</div>
         <form  action="#" th:action="@{/auth/login}" th:object="${login}" method="post">
             <div class="user-details">
+                <label class="error" th:errors="*{username}">Name error placeholder</label>
+                <label class="error" th:errors="*{password}">Name error placeholder</label>
                 <div class="input-box">
                     <span class="user-details"></span>
                     <input type="text" th:field="*{username}" placeholder="Username" required>

@@ -100,14 +100,15 @@ public class UserMvcController {
     }
 
     @PostMapping("/new")
-    public String createUser(@Valid @ModelAttribute("userDto") RegisterDto registerDto, BindingResult bindingResult,
+    public String createUser(@Valid @ModelAttribute("user") RegisterDto registerDto, BindingResult bindingResult,
                              Model model) {
         if(bindingResult.hasErrors()){
-            return "redirect:/new";
+            return "redirect:/users/new";
         }
       try {
           User user = userMapper.fromRegisterDtoToUser(registerDto);
           userService.createUser(user);
+          model.addAttribute("user", registerDto);
           return "redirect:/";
       }catch (EntityDuplicateException e){
           bindingResult.rejectValue("username", "duplicate_username", e.getMessage());
@@ -144,12 +145,12 @@ public class UserMvcController {
 
     @PostMapping("/{id}/update")
     public String updateUser(@ModelAttribute @PathVariable int id,
-                             @Valid @ModelAttribute("user") UpdateUserDto updateUserDto,
+                             @Valid @ModelAttribute("user")UpdateUserDto updateUserDto,
                              BindingResult bindingResult,
                              Model model,
                              HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return "UserEditView";
+            return "redirect:/users/"+ id +"/update";
         }
 
         try {
