@@ -1,4 +1,5 @@
 package com.example.webproject.dtos;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -13,7 +14,8 @@ public class UpdateUserDto {
     @NotNull(message = "email address required")
     private String email;
 
-    @NotNull(message = "password required")
+    @NotEmpty(message = "Password cannot be empty")
+    @Size(min =6, max = 16, message = "Password must be between 6 and 16 characters")
     private String password;
 
     public UpdateUserDto() {

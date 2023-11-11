@@ -42,23 +42,28 @@
 <div class="registration-body">
   <div class="registration-container">
     <div class="registration-container-title" th:align="center">Edit Profile</div>
-    <form action="#" th:action="@{'/users/' + ${userId} + '/update'}" th:object="${user}" method="post">
+    <form action="#" th:action="@{__${requestURI}__}" th:object="${user}" method="post">
       <div class="user-details">
         <div class="input-box">
           <span class="user-details"></span>
-          <input type="text" th:field="*{firstName}" placeholder="Enter your new Fist Name" required>
+          <input type="text" th:field="*{firstName}" placeholder="Enter your new Fist Name">
+          <a class="error" th:errors="*{firstName}" >Name error placeholder</a>
         </div>
+
         <div class="input-box">
           <span class="user-details"></span>
           <input type="text" th:field="*{lastName}" placeholder="Enter your new Last Name" required>
         </div>
+        <label class="error" th:errors="*{lastName}">Name error placeholder</label>
         <div class="input-box">
           <span class="user-details"></span>
           <input type="text" th:field="*{email}" placeholder="Enter your new Email" required>
+          <label class="error" th:errors="*{email}">Name error placeholder</label>
         </div>
         <div class="input-box">
           <span class="user-details"></span>
           <input type="password" th:field="*{password}" placeholder="Enter your new Password" required>
+          <label class="error" th:errors="*{password}">Name error placeholder</label>
         </div>
       </div>
       <div class="button-container">

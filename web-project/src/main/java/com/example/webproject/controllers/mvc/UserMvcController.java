@@ -44,6 +44,11 @@ public class UserMvcController {
         return session != null && session.getAttribute("currentUser") != null;
     }
 
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
+
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
@@ -103,19 +108,22 @@ public class UserMvcController {
     public String createUser(@Valid @ModelAttribute("user") RegisterDto registerDto, BindingResult bindingResult,
                              Model model) {
         if(bindingResult.hasErrors()){
-            return "redirect:/users/new";
+            return "RegisterFormView";
         }
       try {
           User user = userMapper.fromRegisterDtoToUser(registerDto);
           userService.createUser(user);
           model.addAttribute("user", registerDto);
           return "redirect:/";
-      }catch (EntityDuplicateException e){
-          bindingResult.rejectValue("username", "duplicate_username", e.getMessage());
-          bindingResult.rejectValue("email", "duplicate_email", e.getMessage());
-      return "redirect:/users/new";
+      }catch (EntityDuplicateException e) {
+          if (e.getMessage().contains("username")) {
+              bindingResult.rejectValue("username", "duplicate_username", e.getMessage());
+          } else if (e.getMessage().contains("email")) {
+              bindingResult.rejectValue("email", "duplicate_email", e.getMessage());
+          }
+          return "RegisterFormView";
       }catch (AuthorizationException e){
-            model.addAttribute("error",e.getMessage());
+          model.addAttribute("error",e.getMessage());
           return "ErrorView";
       }
     }
@@ -150,7 +158,7 @@ public class UserMvcController {
                              Model model,
                              HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return "redirect:/users/"+ id +"/update";
+            return "UserEditView";
         }
 
         try {
@@ -158,6 +166,7 @@ public class UserMvcController {
             User updatedUser = userMapper.fromUpdateUserDto(updateUserDto);
             updatedUser.setId(loggedUser.getId());
             userService.updateUser(loggedUser, updatedUser);
+            model.addAttribute("id",id);
             return "redirect:/users/{id}";
         } catch (EntityNotFoundException e) {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
@@ -168,9 +177,8 @@ public class UserMvcController {
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
         } catch (EntityDuplicateException e) {
-            model.addAttribute("statusCode", HttpStatus.CONFLICT.getReasonPhrase());
-            model.addAttribute("error", e.getMessage());
-            return "ErrorView";
+            bindingResult.rejectValue("email", "duplicate_email", e.getMessage());
+            return "UserEditView";
         }
     }
 

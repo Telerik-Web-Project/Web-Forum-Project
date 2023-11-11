@@ -43,7 +43,7 @@
 <div class="registration-body">
     <div class="registration-container">
         <div class="registration-container-title" th:align="center">Registration Form</div>
-        <form action="#" th:action="@{/users/new}" th:object="${user}" method="post">
+        <form action="#" th:action="@{__${requestURI}__}" th:object="${user}" method="post">
             <div class="user-details">
                 <div class="input-box">
                     <span class="user-details"></span>

@@ -1581,7 +1581,42 @@ select::-ms-expand {
 /* ---CREATE POST STARTS HERE--- */
 
 /*EDIT COMMENT BALLOON*/
-.edit-comment-balloon, .add-comment-balloon{
+/*.edit-comment-balloon, .add-comment-balloon{*/
+/*    width: 70%;*/
+/*    left: 50%;*/
+/*    top: 30%;*/
+/*    transform: translate(-50%, -50%);*/
+/*    padding: 1em;*/
+/*    max-width: 60%;*/
+/*    margin: 0 auto;*/
+/*    background-color: #fff;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 5px;*/
+/*    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);*/
+/*}*/
+
+/*.add-comment-balloon textarea{*/
+/*    width:100%;*/
+/*    min-height: 110px;*/
+/*    height: auto;*/
+/*    font-size: 17px;*/
+/*    resize: inherit;*/
+/*    cursor: default;*/
+/*}*/
+/*.edit-comment-balloon #edit-comment-textarea{*/
+/*    width:90%;*/
+/*    min-height: 100px;*/
+/*    height: auto;*/
+/*    font-size: 17px;*/
+/*    resize: inherit;*/
+/*    cursor: default;*/
+/*}*/
+
+/*.edit-comment-balloon h3{*/
+/*    text-align: left;*/
+/*}*/
+.edit-comment-balloon,
+.add-comment-balloon {
     width: 70%;
     left: 50%;
     top: 30%;
@@ -1595,45 +1630,61 @@ select::-ms-expand {
     box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
 }
 
-.edit-comment-balloon textarea, .add-comment-balloon textarea{
-    width:100%;
-    min-height: 110px;
+.add-comment-balloon textarea{
+    width: 100%;
+    min-height: 100px;
+    height: auto;
+    font-size: 17px;
+    resize: inherit;
+    cursor: default;
+    margin-right: 10px;
+}
+.edit-comment-balloon textarea {
+    width: 80%;
+    min-height: 50px;
     height: auto;
     font-size: 17px;
     resize: inherit;
     cursor: default;
 }
 
-.edit-comment-balloon h2{
+.edit-comment-balloon h3 {
     text-align: left;
 }
 
-.edit-comment-balloon button{
-    border-radius: 0;
-    align-items: start;
+
+.edit-comment-balloon .post-btn,
+.add-comment-balloon .post-btn {
+    width: 10%;
+    margin-top: 10px;
 }
+
+.edit-comment-balloon #cancel-l,
+.add-comment-balloon #cancel {
+    width: 10%; /* Make the cancel button full width */
+    margin-top: 10px; /* Adjust the margin */
+}
+
+/* Additional styling for the buttons (adjust as needed) */
+.edit-comment-balloon .post-btn,
+.add-comment-balloon .post-btn,
+.edit-comment-balloon #cancel-l,
+.add-comment-balloon #cancel {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 /*EDIT COMMENT BALLOON END*/
 
 
 /*EDIT POST BALLOON*/
-/*.edit-post-balloon{*/
-/*    width: 70%;*/
-/*    left: 50%;*/
-/*    top: 30%;*/
-/*    transform: translate(-50%, -50%);*/
-/*    padding: 1em;*/
-/*    max-width: 60%;*/
-/*    margin: 0 auto;*/
-/*    background-color: #fff;*/
-/*    border: 1px solid #ccc;*/
-/*    border-radius: 5px;*/
-/*    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);*/
-/*}*/
 .edit-post-balloon textarea, .edit-comment-balloon textarea, .add-comment-balloon textarea{
-    width:100%;
+    width:90%;
     min-height: 110px;
     height: auto;
     font-size: 17px;
+    padding: 10px;
     resize: inherit;
     cursor: default;
 }
