@@ -64,6 +64,13 @@ nav img {
     width: 100%;
 }
 
+#my-profile{
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+    margin-bottom: -5px;
+}
+
 /*----- Welcome messages -----*/
 
 .text-box {

@@ -34,7 +34,7 @@ import java.util.List;
 @RequestMapping("/posts")
 public class PostMvcController {
 
-    private static final int DEFAULT_PAGE_SIZE = 5;
+    private static final int DEFAULT_PAGE_SIZE = 6;
     private final AuthenticationHelper authenticationHelper;
     private final PostMapper postMapper;
     private final PostService postService;
