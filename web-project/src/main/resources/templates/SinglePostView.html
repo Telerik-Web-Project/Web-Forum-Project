@@ -110,7 +110,7 @@
             <p class="comment-author">Comment by: <span th:text="${comment.getUser().getUsername()}"></span></p>
 
 <!--            DO NOT TOUCH-->
-           <i class="bx bx-edit-alt" id="open" th:if="${comment.getUser().equals(user) or user.isAdmin()}"></i>
+           <i class="bx bx-edit-alt" id="open" th:if="${comment.getUser().equals(user)}"></i>
             <dialog class="edit-comment-balloon" th:if="${comment.getUser().equals(user) or user.isAdmin()}">
             <form th:object="${comment}"  th:action="@{'/posts/'+${post.getId()}+'/comment/' + ${comment.id} + '/update'}">
                 <h3>Edit Comment</h3>

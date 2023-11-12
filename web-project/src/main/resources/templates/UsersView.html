@@ -38,7 +38,7 @@
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
     <h1>All Users</h1>
-    <section class="Search-user" id="search" style="margin-top: 50px">
+    <section th:if="${isAuthenticated}" class="Search-user" id="search" style="margin-top: 50px">
         <form action="#" id="filter-form" th:action="@{/users}" method="get" th:object="${userFilter}">
             <label>Filter Options</label>
             <input class="search-input" type="text" placeholder="Username" th:field="*{username}" />
