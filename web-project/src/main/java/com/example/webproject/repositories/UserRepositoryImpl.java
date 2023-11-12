@@ -19,6 +19,7 @@ import java.util.Map;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
     private final SessionFactory sessionFactory;
+
     @Autowired
     public UserRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -39,8 +40,8 @@ public class UserRepositoryImpl implements UserRepository {
                 params.put("email", String.format("%%%s%%", value));
             });
             userFilter.getFirstName().ifPresent(value -> {
-                filters.add("first_name like :first_name");
-                params.put("first_name", String.format("%%%s%%", value));
+                filters.add("firstName like :firstName");
+                params.put("firstName", String.format("%%%s%%", value));
             });
             StringBuilder queryString = new StringBuilder("from User");
             if (!filters.isEmpty()) {
@@ -54,16 +55,41 @@ public class UserRepositoryImpl implements UserRepository {
             return query.list();
         }
     }
+
     @Override
-    public List<User> getPaginatedUsers(int page, int postPerPage){
+    public List<User> getPaginatedUsers(int page, int postPerPage,UserFilter userFilter) {
         try (Session session = sessionFactory.openSession()) {
             int offset = (page - 1) * postPerPage;
-            Query<User> query = session.createQuery("FROM User where id!=1", User.class);
+            List<String> filters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+            userFilter.getUsername().ifPresent(value -> {
+                filters.add("username like :username");
+                params.put("username", String.format("%%%s%%", value));
+            });
+
+            userFilter.getEmail().ifPresent(value -> {
+                filters.add("email like :email");
+                params.put("email", String.format("%%%s%%", value));
+            });
+            userFilter.getFirstName().ifPresent(value -> {
+                filters.add("firstName like :firstName");
+                params.put("firstName", String.format("%%%s%%", value));
+            });
+            StringBuilder queryString = new StringBuilder("from User");
+            if (!filters.isEmpty()) {
+                queryString
+                        .append(" where ")
+                        .append(String.join(" and ", filters));
+            }
+            queryString.append(generateOrderBy(userFilter));
+            Query<User> query = session.createQuery(queryString.toString(), User.class);
+            query.setProperties(params);
             query.setFirstResult(offset);
             query.setMaxResults(postPerPage);
             return query.list();
         }
     }
+
     @Override
     public User getById(int id) {
         try (Session session = sessionFactory.openSession()) {
@@ -179,25 +205,28 @@ public class UserRepositoryImpl implements UserRepository {
             session.getTransaction().commit();
         }
     }
+
     private void updateUserComments(int userId) {
         String queryString = "UPDATE COMMENTS SET user_id=1 where user_id=:userId";
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.createNativeQuery(queryString, Integer.class)
-                    .setParameter("userId",userId).executeUpdate();
+                    .setParameter("userId", userId).executeUpdate();
 
             session.getTransaction().commit();
         }
     }
+
     private void updateUserPosts(int userId) {
         String queryString = "UPDATE POSTS SET user_id=1 where user_id=:userId";
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.createNativeQuery(queryString, Integer.class)
-                    .setParameter("userId",userId).executeUpdate();
+                    .setParameter("userId", userId).executeUpdate();
             session.getTransaction().commit();
         }
     }
+
     private String generateOrderBy(UserFilter userFilter) {
         if (userFilter.getSortBy().isEmpty()) {
             return "";

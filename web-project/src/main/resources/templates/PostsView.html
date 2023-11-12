@@ -87,7 +87,7 @@
     </a>
 </section>
 <section>
-    <div class="pagination-container">
+    <div class="pagination-container" th:if="${totalPages>1}">
     <span th:text="'Page ' + ${currentPage} + ' of ' + ${totalPages}"></span>
     <ul class="pagination">
         <li th:if="${postFilter.getContent()==null}" th:each="i : ${#numbers.sequence(1, totalPages)}"
@@ -96,7 +96,7 @@
         </li>
         <li th:unless="${postFilter.getContent()==null}" th:each="i : ${#numbers.sequence(1, totalPages)}"
             th:classappend="${currentPage == i} ? 'active' : ''">
-            <a th:href="@{'/posts?page=' + ${i}+'&&content='+${postFilter.getContent()}}" th:text="${i}"></a>
+            <a th:href="@{'/posts?page=' + ${i}+'&content='+${postFilter.getContent()}}" th:text="${i}"></a>
         </li>
     </ul>
     </div>

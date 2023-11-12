@@ -85,7 +85,7 @@
         </h5>
 
         <button class="post-btn" id="add-comment" th:if="${isAuthenticated}">Add Comment</button>
-        <button th:if="${post.getPostCreator().equals(user) or user.isAdmin()}" class="post-btn" id="edit-post">Edit
+        <button th:if="${post.getPostCreator().equals(user)}" class="post-btn" id="edit-post">Edit
         </button>
     </div>
 </section>

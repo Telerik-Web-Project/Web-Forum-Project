@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getPaginatedUsers(int page, int postsPerPage) {
-        return userRepository.getPaginatedUsers(page, postsPerPage);
+    public List<User> getPaginatedUsers(int page, int postsPerPage, UserFilter userFilter) {
+        return userRepository.getPaginatedUsers(page, postsPerPage, userFilter);
     }
 
     @Override

@@ -38,7 +38,30 @@
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
     <h1>All Users</h1>
+    <section class="Search-user" id="search" style="margin-top: 50px">
+        <form action="#" id="filter-form" th:action="@{/users}" method="get" th:object="${userFilter}">
+            <label>Filter Options</label>
+            <input class="search-input" type="text" placeholder="Username" th:field="*{username}" />
+            <input class="search-input" type="text" placeholder="Email" th:field="*{email}" />
+            <input class="search-input" type="text" placeholder="First Name" th:field="*{firstName}" />
+            <select th:field="*{sortBy}">
+                <option value="">Sort By</option>
+                <option value="username">Username</option>
+                <option value="email">Email</option>
+                <option value="firstName">First Name</option>
+            </select>
+            <select th:field="*{sortOrder}">
+                <option value="">Sort Order</option>
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+            <button id="search-icon" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
+    </section>
 </section>
+<section>
 <div class="user-container">
     <div class="user-card" th:each="user : ${users}">
         <div th:if="${isAuthenticated}">
@@ -49,15 +72,29 @@
         </a>
     </div>
 </div>
+</section>
 
-
-<section>
+<section th:if="${totalPages>1}">
     <div class="pagination-container">
         <span th:text="'Page ' + ${currentPage} + ' of ' + ${totalPages}"></span>
         <ul class="pagination">
             <li th:each="i : ${#numbers.sequence(1, totalPages)}"
                 th:classappend="${currentPage == i} ? 'active' : ''">
-                <a th:href="@{'/users?page=' + ${i}}" th:text="${i}"></a>
+                <a  th:if="${(userFilter.getUsername()==null && userFilter.getEmail()==null && userFilter.getFirstName()==null)
+                 || userFilter.getUsername().isBlank() && userFilter.getEmail().isBlank() && userFilter.getFirstName.isBlank()}"
+                    th:href="@{'/users?page=' + ${i}}" th:text="${i}"></a>
+            </li>
+            <li th:unless="${userFilter.getUsername()==null}" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${currentPage == i} ? 'active' : ''">
+                <a th:unless="${userFilter.getUsername().isBlank()}" th:href="@{'/users?page=' + ${i}+'&username='+${userFilter.getUsername()}}" th:text="${i}"></a>
+            </li>
+            <li th:unless="${userFilter.getEmail()==null}" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${currentPage == i} ? 'active' : ''">
+                <a th:unless="${userFilter.getEmail().isBlank()}" th:href="@{'/users?page=' + ${i}+'&email='+${userFilter.getEmail()}}" th:text="${i}"></a>
+            </li>
+            <li th:unless="${userFilter.getFirstName()==null}" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${currentPage == i} ? 'active' : ''">
+                <a th:unless="${userFilter.getFirstName().isBlank()}" th:href="@{'/users?page=' + ${i}+'&firstName='+${userFilter.getFirstName()}}" th:text="${i}"></a>
             </li>
         </ul>
     </div>

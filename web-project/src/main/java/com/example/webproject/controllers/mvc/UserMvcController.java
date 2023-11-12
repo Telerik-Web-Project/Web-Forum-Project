@@ -58,12 +58,12 @@ public class UserMvcController {
                 filterDto.getEmail(),
                 filterDto.getSortBy(),
                 filterDto.getSortOrder());
-        if(page == null){
+        if (page == null || page == 0){
             page = 1;
         }
         int itemsPerPage = 5;
 
-        List<User> dataList = userService.getPaginatedUsers(page, itemsPerPage);
+        List<User> dataList = userService.getPaginatedUsers(page, itemsPerPage, userFilter);
 //        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
 
 
