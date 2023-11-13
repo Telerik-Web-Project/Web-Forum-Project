@@ -74,7 +74,7 @@ public class PostRepositoryImpl implements PostRepository {
                         .append(" where ")
                         .append(String.join(" and ", paginatedFilters));
             }
-            queryString.append(generateOrderBy(postFilter));
+            queryString.append(OrderBySortOrderPaginationPage());
             Query<Post> query = session.createQuery(queryString.toString(), Post.class);
             query.setProperties(params);
             query.setFirstResult(offset);
@@ -198,6 +198,10 @@ public class PostRepositoryImpl implements PostRepository {
             orderBy = String.format("%s desc", orderBy);
         }
         return orderBy;
+    }
+
+    private static String OrderBySortOrderPaginationPage() {
+        return " order by id desc";
     }
 }
 

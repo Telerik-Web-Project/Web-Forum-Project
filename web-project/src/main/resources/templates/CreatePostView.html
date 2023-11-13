@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="../static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
@@ -14,7 +14,7 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
-  <title>Rocket Forum | About</title>
+  <title>Rocket Forum | Create Post</title>
 </head>
 <body>
 <section class="sub-header">
@@ -41,8 +41,6 @@
     </div>
     <i class="fa fa-bars" onclick="showMenu()"></i>
   </nav>
-
-  <!--    <h1>About Us</h1>-->
 </section>
 
 
@@ -57,20 +55,12 @@
         </div>
         <label class="error" th:errors="*{title}">Name error placeholder</label>
         <div class="form-group">
-          <label >Description</label>
+          <label >Content</label>
           <textarea rows="5" th:field="*{content}" class="form-control" name="description" ></textarea>
           <label class="error" th:errors="*{content}">Name error placeholder</label>
         </div>
-        <div class="form-group">
-          <button type="submit" class="btn btn-primary">
-            Create
-
-          </button>
-          <a th:href="@{/posts}" class="btn btn-default">
-            Cancel
-          </a>
-
-        </div>
+        <button type="submit"  class="hero-btn">CREATE</button>
+        <a href="#" th:href="@{/posts}" class="hero-btn">CANCEL</a>
       </form>
     </div>
   </div>

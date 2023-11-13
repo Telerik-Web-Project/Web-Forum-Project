@@ -49,7 +49,7 @@
                 <a href="#" th:if="${isAuthenticated && loggedUser.equals(user)}" th:href="@{'/users/' + ${user.getId()} + '/update'}">Edit Profile</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) || loggedUser.isAdmin()}"
                    th:href="@{'/users/' + ${user.getId()} + '/delete'}">Delete Profile</a>
-                <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) && loggedUser.isAdmin()}">Add Phone number</a>
+                <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) && loggedUser.isAdmin()}" th:href="@{'/users/' + ${user.getId()} + '/addPhone'}">Add Phone number</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.isAdmin() && (!user.isBlocked())}" th:href="@{'/users/' + ${user.getId()} + '/blockUser'}">Block User</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.isAdmin() && (user.isBlocked())}" th:href="@{'/users/' + ${user.getId()} + '/blockUser'}">Unblock User</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.isAdmin() && (!user.isAdmin())}" th:href="@{'/users/' + ${user.getId()} + '/makeAdmin'}">Make Moderator</a>

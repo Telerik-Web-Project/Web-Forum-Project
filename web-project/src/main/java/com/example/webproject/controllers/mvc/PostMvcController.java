@@ -173,7 +173,7 @@ public class PostMvcController {
         try {
             Post postToCreate = postMapper.fromDto(postDto);
             postService.createPost(postToCreate, user);
-            return "redirect:/posts";
+            return "redirect:/posts/"+postToCreate.getId();
         } catch (EntityDuplicateException | UserBannedException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("statusCode", 409);

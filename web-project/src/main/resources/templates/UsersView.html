@@ -11,7 +11,7 @@
           href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" href="../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon">
-    <title>Rocket Forum | All Posts</title>
+    <title>Rocket Forum | All Users</title>
 <body id="home-body">
 <section class="sub-header">
     <nav>
@@ -37,30 +37,35 @@
         </div>
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
-    <h1>All Users</h1>
-    <section th:if="${isAuthenticated}" class="Search-user" id="search" style="margin-top: 50px">
-        <form action="#" id="filter-form" th:action="@{/users}" method="get" th:object="${userFilter}">
-            <label>Filter Options</label>
-            <input class="search-input" type="text" placeholder="Username" th:field="*{username}" />
-            <input class="search-input" type="text" placeholder="Email" th:field="*{email}" />
-            <input class="search-input" type="text" placeholder="First Name" th:field="*{firstName}" />
-            <select th:field="*{sortBy}">
-                <option value="">Sort By</option>
-                <option value="username">Username</option>
-                <option value="email">Email</option>
-                <option value="firstName">First Name</option>
-            </select>
-            <select th:field="*{sortOrder}">
-                <option value="">Sort Order</option>
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
-            <button id="search-icon" type="submit">
-                <i class="fa fa-search"></i>
-            </button>
-        </form>
-    </section>
+
 </section>
+
+<section th:if="${isAuthenticated}" class="Search-user" id="search" style="margin-top: 50px">
+    <h3>Filter options</h3>
+    <form action="#" id="filter-form" th:action="@{/users}" method="get" th:object="${userFilter}">
+        <!--            <label>Filter Options</label>-->
+        <input class="search-input" type="text" placeholder="Username" th:field="*{username}" />
+        <input class="search-input" type="text" placeholder="Email" th:field="*{email}" />
+        <input class="search-input" type="text" placeholder="First Name" th:field="*{firstName}" />
+        <select th:field="*{sortBy}">
+            <option value="">Sort By</option>
+            <option value="username">Username</option>
+            <option value="email">Email</option>
+            <option value="firstName">First Name</option>
+        </select>
+        <select th:field="*{sortOrder}">
+            <option value="">Sort Order</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <!--            <button id="search-icon" type="submit">-->
+        <!--                <i class="fa fa-search"></i>-->
+        <!--            </button>-->
+        <a href="#" id="search-btn" class="hero-btn black-border">Search <i class="fa fa-search"></i></a>
+    </form>
+</section>
+
+
 <section>
 <div class="user-container">
     <div class="user-card" th:each="user : ${users}">

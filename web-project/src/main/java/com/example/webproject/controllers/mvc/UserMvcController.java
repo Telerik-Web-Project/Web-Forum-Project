@@ -1,12 +1,16 @@
 package com.example.webproject.controllers.mvc;
+import com.example.webproject.dtos.PhoneDto;
 import com.example.webproject.dtos.RegisterDto;
 import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.dtos.UserFilterDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.exceptions.UserBannedException;
 import com.example.webproject.helpers.AuthenticationHelper;
+import com.example.webproject.mappers.PhoneMapper;
 import com.example.webproject.mappers.UserMapper;
+import com.example.webproject.models.Phone;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
 import com.example.webproject.services.contracts.PostService;
@@ -29,13 +33,15 @@ public class UserMvcController {
     private final UserMapper userMapper;
     private final AuthenticationHelper authenticationHelper;
     private final PostService postService;
+    private final PhoneMapper phoneMapper;
 
     @Autowired
-    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService, PostService postService1) {
+    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService, PhoneMapper phoneMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.authenticationHelper = authenticationHelper;
-        this.postService = postService1;
+        this.postService = postService;
+        this.phoneMapper = phoneMapper;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -181,6 +187,62 @@ public class UserMvcController {
             return "UserEditView";
         }
     }
+
+    @GetMapping("/{id}/addPhone")
+    public String showAddPhoneView(@PathVariable int id,Model model,HttpSession session) {
+        try{
+            authenticationHelper.tryGetCurrentUser(session);
+        }
+        catch (AuthorizationException e){
+            return "redirect:/auth/login";
+        }
+
+        try {
+            User user = userService.getById(id);
+            model.addAttribute("userId", id);
+            model.addAttribute("phone", new PhoneDto());
+            model.addAttribute("user", user);
+            return "AddPhoneView";
+        }
+        catch (EntityNotFoundException e){
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+            model.addAttribute("error",e.getMessage());
+            return "ErrorView";
+        }
+    }
+
+    @PostMapping("/{id}/addPhone")
+    public String addPhoneNumber(@PathVariable int id,Model model,HttpSession session,
+                                 @Valid @ModelAttribute("phone") PhoneDto phoneDto,
+                                 BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "UserEditView";
+        }
+
+        try{
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            Phone phone = phoneMapper.fromDto(phoneDto, user);
+            userService.addPhoneNumber(phone);
+            model.addAttribute("id",id);
+            return "redirect:/users/{id}";
+        }
+//        catch (AuthorizationException e){
+//            return "redirect:/auth/login";
+//        }
+        catch (UserBannedException e) {
+            return "ErrorView";
+        }
+        catch (EntityDuplicateException e){
+            return "redirect:/users/{id}/addPhone";
+        }
+        catch (AuthorizationException e) {
+            model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        }
+    }
+
 
     @GetMapping("/{id}/delete")
     public String deleteUser(@PathVariable int id , Model model,HttpSession session) {
