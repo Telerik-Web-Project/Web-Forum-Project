@@ -699,7 +699,7 @@ a {
     height: 400px;
     border-radius: 15%;
     align-content: center;
-    content: url("../images/borisprofile.png");
+    content: url("../images/borisprofile.jpg");
 }
 
 .bobi-pic:hover {
@@ -731,7 +731,7 @@ a {
     height: 400px;
     border-radius: 15%;
     align-content: center;
-    content: url("../images/borisprofile.png");
+    content: url("../images/stoyan.jpg");
 }
 
 .stoyan-pic:hover {
@@ -1780,6 +1780,12 @@ select {
 
 #search-btn{
     font-size: 16px;
+}
+.phone-container{
+    width: 80%;
+    height: 15%;
+    margin: 0 17rem;
+    display: grid;
 }
 
 .add-phone-number{

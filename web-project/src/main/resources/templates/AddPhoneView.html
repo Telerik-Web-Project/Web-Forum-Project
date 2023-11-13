@@ -43,7 +43,7 @@
 </section>
 
 <div class="add-phone-number">
-    <div class="registration-container">
+    <div class="phone-container">
         <div class="registration-container-title" th:align="center" style="color:white">Add Phone Number</div>
         <form action="#" th:action="@{__${requestURI}__}" th:object="${phone}" method="post">
             <div class="user-details">
@@ -53,7 +53,7 @@
                 </div>
                 <div class="button-container">
                     <div class="button">
-                        <input type="submit" value="Update">
+                        <input type="submit" value="Submit" style="margin-left: 7.5px">
                     </div>
                 </div>
             </div>
@@ -64,13 +64,8 @@
 
 <section class="footer">
     <h4>About Us</h4>
+    <a href="#" th:href="@{/contacts}" class="hero-btn black-border" style="margin-bottom: 20px;">Contacts</a>
     <p>Copyright &copy 2023 Team Rocket</p>
-    <div class="icons">
-        <i class="fa fa-facebook"></i>
-        <i class="fa fa-twitter"></i>
-        <i class="fa fa-instagram"></i>
-        <i class="fa fa-linkedin"></i>
-    </div>
 </section>
 
 <!--JavaScript for toggle menu-->
