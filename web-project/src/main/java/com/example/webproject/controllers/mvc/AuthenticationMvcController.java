@@ -42,6 +42,7 @@ public class AuthenticationMvcController {
         HttpSession session = request.getSession(false);
         return session != null && session.getAttribute("currentUser") != null;
     }
+
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         model.addAttribute("login", new LoginDto());

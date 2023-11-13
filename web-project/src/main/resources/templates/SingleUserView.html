@@ -42,6 +42,7 @@
         <div class="profile-info">
             <h2 class="full-name" th:text="${user.firstName+' '+user.lastName}">John Doe</h2>
             <p class="email" th:text="${user.email}">john.doe@example.com</p>
+            <p class="email" th:if="${loggedUser.isAdmin()}" th:text="${phone}">john.doe@example.com</p>
         </div>
         <div class="settings-icon" onclick="toggleDropdown()" th:if="${isAuthenticated && loggedUser.equals(user) || loggedUser.isAdmin()}">
             <img class="settings-icon" src="../static/images/settings.png" th:src="@{/images/settings.png}" alt="">
@@ -49,7 +50,8 @@
                 <a href="#" th:if="${isAuthenticated && loggedUser.equals(user)}" th:href="@{'/users/' + ${user.getId()} + '/update'}">Edit Profile</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) || loggedUser.isAdmin()}"
                    th:href="@{'/users/' + ${user.getId()} + '/delete'}">Delete Profile</a>
-                <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) && loggedUser.isAdmin()}" th:href="@{'/users/' + ${user.getId()} + '/addPhone'}">Add Phone number</a>
+                <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) && loggedUser.isAdmin() && phone.isBlank()}" th:href="@{'/users/' + ${user.getId()} + '/addPhone'}">Add Phone number</a>
+                <a href="#" th:if="${isAuthenticated && loggedUser.equals(user) && loggedUser.isAdmin() && !phone.isBlank()}" th:href="@{'/users/' + ${user.getId()} + '/addPhone'}">Edit Phone number</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.isAdmin() && (!user.isBlocked())}" th:href="@{'/users/' + ${user.getId()} + '/blockUser'}">Block User</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.isAdmin() && (user.isBlocked())}" th:href="@{'/users/' + ${user.getId()} + '/blockUser'}">Unblock User</a>
                 <a href="#" th:if="${isAuthenticated && loggedUser.isAdmin() && (!user.isAdmin())}" th:href="@{'/users/' + ${user.getId()} + '/makeAdmin'}">Make Moderator</a>

@@ -13,6 +13,7 @@ import com.example.webproject.mappers.UserMapper;
 import com.example.webproject.models.Phone;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
+import com.example.webproject.repositories.contracts.PhoneRepository;
 import com.example.webproject.services.contracts.PostService;
 import com.example.webproject.services.contracts.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,14 +35,16 @@ public class UserMvcController {
     private final AuthenticationHelper authenticationHelper;
     private final PostService postService;
     private final PhoneMapper phoneMapper;
+    private final PhoneRepository phoneRepository;
 
     @Autowired
-    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService, PhoneMapper phoneMapper) {
+    public UserMvcController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper, PostService postService, PhoneMapper phoneMapper, PhoneRepository phoneRepository) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.authenticationHelper = authenticationHelper;
         this.postService = postService;
         this.phoneMapper = phoneMapper;
+        this.phoneRepository = phoneRepository;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -95,6 +98,14 @@ public class UserMvcController {
             model.addAttribute("userService", userService);
             model.addAttribute("userPosts", userService.getUserPosts(loggedUser,user));
             model.addAttribute("postService", postService);
+            String phoneNumber;
+            try {
+                phoneNumber = phoneRepository.findPhone(user).getPhoneNumber();
+            }
+            catch (EntityNotFoundException e){
+                phoneNumber = "";
+            }
+            model.addAttribute("phone",phoneNumber);
             return "SingleUserView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("statusCode",
