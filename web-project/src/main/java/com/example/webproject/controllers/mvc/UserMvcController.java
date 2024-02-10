@@ -61,7 +61,7 @@ public class UserMvcController {
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
-                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto, HttpSession session) {
+                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto) {
         UserFilter userFilter = new UserFilter(filterDto.getFirstName(),
                 filterDto.getUsername(),
                 filterDto.getEmail(),
@@ -73,14 +73,13 @@ public class UserMvcController {
         int itemsPerPage = 5;
 
         List<User> dataList = userService.getPaginatedUsers(page, itemsPerPage, userFilter);
-//        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+
 
 
         int totalItems = userService.getAll(userFilter).size();
         int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
 
             model.addAttribute("users", dataList);
-//            model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("userService", userService);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", totalPages);

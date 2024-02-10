@@ -54,6 +54,7 @@ public class SecurityConfiguration {
 
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("api/users/**").permitAll();
+                    auth.requestMatchers("/users/**").permitAll();
                     auth.requestMatchers("/api/posts/**").permitAll();
                     auth.requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN");
                     auth.requestMatchers("/**", "/resources/**", "/static/**", "/css/**", "/js/**",
