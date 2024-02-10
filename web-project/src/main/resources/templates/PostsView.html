@@ -27,8 +27,8 @@
             <ul>
                 <li><a href="HomeView.html" th:href="@{/}" th:text="#{navigation.home}">Home</a></li>
                 <li><a href="About.html" th:href="@{/about}">About</a></li>
-                <li><a href="PostsView" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
-                <li><a href="contact.html" th:href="@{/users}">Users</a></li>
+                <li><a href="PostsView.html" th:href="@{/posts}" th:text="#{navigation.posts}">Posts</a></li>
+                <li><a href="Contacts.html" th:href="@{/users}">Users</a></li>
                 <li><a href="RegisterFormView.html" th:href="@{/users/new}" th:unless="${isAuthenticated}">Register</a></li>
                 <li><a href="CreatePostView.html" th:href="@{/posts/new}" th:if="${isAuthenticated}">Create Post</a></li>
                 <li><a href="" th:unless="${isAuthenticated}" th:href="@{/login}">Sign In</a>

@@ -62,7 +62,7 @@ public class PostMvcController {
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
-                                    @Valid @ModelAttribute("postFilter") PostFilterDto filterDto, HttpSession session) {
+                                    @Valid @ModelAttribute("postFilter") PostFilterDto filterDto,Authentication authentication) {
         PostFilter postFilter = new PostFilter(
                 filterDto.getTitle(),
                 filterDto.getContent(),
@@ -82,20 +82,20 @@ public class PostMvcController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("postFilter", filterDto);
-        model.addAttribute("loggedUser", authenticationHelper.tryPopulateUser(session));
+        model.addAttribute("loggedUser", authenticationHelper.tryGetUserDemo(authentication));
         return "PostsView";
     }
 
     @GetMapping("/{id}")
     public String getPost(@ModelAttribute User loggedUser, @ModelAttribute CommentDto commentDto,
-                          @PathVariable int id, Model model, HttpSession session) {
+                          @PathVariable int id, Model model,Authentication authentication) {
 
         try {
             Post post = postService.get(id);
             model.addAttribute("comment", commentDto);
             model.addAttribute("post", post);
             model.addAttribute("postComments", postService.getPostComments(post));
-            model.addAttribute("user", authenticationHelper.tryPopulateUser(session));
+            model.addAttribute("user", authenticationHelper.tryGetUserDemo(authentication));
             model.addAttribute("commentService", commentService);
             return "SinglePostView";
         } catch (EntityNotFoundException e) {
