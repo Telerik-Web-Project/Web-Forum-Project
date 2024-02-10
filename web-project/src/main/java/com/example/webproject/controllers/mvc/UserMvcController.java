@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,9 +49,8 @@ public class UserMvcController {
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        return session != null && session.getAttribute("currentUser") != null;
+    public boolean populateIsAuthenticated() {
+        return authenticationHelper.isAuthenticated();
     }
 
     @ModelAttribute("requestURI")
@@ -89,9 +89,9 @@ public class UserMvcController {
     }
 
     @GetMapping("/{id}")
-    public String getUserById(HttpSession session, @PathVariable int id, Model model) {
+    public String getUserById(Authentication authentication, @PathVariable int id, Model model) {
         try {
-            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
             User user = userService.getById(id);
             model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("user", user);
@@ -146,9 +146,9 @@ public class UserMvcController {
     }
 
     @GetMapping("/{id}/update")
-    public String showEditView(@PathVariable int id,Model model,HttpSession session) {
+    public String showEditView(@PathVariable int id,Model model,Authentication authentication) {
         try{
-            authenticationHelper.tryGetCurrentUser(session);
+            authenticationHelper.tryGetUserDemo(authentication);
         }
         catch (AuthorizationException e){
             return "redirect:/auth/login";
@@ -173,13 +173,13 @@ public class UserMvcController {
                              @Valid @ModelAttribute("user")UpdateUserDto updateUserDto,
                              BindingResult bindingResult,
                              Model model,
-                             HttpSession session) {
+                             Authentication authentication) {
         if (bindingResult.hasErrors()) {
             return "UserEditView";
         }
 
         try {
-            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
+            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
             User updatedUser = userMapper.fromUpdateUserDto(updateUserDto);
             updatedUser.setId(loggedUser.getId());
             userService.updateUser(loggedUser, updatedUser);

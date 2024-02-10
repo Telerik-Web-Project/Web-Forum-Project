@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -57,9 +58,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/posts")
-    public List<Post> getUserPosts(@PathVariable int id, @RequestHeader HttpHeaders headers) {
+    public List<Post> getUserPosts(@PathVariable int id, Authentication authentication) {
         try {
-            User loggedUser = authenticationHelper.getUser(headers);
+            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
             User userToCheckPosts = userService.getById(id);
             return userService.getUserPosts(loggedUser, userToCheckPosts);
         } catch (EntityNotFoundException e) {
@@ -80,9 +81,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody UpdateUserDto updateUserDto) {
+    public User updateUser(@PathVariable int id, Authentication authentication, @Valid @RequestBody UpdateUserDto updateUserDto) {
         try {
-            User user = authenticationHelper.getUser(headers);
+            User user = authenticationHelper.tryGetUserDemo(authentication);
             User userToBeUpdated = userMapper.fromUpdateUserDto(updateUserDto);
             userToBeUpdated.setId(id);
             return userService.updateUser(user, userToBeUpdated);
@@ -95,9 +96,9 @@ public class UserController {
         }
     }
     @DeleteMapping("/{id}")
-    public void deleteUser(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+    public void deleteUser(Authentication authentication, @PathVariable int id) {
         try {
-            User userLoggedUser = authenticationHelper.getUser(headers);
+            User userLoggedUser = authenticationHelper.tryGetUserDemo(authentication);
             User userToBeDelete = userService.getById(id);
             userService.deleteUser(userLoggedUser, userToBeDelete);
         } catch (EntityNotFoundException e) {

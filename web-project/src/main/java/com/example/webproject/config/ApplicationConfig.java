@@ -1,11 +1,8 @@
 package com.example.webproject.config;
 
-import com.example.webproject.dtos.mvcDtos.SingletonCommentDto;
-import com.example.webproject.models.mvcModels.guestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -48,14 +45,5 @@ public class ApplicationConfig {
         hibernateProperties.setProperty("hibernate.dialect","org.hibernate.dialect.MySQLDialect");
         return hibernateProperties;
     }
-    @Bean
-    @Scope("singleton")
-    public guestUser singletonUser() {
-        return new guestUser();
-    }
-    @Bean
-    @Scope("singleton")
-    public SingletonCommentDto singletonCommentDto() {
-        return new SingletonCommentDto();
-    }
+
 }

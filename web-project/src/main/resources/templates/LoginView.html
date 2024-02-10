@@ -32,33 +32,34 @@
                 <li><a href="contact.html" th:href="@{/users}">Users</a></li>
                 <li><a href="RegisterFormView.html" th:href="@{/users/new}" th:unless="${isAuthenticated}">Register</a></li>
                 <li><a href="CreatePostView.html" th:href="@{/posts/new}" th:if="${isAuthenticated}">Create Post</a></li>
-                <li><a href="" th:unless="${isAuthenticated}" th:href="@{/auth/login}">Sign In</a>
-                <li><a href="#" th:href="@{/auth/logout}" th:if="${isAuthenticated}">Log Out</a></li>
+                <li><a href="" th:unless="${isAuthenticated}" th:href="@{/login}">Sign In</a>
+                <li><a href="#" th:href="@{/logout}" th:if="${isAuthenticated}">Log Out</a></li>
             </ul>
         </div>
         <i class="fa fa-bars" onclick="showMenu()"></i>
     </nav>
 </section>
-</section>
+
 <div class="login-body">
     <div class="login-container">
         <div class="login-container-title" th:align="center">Login</div>
-        <form  action="#" th:action="@{__${requestURI}__}" th:object="${login}" method="post">
+        <form th:action="@{/login}" method="post">
             <div class="user-details">
-                <label class="error" th:errors="*{username}">Name error placeholder</label>
-                <label class="error" th:errors="*{password}">Name error placeholder</label>
                 <div class="input-box">
+            <label for="username"></label>
                     <span class="user-details"></span>
-                    <input type="text" th:field="*{username}" placeholder="Username" required>
+            <input type="text" id="username" name="username" placeholder="Username" required>
                 </div>
                 <div class="input-box">
+
+            <label for="password"></label>
                     <span class="user-details"></span>
-                    <input type="password" th:field="*{password}" placeholder="Password" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
                 </div>
             </div>
             <div class="button-container">
                 <div class="button">
-                    <button type="submit">Login</button>
+            <button type="submit">Login</button>
                 </div>
             </div>
         </form>

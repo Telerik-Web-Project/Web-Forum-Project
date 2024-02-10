@@ -3,10 +3,11 @@ import com.example.webproject.models.Phone;
 import com.example.webproject.models.Post;
 import com.example.webproject.models.User;
 import com.example.webproject.models.UserFilter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
     List <User> getAll(UserFilter userFilter);
     User getById (int id);
     User getByUsername (String username);

@@ -16,6 +16,7 @@ import com.example.webproject.services.contracts.PostService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -86,10 +87,10 @@ public class PostController {
         }
     }
     @PostMapping()
-    public Post createPost(@Valid @RequestBody PostDto postDto, @RequestHeader HttpHeaders httpHeader) {
+    public Post createPost(@Valid @RequestBody PostDto postDto, Authentication authentication) {
         try {
             Post postToCreate = postMapper.fromDto(postDto);
-            User loggedUser = authenticationHelper.getUser(httpHeader);
+            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
             postService.createPost(postToCreate, loggedUser);
             return postToCreate;
         } catch (EntityDuplicateException | UserBannedException e) {
@@ -99,9 +100,9 @@ public class PostController {
         }
     }
     @PutMapping("/{id}")
-    public Post updatePost(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody UpdatePostDto updatePostDto) {
+    public Post updatePost(@PathVariable int id,Authentication authentication, @Valid @RequestBody UpdatePostDto updatePostDto) {
         try {
-            User user = authenticationHelper.getUser(headers);
+            User user = authenticationHelper.tryGetUserDemo(authentication);
             Post post = postMapper.fromUpdatePostDto(updatePostDto,id,user);
             postService.updatePost(post, user);
             return post;
@@ -114,9 +115,9 @@ public class PostController {
         }
     }
     @DeleteMapping("/{id}")
-    public void deletePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+    public void deletePost(Authentication authentication, @PathVariable int id) {
         try {
-            User loggedUser = authenticationHelper.getUser(headers);
+            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
             Post postToDelete = postService.get(id);
             postService.deletePost(postToDelete, loggedUser);
         } catch (EntityNotFoundException e) {
@@ -128,10 +129,10 @@ public class PostController {
         }
     }
     @PostMapping("/{id}/comments")
-    public void addCommentToPost(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto) {
+    public void addCommentToPost(@PathVariable int id,Authentication authentication, @Valid @RequestBody CommentDto commentDto) {
         try {
             Comment comment = commentMapper.fromDto(commentDto);
-            User user = authenticationHelper.getUser(headers);
+            User user = authenticationHelper.tryGetUserDemo(authentication);
             Post post = postService.get(id);
             commentService.createComment(user, post, comment);
         } catch (EntityNotFoundException e) {
@@ -143,10 +144,10 @@ public class PostController {
         }
     }
     @PutMapping("/comments/{id}")
-    public void updatePostComment(@PathVariable int id, @RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto) {
+    public void updatePostComment(@PathVariable int id, Authentication authentication, @Valid @RequestBody CommentDto commentDto) {
         try {
             Comment comment = commentMapper.fromDto(commentDto,id);
-            User user = authenticationHelper.getUser(headers);
+            User user = authenticationHelper.tryGetUserDemo(authentication);
             commentService.updateComment(comment, user, id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -157,9 +158,9 @@ public class PostController {
         }
     }
     @DeleteMapping("/comments/{id}")
-    public void deletePostComment(@PathVariable int id, @RequestHeader HttpHeaders headers) {
+    public void deletePostComment(@PathVariable int id, Authentication authentication) {
         try {
-            User user = authenticationHelper.getUser(headers);
+            User user = authenticationHelper.tryGetUserDemo(authentication);
             commentService.deleteComment(user, id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -171,9 +172,9 @@ public class PostController {
     }
 
     @PostMapping("/{id}/tags")
-    public void addTagToPost(@PathVariable int id, @RequestBody Tag tag, @RequestHeader HttpHeaders headers){
+    public void addTagToPost(@PathVariable int id, @RequestBody Tag tag, Authentication authentication){
         try {
-            User loggedUser = authenticationHelper.getUser(headers);
+            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
             Post post = postService.get(id);
             postService.addTagToPost(post, tag, loggedUser);
         } catch (EntityNotFoundException e){
@@ -185,10 +186,10 @@ public class PostController {
 
     @DeleteMapping("/{id}/tags")
     public void deleteTagFromPost(@PathVariable int id,
-                                  @RequestHeader HttpHeaders headers,
+                                  Authentication authentication,
                                   @RequestBody Tag tag){
         try{
-            User loggedUser = authenticationHelper.getUser(headers);
+            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
             Post post = postService.get(id);
             postService.deleteTagFromPost(post, loggedUser, tag);
         } catch (EntityNotFoundException e){
@@ -199,9 +200,9 @@ public class PostController {
     }
 
     @PutMapping("{id}/like")
-    public void likePost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+    public void likePost(Authentication authentication, @PathVariable int id) {
         try {
-            User user = authenticationHelper.getUser(headers);
+            User user = authenticationHelper.tryGetUserDemo(authentication);
             Post post = postService.get(id);
             postService.likePost(user, post);
         } catch (AuthorizationException e) {
