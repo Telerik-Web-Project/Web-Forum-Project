@@ -88,9 +88,9 @@ public class UserMvcController {
     }
 
     @GetMapping("/{id}")
-    public String getUserById(Authentication authentication, @PathVariable int id, Model model) {
+    public String getUserById(HttpSession session, @PathVariable int id, Model model) {
         try {
-            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
+            User loggedUser = authenticationHelper.tryPopulateUser(session);
             User user = userService.getById(id);
             model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("user", user);
