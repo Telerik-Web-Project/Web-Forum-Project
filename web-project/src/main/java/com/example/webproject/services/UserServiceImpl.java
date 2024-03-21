@@ -6,8 +6,6 @@ import com.example.webproject.repositories.contracts.PhoneRepository;
 import com.example.webproject.repositories.contracts.UserRepository;
 import com.example.webproject.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -128,8 +126,4 @@ public class UserServiceImpl implements UserService {
         loggedUser.setPassword(userToBeUpdated.getPassword());
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.getByUsername(username);
-    }
 }

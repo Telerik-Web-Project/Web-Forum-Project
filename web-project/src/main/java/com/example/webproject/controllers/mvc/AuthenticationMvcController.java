@@ -21,28 +21,89 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/login")
+@RequestMapping("/auth")
 public class AuthenticationMvcController {
 
-
+    private final UserService userService;
     private final AuthenticationHelper authenticationHelper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public AuthenticationMvcController(AuthenticationHelper authenticationHelper) {
-
+    public AuthenticationMvcController(UserService userService,
+                                       AuthenticationHelper authenticationHelper,
+                                       UserMapper userMapper) {
+        this.userService = userService;
         this.authenticationHelper = authenticationHelper;
-
+        this.userMapper = userMapper;
     }
-    @GetMapping()
-    public String showLoginPage() {
+
+    @ModelAttribute("isAuthenticated")
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        model.addAttribute("login", new LoginDto());
         return "LoginView";
     }
-    @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated() {
-      return authenticationHelper.isAuthenticated();
+
+    @PostMapping("/login")
+    public String handleLogin(@Valid @ModelAttribute("login") LoginDto login,
+                              BindingResult bindingResult,
+                              HttpSession session) {
+        if (bindingResult.hasErrors()) {
+            return "LoginView";
+        }
+
+        try {
+            User user = authenticationHelper.verifyAuthentication(login.getUsername(), login.getPassword());
+            session.setAttribute("currentUser", login.getUsername());
+            session.setAttribute("isAdmin", user.isAdmin());
+            return "redirect:/";
+        } catch (AuthorizationException e) {
+            bindingResult.rejectValue("username", "auth_error", e.getMessage());
+            return "LoginView";
+        }
     }
 
+    @GetMapping("/logout")
+    public String handleLogout(HttpSession session) {
+        session.removeAttribute("currentUser");
+        return "redirect:/";
+    }
 
+   @GetMapping("/register")
+   public String showRegisterPage(Model model,BindingResult bindingResult) {
+       if (bindingResult.hasErrors()) {
+           return "RegisterFormView";
+       }
+       model.addAttribute("register", new RegisterDto());
+       return "RegisterFormView";
    }
 
+   @PostMapping("/register")
+   public String handleRegister(@Valid @ModelAttribute("register") RegisterDto register,
+                                BindingResult bindingResult) {
+       if (bindingResult.hasErrors()) {
+           return "RegisterFormView";
+       }
 
+       if (!register.getPassword().equals(register.getConfirmPassword())) {
+           bindingResult.rejectValue("passwordConfirm", "password_error", "Password confirmation should match password.");
+           return "RegisterFormView";
+       }
+
+       try {
+           User user = userMapper.fromRegisterDto(register);
+           userService.createUser(user);
+           return "redirect:/auth/login";
+       } catch (EntityDuplicateException e) {
+           bindingResult.rejectValue("username", "username_error", e.getMessage());
+           bindingResult.rejectValue("email", "email_error", e.getMessage());
+           return "RegisterFormView";
+       }
+   }
+
+}

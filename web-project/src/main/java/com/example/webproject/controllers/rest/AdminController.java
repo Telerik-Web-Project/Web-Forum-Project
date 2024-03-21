@@ -34,9 +34,9 @@ public class AdminController {
     @PutMapping("/ban/{id}")
     public void assignIsBanned(@RequestHeader HttpHeaders httpHeaders, @PathVariable int id) {
         try {
-            User userToBan = userService.getById(id);
+            User user = userService.getById(id);
             validateUserIsAdmin(authenticationHelper.getUser(httpHeaders));
-            userService.changeBanStatus(userToBan);
+            userService.changeBanStatus(user);
         } catch (AuthorizationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         } catch (EntityNotFoundException e) {

@@ -4,6 +4,7 @@ import com.example.webproject.dtos.CommentDto;
 import com.example.webproject.dtos.PostDto;
 import com.example.webproject.dtos.PostFilterDto;
 import com.example.webproject.dtos.UpdatePostDto;
+import com.example.webproject.dtos.mvcDtos.SingletonCommentDto;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityDuplicateException;
 import com.example.webproject.exceptions.EntityNotFoundException;
@@ -17,10 +18,10 @@ import com.example.webproject.models.PostFilter;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.CommentService;
 import com.example.webproject.services.contracts.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,24 +40,25 @@ public class PostMvcController {
     private final PostService postService;
     private final CommentMapper commentMapper;
     private final CommentService commentService;
-
+    private final SingletonCommentDto singletonCommentDto;
 
     @Autowired
     public PostMvcController(AuthenticationHelper authenticationHelper,
                              PostMapper postMapper,
                              PostService postService,
-                             CommentMapper commentMapper, CommentService commentService) {
+                             CommentMapper commentMapper, CommentService commentService, SingletonCommentDto singletonCommentDto) {
         this.authenticationHelper = authenticationHelper;
         this.postMapper = postMapper;
         this.postService = postService;
         this.commentMapper = commentMapper;
         this.commentService = commentService;
-
+        this.singletonCommentDto = singletonCommentDto;
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated() {
-        return authenticationHelper.isAuthenticated();
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
     }
 
     @GetMapping
@@ -87,12 +89,12 @@ public class PostMvcController {
     }
 
     @GetMapping("/{id}")
-    public String getPost(@ModelAttribute User loggedUser, @ModelAttribute CommentDto commentDto,
+    public String getPost(@ModelAttribute User loggedUser, @ModelAttribute SingletonCommentDto singletonCommentDto,
                           @PathVariable int id, Model model, HttpSession session) {
 
         try {
             Post post = postService.get(id);
-            model.addAttribute("comment", commentDto);
+            model.addAttribute("comment", singletonCommentDto);
             model.addAttribute("post", post);
             model.addAttribute("postComments", postService.getPostComments(post));
             model.addAttribute("user", authenticationHelper.tryPopulateUser(session));
@@ -121,9 +123,9 @@ public class PostMvcController {
     }
 
     @GetMapping("/new")
-    public String showCreatePostView(Model model, Authentication authentication) {
+    public String showCreatePostView(Model model, HttpSession session) {
         try {
-            authenticationHelper.tryGetUserDemo(authentication);
+            authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("statusCode", 401);
@@ -157,10 +159,10 @@ public class PostMvcController {
     public String createPost(@Valid @ModelAttribute("post") PostDto postDto,
                              BindingResult errors,
                              Model model,
-                             Authentication authentication) {
+                             HttpSession session) {
         User user;
         try {
-            user = authenticationHelper.tryGetUserDemo(authentication);
+            user = authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }
@@ -234,8 +236,7 @@ public class PostMvcController {
 
 
     @PostMapping("/{id}/comment")
-    public String addCommentToPost(@ModelAttribute("comment") @Valid CommentDto commentDto,BindingResult bindingResult,
-                                   @PathVariable int id, Model model, HttpSession session) {
+    public String addCommentToPost(@ModelAttribute("comment") @Valid CommentDto commentDto,BindingResult bindingResult, @PathVariable int id, Model model, HttpSession session) {
         User user;
         if(bindingResult.hasErrors()){
             return "ErrorView";
@@ -266,8 +267,7 @@ public class PostMvcController {
 
     }
     @GetMapping("{postId}/comment/{id}/update")
-    public String updatePostComment(@PathVariable int postId, @ModelAttribute("comment") @Valid CommentDto commentDto,
-                                    BindingResult bindingResult, @PathVariable int id, HttpSession session, Model model) {
+    public String updatePostComment(@PathVariable int postId, @ModelAttribute("comment") @Valid CommentDto commentDto, BindingResult bindingResult, @PathVariable int id, HttpSession session, Model model) {
         if(bindingResult.hasErrors()){
             return "ErrorView";
         }

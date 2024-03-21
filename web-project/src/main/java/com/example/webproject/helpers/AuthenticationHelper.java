@@ -1,31 +1,24 @@
 package com.example.webproject.helpers;
 import com.example.webproject.exceptions.AuthorizationException;
 import com.example.webproject.exceptions.EntityNotFoundException;
+import com.example.webproject.models.mvcModels.guestUser;
 import com.example.webproject.models.User;
 import com.example.webproject.services.contracts.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Component
 public class AuthenticationHelper {
-    private static final String GUEST_USER_KEY = "guestUser";
     private final UserService userService;
-
-    private final Map<String,User> cache = new HashMap<>();
+    private final guestUser guestUser;
     @Autowired
-    public AuthenticationHelper(UserService userService) {
+    public AuthenticationHelper(UserService userService, guestUser guestUser) {
         this.userService = userService;
-        cache.put(GUEST_USER_KEY,new User());
-
+        this.guestUser = guestUser;
     }
     public static final String INVALID_AUTHENTICATION_MESSAGE = "Wrong username or password.";
     public static final String VALID_HEADER_NAME = "Authorization";
@@ -47,8 +40,7 @@ public class AuthenticationHelper {
             throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
         }
 
-    }
-    private String getUsername(String input){
+    }private String getUsername(String input){
         if(input.charAt(0) == ASCII_VALUE_OF_SPACE){
             return "";
         }
@@ -57,20 +49,11 @@ public class AuthenticationHelper {
     public User tryPopulateUser(HttpSession session) {
         String currentUsername = (String) session.getAttribute("currentUser");
         if(currentUsername == null){
-          return cache.get(GUEST_USER_KEY);
+            return guestUser;
         }
-        if(cache.containsKey(currentUsername)){
-
-            return cache.get(currentUsername);
+        else {
+            return userService.getByUsername(currentUsername);
         }
-
-        User user = userService.getByUsername(currentUsername);
-
-        cache.put(user.getUsername(),user);
-
-        return user;
-
-
     }
 
     public User tryGetCurrentUser(HttpSession session) {
@@ -83,24 +66,15 @@ public class AuthenticationHelper {
         return userService.getByUsername(currentUsername);
     }
 
-    public User tryGetUserDemo(Authentication authentication) {
-        String username;
+    public User verifyAuthentication(String username, String password) {
         try {
-            username = authentication.getName();
-        } catch (NullPointerException e) {
+            User user = userService.getByUsername(username);
+            if (!user.getPassword().equals(password)) {
+                throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
+            }
+            return user;
+        } catch (EntityNotFoundException e) {
             throw new AuthorizationException(INVALID_AUTHENTICATION_MESSAGE);
         }
-        return userService.getByUsername(username);
     }
-
-    public boolean isAuthenticated() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return false;
-        }
-
-        return authentication.isAuthenticated();
-    }
-
 }

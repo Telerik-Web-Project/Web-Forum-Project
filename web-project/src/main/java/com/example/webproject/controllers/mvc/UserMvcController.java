@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -49,8 +48,9 @@ public class UserMvcController {
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated() {
-        return authenticationHelper.isAuthenticated();
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
     }
 
     @ModelAttribute("requestURI")
@@ -61,7 +61,7 @@ public class UserMvcController {
     @GetMapping
     public String getPaginationPage(@RequestParam(value = "page", required = false) Integer page,
                                     Model model,
-                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto) {
+                                    @Valid @ModelAttribute("postFilter") UserFilterDto filterDto, HttpSession session) {
         UserFilter userFilter = new UserFilter(filterDto.getFirstName(),
                 filterDto.getUsername(),
                 filterDto.getEmail(),
@@ -73,13 +73,14 @@ public class UserMvcController {
         int itemsPerPage = 5;
 
         List<User> dataList = userService.getPaginatedUsers(page, itemsPerPage, userFilter);
-
+//        User loggedUser = authenticationHelper.tryGetCurrentUser(session);
 
 
         int totalItems = userService.getAll(userFilter).size();
         int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
 
             model.addAttribute("users", dataList);
+//            model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("userService", userService);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", totalPages);
@@ -90,7 +91,7 @@ public class UserMvcController {
     @GetMapping("/{id}")
     public String getUserById(HttpSession session, @PathVariable int id, Model model) {
         try {
-            User loggedUser = authenticationHelper.tryPopulateUser(session);
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
             User user = userService.getById(id);
             model.addAttribute("loggedUser", loggedUser);
             model.addAttribute("user", user);
@@ -145,9 +146,9 @@ public class UserMvcController {
     }
 
     @GetMapping("/{id}/update")
-    public String showEditView(@PathVariable int id,Model model,Authentication authentication) {
+    public String showEditView(@PathVariable int id,Model model,HttpSession session) {
         try{
-            authenticationHelper.tryGetUserDemo(authentication);
+            authenticationHelper.tryGetCurrentUser(session);
         }
         catch (AuthorizationException e){
             return "redirect:/auth/login";
@@ -172,13 +173,13 @@ public class UserMvcController {
                              @Valid @ModelAttribute("user")UpdateUserDto updateUserDto,
                              BindingResult bindingResult,
                              Model model,
-                             Authentication authentication) {
+                             HttpSession session) {
         if (bindingResult.hasErrors()) {
             return "UserEditView";
         }
 
         try {
-            User loggedUser = authenticationHelper.tryGetUserDemo(authentication);
+            User loggedUser = authenticationHelper.tryGetCurrentUser(session);
             User updatedUser = userMapper.fromUpdateUserDto(updateUserDto);
             updatedUser.setId(loggedUser.getId());
             userService.updateUser(loggedUser, updatedUser);

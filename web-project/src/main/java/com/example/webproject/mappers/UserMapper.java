@@ -3,66 +3,39 @@ package com.example.webproject.mappers;
 import com.example.webproject.dtos.RegisterDto;
 import com.example.webproject.dtos.UpdateUserDto;
 import com.example.webproject.exceptions.AuthorizationException;
-import com.example.webproject.models.Role;
 import com.example.webproject.models.User;
 import com.example.webproject.dtos.UserDto;
-import com.example.webproject.repositories.contracts.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class UserMapper {
-    private final PasswordEncoder encoder;
-    private final RoleRepository roleRepository;
-    @Autowired
-    public UserMapper(PasswordEncoder encoder, RoleRepository roleRepository) {
-        this.encoder = encoder;
-        this.roleRepository = roleRepository;
+    public UserMapper() {
     }
     public User fromDtoToUser(UserDto userDto){
         User user = fromUpdateUserDto(userDto);
         user.setUsername(userDto.getUsername());
         return user;
     }
-
     public User fromRegisterDtoToUser(RegisterDto registerDto){
         if(!registerDto.getPassword().equals(registerDto.getConfirmPassword())){
             throw new AuthorizationException("Passwords does not match please try again");
         }
-
-        String encoded = encoder.encode(registerDto.getPassword());
-
-        Role userRole = roleRepository.findByAuthority("USER");
-
-        Set<Role> rolesSet = new HashSet<>();
-
-        rolesSet.add(userRole);
-
-        return new User(registerDto.getFirstName(),
-                registerDto.getLastName(),
-                registerDto.getUsername(),
-                encoded,registerDto.getEmail(),
-                rolesSet);
+        User user = new User();
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setUsername(registerDto.getUsername());
+        user.setPassword(registerDto.getPassword());
+        user.setEmail(registerDto.getEmail());
+        return user;
     }
 
     public User fromUpdateUserDto(UpdateUserDto updateUserDto){
-        String encoded =  encoder.encode(updateUserDto.getPassword());
-
-        Role userRole = roleRepository.findByAuthority("USER");
-
-        Set<Role> rolesSet = new HashSet<>();
-
-        rolesSet.add(userRole);
-
-       return new User(updateUserDto.getFirstName(),
-                        updateUserDto.getLastName(),
-                        encoded,
-                        updateUserDto.getEmail(),
-                        rolesSet);
+        User user = new User();
+        user.setFirstName(updateUserDto.getFirstName());
+        user.setLastName(updateUserDto.getLastName());
+        user.setPassword(updateUserDto.getPassword());
+        user.setEmail(updateUserDto.getEmail());
+        return user;
     }
     public UpdateUserDto fromUserToDto(User user){
         UpdateUserDto updateUserDto = new UpdateUserDto();
@@ -72,5 +45,12 @@ public class UserMapper {
         updateUserDto.setPassword(user.getPassword());
         return updateUserDto;
     }
-
+    public User fromRegisterDto(RegisterDto registerDto){
+        User user = new User();
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(registerDto.getPassword());
+        return user;
+    }
 }

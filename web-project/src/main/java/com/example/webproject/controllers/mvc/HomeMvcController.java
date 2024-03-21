@@ -32,8 +32,9 @@ public class HomeMvcController {
     }
 
     @ModelAttribute("isAuthenticated")
-    public boolean populateIsAuthenticated() {
-        return authenticationHelper.isAuthenticated();
+    public boolean populateIsAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("currentUser") != null;
     }
 
     @GetMapping()
